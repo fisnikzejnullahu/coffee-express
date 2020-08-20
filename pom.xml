@@ -10,6 +10,8 @@
     <modules>
         <module>orders</module>
         <module>barista</module>
+        <module>finance</module>
+        <module>customers</module>
         <module>orders-st</module>
     </modules>
 

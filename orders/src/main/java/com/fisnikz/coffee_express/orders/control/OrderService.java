@@ -21,6 +21,5 @@ public class OrderService {
         LOG.log(Logger.Level.INFO, "Placing order: " + order.id);
         order.place();
         order.persist();
-        LOG.log(Logger.Level.INFO, "Order Persisted: " + order.id);
     }
 }
