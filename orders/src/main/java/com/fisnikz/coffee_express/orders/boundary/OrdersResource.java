@@ -30,6 +30,7 @@ public class OrdersResource {
     public Response place(Order order) {
         order.id = UUID.randomUUID();
         orderService.place(order);
+
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(OrdersResource.class, "find").build(order.id))
                 .build();

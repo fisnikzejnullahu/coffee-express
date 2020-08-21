@@ -22,7 +22,7 @@ public class RequestJsonBuider {
         JsonArray jsonItems = Json.createReader(new StringReader(items)).readArray();
 
         return builder.add("customer-id", order.getCustomerId())
-                .add("order-info", Json.createObjectBuilder().add("items", jsonItems).build())
+                .add("order-details", Json.createObjectBuilder().add("items", jsonItems).build())
                 .build();
     }
 

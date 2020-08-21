@@ -1,5 +1,6 @@
 package com.fisnikz.coffee_express.orders.control;
 
+import com.fisnikz.coffee_express.orders.boundary.OrderCommandService;
 import com.fisnikz.coffee_express.orders.entity.Order;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,9 +18,13 @@ public class OrderService {
     @Inject
     Logger LOG;
 
+    @Inject
+    OrderCommandService commandService;
+
     public void place(Order order){
         LOG.log(Logger.Level.INFO, "Placing order: " + order.id);
         order.place();
         order.persist();
+        commandService.placeOrder(order);
     }
 }

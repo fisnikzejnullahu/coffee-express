@@ -6,15 +6,15 @@ import javax.persistence.FetchType;
 import java.util.List;
 
 @Embeddable
-public class OrderInfo {
+public class OrderDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     public List<OrderItem> items;
 
-    public OrderInfo() {
+    public OrderDetails() {
     }
 
-    public OrderInfo(List<OrderItem> orderItems) {
+    public OrderDetails(List<OrderItem> orderItems) {
         this.items = orderItems;
     }
 

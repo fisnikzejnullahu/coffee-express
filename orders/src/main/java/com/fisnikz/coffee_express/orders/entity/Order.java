@@ -2,7 +2,7 @@ package com.fisnikz.coffee_express.orders.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Type;
-import javax.json.JsonObject;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class Order extends PanacheEntityBase {
 
     @Embedded
     @NotNull
-    public OrderInfo orderInfo;
+    public OrderDetails orderDetails;
 
     @NotNull
     @Type(type = "uuid-char")
@@ -44,7 +44,7 @@ public class Order extends PanacheEntityBase {
     public Order(UUID customerId, List<OrderItem> items) {
         this.id = UUID.randomUUID();
         this.customerId = customerId;
-        this.orderInfo = new OrderInfo(items);
+        this.orderDetails = new OrderDetails(items);
     }
 
     public void place() {
@@ -82,7 +82,7 @@ public class Order extends PanacheEntityBase {
     public String toString() {
         return "Order{" +
                 ", customerId=" + customerId +
-                ", orderInfo=" + orderInfo +
+                ", orderInfo=" + orderDetails +
                 ", orderStatus=" + orderState +
                 '}';
     }
