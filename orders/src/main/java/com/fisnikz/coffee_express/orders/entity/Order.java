@@ -27,6 +27,9 @@ public class Order extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     public OrderState orderState;
 
+    @Embedded
+    public PaymentInformation paymentInformation;
+
     public LocalDateTime placedAt;
     public LocalDateTime acceptedAt;
     public LocalDateTime readyBy;
