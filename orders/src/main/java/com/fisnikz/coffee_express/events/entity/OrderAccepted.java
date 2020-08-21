@@ -1,0 +1,22 @@
+package com.fisnikz.coffee_express.events.entity;
+
+import com.fisnikz.coffee_express.orders.entity.OrderItem;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * @author Fisnik Zejnullahu
+ */
+public class OrderAccepted extends DomainEvent {
+
+    public List<OrderItem> orderItems;
+
+    public OrderAccepted() {
+    }
+
+    public OrderAccepted(UUID orderId, List<OrderItem> orderItems) {
+        super(orderId);
+        this.orderItems = orderItems;
+    }
+}
+
