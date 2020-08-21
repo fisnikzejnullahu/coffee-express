@@ -1,9 +1,9 @@
-package com.fisnikz.coffee_express.orders.boundary;
+package com.fisnikz.coffee_express.customers.boundary;
 
+import com.fisnikz.coffee_express.customers.control.CustomerService;
 import com.fisnikz.coffee_express.events.control.EventConsumer;
-import com.fisnikz.coffee_express.events.entity.CustomerVerificationFailed;
 import com.fisnikz.coffee_express.events.entity.DomainEvent;
-import com.fisnikz.coffee_express.orders.control.OrderService;
+import com.fisnikz.coffee_express.events.entity.OrderPlaced;
 import io.quarkus.runtime.StartupEvent;
 
 import javax.annotation.PostConstruct;
@@ -11,12 +11,17 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.bind.JsonbBuilder;
+import java.lang.System.Logger;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @ApplicationScoped
-public class OrderEventHandler {
+public class CustomerEventHandler {
+
+    @Inject
+    Logger LOG;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -24,24 +29,25 @@ public class OrderEventHandler {
     Properties kafkaProperties;
     @Inject
     Event<DomainEvent> events;
-    @Inject
-    OrderService orderService;
     private EventConsumer eventConsumer;
+
+    @Inject
+    CustomerService customerService;
 
     void onStart(@Observes StartupEvent ev) {
         executorService.submit(eventConsumer);
     }
 
-    void handleEvent(@Observes CustomerVerificationFailed event){
-        orderService.cancelOrder(event.orderId, event.message);
-        //TODO: Notify user from a notification-service that his user has cancelled
+    void handleEvent(@Observes OrderPlaced event){
+        LOG.log(Logger.Level.INFO, "Cosnsuming OrderPlaced Event: " + event.orderId);
+        customerService.verifyCustomer(event.customerId, event.orderId);
     }
 
     @PostConstruct
     public void init() {
-        String customersTopic = kafkaProperties.getProperty("customers.topic");
+        String ordersTopic = kafkaProperties.getProperty("orders.topic");
         eventConsumer = new EventConsumer(kafkaProperties, event -> {
             events.fire(event);
-        }, customersTopic);
+        }, ordersTopic);
     }
 }

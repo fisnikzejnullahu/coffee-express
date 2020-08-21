@@ -7,6 +7,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.lang.System.Logger;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * @author Fisnik Zejnullahu
@@ -26,5 +28,17 @@ public class OrderService {
         order.place();
         order.persist();
         commandService.placeOrder(order);
+    }
+
+    public void cancelOrder(UUID orderId, String message) {
+        LOG.log(Logger.Level.INFO, "Cancelling order: " + orderId);
+        applyToOrder(orderId, Order::cancel);
+    }
+
+    public void applyToOrder(UUID orderId, Consumer<Order> consumer){
+        Order order = Order.findById(orderId);
+        if (order != null) {
+            consumer.accept(order);
+        }
     }
 }

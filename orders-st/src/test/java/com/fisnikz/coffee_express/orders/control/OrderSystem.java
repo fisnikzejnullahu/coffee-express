@@ -1,4 +1,4 @@
-package com.fisnikz.coffee_express.orders.boundary;
+package com.fisnikz.coffee_express.orders.control;
 
 import com.fisnikz.coffee_express.orders.control.OrdersResourceClient;
 import com.fisnikz.coffee_express.orders.control.RequestJsonBuider;

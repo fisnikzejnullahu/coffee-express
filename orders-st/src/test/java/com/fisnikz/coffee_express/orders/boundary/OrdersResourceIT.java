@@ -1,6 +1,6 @@
-package com.fisnikz.coffee_express.orders.control;
+package com.fisnikz.coffee_express.orders.boundary;
 
-import com.fisnikz.coffee_express.orders.boundary.OrderSystem;
+import com.fisnikz.coffee_express.orders.control.OrderSystem;
 import com.fisnikz.coffee_express.orders.entity.Order;
 import com.fisnikz.coffee_express.orders.entity.OrderItem;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +46,7 @@ public class OrdersResourceIT {
                 new OrderItem(2, "machiato", 0.5d, (short) 1)
         ).collect(Collectors.toList());
 
-        return new Order("1d95d653-762e-45c5-bac3-bd1717492cd3", items);
+        return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", items);
     }
 
 

@@ -1,4 +1,4 @@
-package com.fisnikz.coffee_express.orders;
+package com.fisnikz.coffee_express;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
