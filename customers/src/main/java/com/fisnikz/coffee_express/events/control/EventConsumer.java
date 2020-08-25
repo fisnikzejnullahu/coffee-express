@@ -1,6 +1,6 @@
 package com.fisnikz.coffee_express.events.control;
 
-import com.fisnikz.coffee_express.events.entity.DomainEvent;
+import com.fisnikz.coffee_express.events.entity.OrderEvent;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -18,10 +18,10 @@ import static java.util.Arrays.asList;
 public class EventConsumer implements Runnable {
 
     private final AtomicBoolean running = new AtomicBoolean();
-    private final KafkaConsumer<String, DomainEvent> consumer;
-    private final Consumer<DomainEvent> eventConsumer;
+    private final KafkaConsumer<String, OrderEvent> consumer;
+    private final Consumer<OrderEvent> eventConsumer;
 
-    public EventConsumer(Properties kafkaProperties, Consumer<DomainEvent> eventConsumer, String... topics) {
+    public EventConsumer(Properties kafkaProperties, Consumer<OrderEvent> eventConsumer, String... topics) {
         kafkaProperties.put("group.id", "customers-handler");
         this.eventConsumer = eventConsumer;
         consumer = new KafkaConsumer<>(kafkaProperties);
@@ -44,8 +44,8 @@ public class EventConsumer implements Runnable {
     }
 
     private void consume() {
-        ConsumerRecords<String, DomainEvent> records = consumer.poll(Duration.ofMillis(100));
-        for (ConsumerRecord<String, DomainEvent> record : records) {
+        ConsumerRecords<String, OrderEvent> records = consumer.poll(Duration.ofMillis(100));
+        for (ConsumerRecord<String, OrderEvent> record : records) {
             eventConsumer.accept(record.value());
         }
         consumer.commitSync();

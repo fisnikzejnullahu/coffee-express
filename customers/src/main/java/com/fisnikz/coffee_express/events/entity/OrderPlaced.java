@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class OrderPlaced extends DomainEvent {
+public class OrderPlaced extends OrderEvent {
     public UUID customerId;
 
     public OrderPlaced() {

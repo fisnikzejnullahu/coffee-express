@@ -18,9 +18,6 @@ public class CustomerCommandService {
     @Inject
     EventProducer eventProducer;
 
-    @Inject
-    Properties kafkaProperties;
-
     public void customerVerified(UUID customerId, UUID orderId) {
         eventProducer.publish(new CustomerVerified(customerId, orderId));
     }

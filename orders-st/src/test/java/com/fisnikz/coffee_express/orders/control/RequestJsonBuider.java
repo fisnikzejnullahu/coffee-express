@@ -16,13 +16,19 @@ public class RequestJsonBuider {
 
     public JsonObject toJson(Order order) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
         String items = fromJsonB(order.getItems());
         JsonArray jsonItems = Json.createReader(new StringReader(items)).readArray();
 
+        JsonObject paymentInfo = Json.createObjectBuilder()
+                .add("card-number", order.getCardNumber())
+                .add("expiration-date", order.getExpirationDate().toString())
+                .add("cvc", order.getCvc())
+                .build();
+
         return builder.add("customer-id", order.getCustomerId())
                 .add("order-details", Json.createObjectBuilder().add("items", jsonItems).build())
+                .add("payment-information", paymentInfo)
                 .build();
     }
 

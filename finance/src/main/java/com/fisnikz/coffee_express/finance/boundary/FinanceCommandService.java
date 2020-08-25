@@ -1,12 +1,10 @@
 package com.fisnikz.coffee_express.finance.boundary;
 
 import com.fisnikz.coffee_express.events.control.EventProducer;
-import com.fisnikz.coffee_express.events.entity.CustomerVerificationFailed;
-import com.fisnikz.coffee_express.events.entity.CustomerVerified;
-
+import com.fisnikz.coffee_express.events.entity.CardAuthorizationFailed;
+import com.fisnikz.coffee_express.events.entity.CardAuthorized;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -18,14 +16,11 @@ public class FinanceCommandService {
     @Inject
     EventProducer eventProducer;
 
-    @Inject
-    Properties kafkaProperties;
-
-    public void customerVerified(UUID customerId, UUID orderId) {
-        eventProducer.publish(new CustomerVerified(customerId, orderId));
+    public void cardVerified(UUID orderId) {
+        eventProducer.publish(new CardAuthorized(orderId));
     }
 
-    public void customerVerificationFailed(UUID customerId, UUID orderId, String message) {
-        eventProducer.publish(new CustomerVerificationFailed(customerId, orderId, message));
+    public void cardVerificationFailed(UUID orderId, String message) {
+        eventProducer.publish(new CardAuthorizationFailed(orderId, message));
     }
 }

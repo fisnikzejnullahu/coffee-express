@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class CustomerVerificationFailed extends DomainEvent {
+public class CustomerVerificationFailed extends OrderEvent {
     public UUID customerId;
     public String message;
 

@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class OrderAccepted extends DomainEvent {
+public class OrderAccepted extends OrderEvent {
 
     public List<OrderItem> orderItems;
 

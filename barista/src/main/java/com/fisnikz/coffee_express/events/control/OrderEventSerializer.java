@@ -1,6 +1,6 @@
 package com.fisnikz.coffee_express.events.control;
 
-import com.fisnikz.coffee_express.events.entity.DomainEvent;
+import com.fisnikz.coffee_express.events.entity.OrderEvent;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -13,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author Fisnik Zejnullahu
  */
-public class OrderEventSerializer implements Serializer<DomainEvent> {
+public class OrderEventSerializer implements Serializer<OrderEvent> {
     @Override
-    public byte[] serialize(String s, DomainEvent event) {
+    public byte[] serialize(String s, OrderEvent event) {
         try {
             if (event == null)
                 return null;

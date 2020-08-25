@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.json.JsonObject;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,7 +47,7 @@ public class OrdersResourceIT {
                 new OrderItem(2, "machiato", 0.5d, (short) 1)
         ).collect(Collectors.toList());
 
-        return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", items);
+        return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", items, 1234123412341234L, LocalDate.now().plusYears(2), (short) 312);
     }
 
 

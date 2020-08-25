@@ -5,14 +5,14 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public abstract class DomainEvent {
+public abstract class OrderEvent {
 
     public UUID orderId;
 
-    public DomainEvent() {
+    public OrderEvent() {
     }
 
-    public DomainEvent(UUID orderId) {
+    public OrderEvent(UUID orderId) {
         this.orderId = orderId;
     }
 }

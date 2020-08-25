@@ -28,12 +28,12 @@ public class Order extends PanacheEntityBase {
     public OrderState orderState;
 
     @Embedded
+    @Transient
     public PaymentInformation paymentInformation;
 
     public LocalDateTime placedAt;
     public LocalDateTime acceptedAt;
     public LocalDateTime readyBy;
-    public LocalDateTime startedToPrepareAt;
     public LocalDateTime finishedAt;
     public LocalDateTime cancelledAt;
     public LocalDateTime pickedUpAt;
@@ -61,7 +61,6 @@ public class Order extends PanacheEntityBase {
     }
 
     public void start(LocalDateTime readyBy) {
-        this.startedToPrepareAt = LocalDateTime.now();
         this.readyBy = readyBy;
         this.orderState = OrderState.PREPARING;
     }

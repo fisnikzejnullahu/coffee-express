@@ -1,6 +1,6 @@
 package com.fisnikz.coffee_express.events.control;
 
-import com.fisnikz.coffee_express.events.entity.DomainEvent;
+import com.fisnikz.coffee_express.events.entity.OrderEvent;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -8,6 +8,9 @@ import org.apache.kafka.common.KafkaException;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import java.lang.System.Logger;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -17,7 +20,10 @@ import java.util.UUID;
 @ApplicationScoped
 public class EventProducer {
 
-    private Producer<String, DomainEvent> kafkaProducer;
+    @Inject
+    Logger LOG;
+
+    private Producer<String, OrderEvent> kafkaProducer;
     private String topic;
 
     @Inject
@@ -31,7 +37,7 @@ public class EventProducer {
         kafkaProducer.initTransactions();
     }
 
-    public void publish(DomainEvent... events) {
+    public void publish(OrderEvent... events) {
         try {
             kafkaProducer.beginTransaction();
             send(events);
@@ -42,9 +48,10 @@ public class EventProducer {
         }
     }
 
-    private void send(DomainEvent... events) {
-        for (DomainEvent event : events) {
-            ProducerRecord<String, DomainEvent> record = new ProducerRecord<>(topic, event);
+    private void send(OrderEvent... events) {
+        for (OrderEvent event : events) {
+            LOG.log(Logger.Level.INFO, "--Publishing: " + event.getClass().getName() + ", data: " + JsonbBuilder.create().toJson(event));
+            ProducerRecord<String, OrderEvent> record = new ProducerRecord<>(topic, event);
             this.kafkaProducer.send(record);
         }
     }

@@ -1,4 +1,4 @@
-package com.fisnikz.coffee_express.events.entity;
+package com.fisnikz.coffee_express.finance.entity;
 
 import com.fisnikz.coffee_express.finance.entity.PaymentInformation;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -22,7 +22,14 @@ public class Payment extends PanacheEntityBase {
 
     @NotNull
     @Type(type = "uuid-char")
+    public UUID orderId;
+
+    @NotNull
+    @Type(type = "uuid-char")
     public UUID customerId;
+
+    @NotNull
+    public double amount;
 
     @Embedded
     @NotNull

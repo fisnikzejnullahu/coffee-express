@@ -6,9 +6,9 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class OrderStarted extends DomainEvent{
+public class OrderStarted extends OrderEvent {
 
-    private LocalDateTime readyBy;
+    public LocalDateTime readyBy;
 
     public OrderStarted() {
     }
