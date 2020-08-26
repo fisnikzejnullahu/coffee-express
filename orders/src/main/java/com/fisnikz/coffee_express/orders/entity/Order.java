@@ -27,8 +27,8 @@ public class Order extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     public OrderState orderState;
 
-    @Embedded
     @Transient
+    @Embedded
     public PaymentInformation paymentInformation;
 
     public LocalDateTime placedAt;
@@ -38,6 +38,7 @@ public class Order extends PanacheEntityBase {
     public LocalDateTime cancelledAt;
     public LocalDateTime pickedUpAt;
 
+    @Transient
     @Version
     public long version;
 

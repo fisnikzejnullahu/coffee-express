@@ -2,14 +2,15 @@ package com.fisnikz.coffee_express.orders.control;
 
 import com.fisnikz.coffee_express.orders.boundary.OrderCommandService;
 import com.fisnikz.coffee_express.orders.entity.Order;
+import io.quarkus.panache.common.Sort;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.transaction.Transactional;
 import java.lang.System.Logger;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -26,7 +27,7 @@ public class OrderService {
     @Inject
     OrderCommandService commandService;
 
-    public void place(Order order){
+    public void place(Order order) {
         LOG.log(Logger.Level.INFO, "Placing order: " + order.id);
         LOG.log(Logger.Level.INFO, "ORDER: " + JsonbBuilder.create().toJson(order));
         order.place();
@@ -51,14 +52,19 @@ public class OrderService {
     }
 
     public void cancelOrder(UUID orderId, String message) {
-        LOG.log(Logger.Level.INFO, "Cancelling order: " + orderId);
         applyToOrder(orderId, Order::cancel);
     }
 
-    public void applyToOrder(UUID orderId, Consumer<Order> consumer){
+    public void applyToOrder(UUID orderId, Consumer<Order> consumer) {
         Order order = Order.findById(orderId);
         if (order != null) {
             consumer.accept(order);
         }
+    }
+
+    public List<Order> getOrdersOfCustomer(UUID customerId, int page) {
+        return Order.find("customerId", Sort.descending("placedAt"), customerId)
+                .page(page, 2)
+                .list();
     }
 }

@@ -2,10 +2,12 @@ package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.orders.control.OrderService;
 import com.fisnikz.coffee_express.orders.entity.Order;
+import io.quarkus.panache.common.Sort;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -16,7 +18,6 @@ import java.util.UUID;
 @Path("orders")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Transactional
 public class OrdersResource {
 
     @Context
@@ -44,6 +45,12 @@ public class OrdersResource {
             return Response.ok(order).build();
         }
         throw new NotFoundException("Order with id: " + orderId + ", was not found!");
+    }
+
+    @GET
+    public Response ordersOfCustomer(@QueryParam("customerId") UUID customerId, @QueryParam("page") int page) {
+        // TODO: check permission: only allow personal orders, not anyone else
+        return Response.ok(orderService.getOrdersOfCustomer(customerId, page)).build();
     }
 
 }
