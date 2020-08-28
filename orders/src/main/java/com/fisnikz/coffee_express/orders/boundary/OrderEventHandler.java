@@ -41,7 +41,7 @@ public class OrderEventHandler {
     }
 
     void handleEvent(@Observes CustomerVerificationFailed event){
-        orderService.cancelOrder(event.orderId, event.message);
+        orderService.rejectOrder(event.orderId, event.message);
         //TODO: Notify user from a notification-service that his user has cancelled
     }
 
@@ -50,11 +50,15 @@ public class OrderEventHandler {
     }
 
     void handleEvent(@Observes CardAuthorizationFailed event){
-        orderService.cancelOrder(event.orderId, event.message);
+        orderService.rejectOrder(event.orderId, event.message);
     }
 
     void handleEvent(@Observes OrderStarted event){
-        orderService.startOrder(event.orderId, event.readyBy);
+        orderService.orderStarted(event.orderId, event.readyBy);
+    }
+
+    void handleEvent(@Observes OrderFinished event){
+        orderService.orderFinished(event.orderId);
     }
 
     @PostConstruct

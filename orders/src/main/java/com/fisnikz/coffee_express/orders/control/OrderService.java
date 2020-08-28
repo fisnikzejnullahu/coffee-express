@@ -8,6 +8,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
 import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.lang.System.Logger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,8 +30,7 @@ public class OrderService {
     OrderCommandService commandService;
 
     public void place(Order order) {
-        LOG.log(Logger.Level.INFO, "Placing order: " + order.id);
-        LOG.log(Logger.Level.INFO, "ORDER: " + JsonbBuilder.create().toJson(order));
+        LOG.log(Logger.Level.INFO, "Placing order: " + JsonbBuilder.create().toJson(order));
         order.place();
         order.persist();
         commandService.placeOrder(order);
@@ -42,20 +43,38 @@ public class OrderService {
 
     public void cardAuthorized(UUID orderId) {
         Order order = Order.findById(orderId);
-        applyToOrder(orderId, Order::accept);
+        updateOrder(orderId, Order::accept);
         commandService.acceptOrder(order);
     }
 
-    public void startOrder(UUID orderId, LocalDateTime readyBy) {
+    public void orderStarted(UUID orderId, LocalDateTime readyBy) {
         Order order = Order.findById(orderId);
         order.start(readyBy);
     }
 
-    public void cancelOrder(UUID orderId, String message) {
-        applyToOrder(orderId, Order::cancel);
+    public void orderFinished(UUID orderId) {
+        Order order = Order.findById(orderId);
+        order.finish();
     }
 
-    public void applyToOrder(UUID orderId, Consumer<Order> consumer) {
+    public void rejectOrder(UUID orderId, String message){
+        updateOrder(orderId, Order::cancel);
+    }
+
+    public void cancelOrder(UUID orderId) {
+        Order order = Order.findById(orderId);
+        switch (order.orderState) {
+            case PLACED:
+                commandService.cancelOrder(orderId);
+                break;
+            case CANCELLED:
+                throw new WebApplicationException(Response.status(400).header("cause", "Order has already been canceled").build());
+            default:
+                throw new WebApplicationException(Response.status(400).header("cause", "Order has already started and cannot be canceled").build());
+        }
+    }
+
+    public void updateOrder(UUID orderId, Consumer<Order> consumer) {
         Order order = Order.findById(orderId);
         if (order != null) {
             consumer.accept(order);

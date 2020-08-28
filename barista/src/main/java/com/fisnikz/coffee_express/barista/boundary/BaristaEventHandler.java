@@ -39,7 +39,7 @@ public class BaristaEventHandler {
     }
 
     void handleEvent(@Observes OrderAccepted event){
-        baristaService.prepareCoffee(event.orderId, event.orderItems);
+        baristaService.acceptOrder(event.orderId, event.orderItems);
     }
 
     @PostConstruct

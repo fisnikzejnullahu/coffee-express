@@ -41,7 +41,7 @@ public class OrderSystem {
 
     public Response sendRequest(Order order) {
         JsonObject requestBody = this.jsonBuilder.toJson(order);
-        System.out.println(requestBody);
+        System.out.println("REQUEST BODY: " + requestBody);
         return this.client.place(requestBody);
     }
 

@@ -1,13 +1,16 @@
 package com.fisnikz.coffee_express.barista.entity;
 
+import javax.persistence.Embeddable;
+
 /**
  * @author Fisnik Zejnullahu
  */
+@Embeddable
 public class OrderItem {
 
-    private String menuItemId;
-    private String menuItemName;
-    private short quantity;
+    public String menuItemId;
+    public String menuItemName;
+    public short quantity;
 
     public OrderItem() {
     }
@@ -18,15 +21,4 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    public String getMenuItemId() {
-        return menuItemId;
-    }
-
-    public String getMenuItemName() {
-        return menuItemName;
-    }
-
-    public short getQuantity() {
-        return quantity;
-    }
 }

@@ -30,6 +30,7 @@ public class OrdersResource {
     @POST
     public Response place(Order order) {
         order.id = UUID.randomUUID();
+
         orderService.place(order);
 
         return Response
@@ -45,6 +46,13 @@ public class OrdersResource {
             return Response.ok(order).build();
         }
         throw new NotFoundException("Order with id: " + orderId + ", was not found!");
+    }
+
+    @POST
+    @Path("{orderId}")
+    public Response cancel(@PathParam("orderId") UUID orderId) {
+        orderService.cancelOrder(orderId);
+        return Response.ok().build();
     }
 
     @GET

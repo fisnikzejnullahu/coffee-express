@@ -35,9 +35,9 @@ public class OrdersResourceIT {
         assertNotNull(createdOrderLocation);
 
         String orderId = createdOrderLocation.toString().substring(createdOrderLocation.toString().lastIndexOf("/"));
-        System.out.println(orderId);
         JsonObject responseOrder = this.orderSystem.getOrder(orderId);
         assertNotNull(responseOrder);
+        assertEquals("PLACED", responseOrder.getString("order-state"));
         System.out.println(responseOrder);
     }
 
