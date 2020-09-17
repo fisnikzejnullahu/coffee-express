@@ -28,8 +28,8 @@ public class EventConsumer implements Runnable {
     ConnectionFactory connectionFactory;
 
     @Inject
-    @ConfigProperty(name = "orders.queue")
-    String ordersQueue;
+    @ConfigProperty(name = "customers.queue")
+    String customersQueue;
 
     @Inject
     OrderEventJsonbSerializer serializer;
@@ -44,7 +44,7 @@ public class EventConsumer implements Runnable {
     @Override
     public void run() {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            JMSConsumer consumer = context.createConsumer(context.createQueue(ordersQueue));
+            JMSConsumer consumer = context.createConsumer(context.createQueue(customersQueue));
             while (true) {
                 Message message = consumer.receive();
                 if (message == null) {

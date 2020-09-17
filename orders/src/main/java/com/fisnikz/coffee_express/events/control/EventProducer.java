@@ -31,13 +31,9 @@ public class EventProducer {
     @Inject
     OrderEventJsonbSerializer serializer;
 
-    @Inject
-    @ConfigProperty(name = "orders.queue")
-    String ordersQueue;
-
-    public void publish(OrderEvent event) {
+    public void publish(OrderEvent event, String queue) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createQueue(ordersQueue), serializer.serialize(event));
+            context.createProducer().send(context.createQueue(queue), serializer.serialize(event));
         }
     }
 }

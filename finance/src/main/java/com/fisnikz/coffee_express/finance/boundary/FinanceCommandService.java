@@ -3,6 +3,8 @@ package com.fisnikz.coffee_express.finance.boundary;
 import com.fisnikz.coffee_express.events.control.EventProducer;
 import com.fisnikz.coffee_express.events.entity.CardAuthorizationFailed;
 import com.fisnikz.coffee_express.events.entity.CardAuthorized;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.UUID;

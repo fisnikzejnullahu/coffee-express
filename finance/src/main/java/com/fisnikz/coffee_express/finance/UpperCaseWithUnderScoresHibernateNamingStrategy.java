@@ -12,8 +12,6 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class UpperCaseWithUnderScoresHibernateNamingStrategy implements PhysicalNamingStrategy {
 
-    private final String SCHEMA_NAME = "finances_service";
-
     @Override
     public Identifier toPhysicalCatalogName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
         return null;
@@ -21,7 +19,7 @@ public class UpperCaseWithUnderScoresHibernateNamingStrategy implements Physical
 
     @Override
     public Identifier toPhysicalSchemaName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        return Identifier.toIdentifier(SCHEMA_NAME);
+        return null;
     }
 
     @Override
