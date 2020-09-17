@@ -9,10 +9,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.*;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.bind.Jsonb;
-import java.io.StringReader;
+import java.lang.System.Logger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,11 +28,14 @@ public class EventConsumer implements Runnable {
     ConnectionFactory connectionFactory;
 
     @Inject
+    @ConfigProperty(name = "orders.topic")
+    String ordersTopic;
+
+    @Inject
     OrderEventJsonbSerializer serializer;
 
     @Inject
-    @ConfigProperty(name = "orders.topic")
-    String ordersTopic;
+    Logger LOG;
 
     void onStart(@Observes StartupEvent ev) {
         executorService.submit(this);
@@ -50,9 +50,11 @@ public class EventConsumer implements Runnable {
                 if (message == null) {
                     return;
                 }
-                events.fire(serializer.deserialize(message.getBody(String.class)));
+                OrderEvent event = serializer.deserialize(message.getBody(String.class));
+                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                events.fire(event);
             }
-        } catch (JMSException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
