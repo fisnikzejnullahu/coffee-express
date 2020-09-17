@@ -1,58 +1,62 @@
 package com.fisnikz.coffee_express.events.control;
 
 import com.fisnikz.coffee_express.events.entity.OrderEvent;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import io.quarkus.runtime.StartupEvent;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import java.time.Duration;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-
-import static java.util.Arrays.asList;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.*;
+import java.lang.System.Logger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Fisnik Zejnullahu
  */
+@ApplicationScoped
 public class EventConsumer implements Runnable {
 
-    private final AtomicBoolean running = new AtomicBoolean();
-    private final KafkaConsumer<String, OrderEvent> consumer;
-    private final Consumer<OrderEvent> eventConsumer;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public EventConsumer(Properties kafkaProperties, Consumer<OrderEvent> eventConsumer, String... topics) {
-        kafkaProperties.put("group.id", "baristas-handler");
-        this.eventConsumer = eventConsumer;
-        consumer = new KafkaConsumer<>(kafkaProperties);
-        consumer.subscribe(asList(topics));
-        this.running.set(true);
+    @Inject
+    Event<OrderEvent> events;
+
+    @Inject
+    ConnectionFactory connectionFactory;
+
+    @Inject
+    @ConfigProperty(name = "baristas.queue")
+    String baristasQueue;
+
+    @Inject
+    OrderEventJsonbSerializer serializer;
+
+    @Inject
+    Logger LOG;
+
+    void onStart(@Observes StartupEvent ev) {
+        executorService.submit(this);
     }
 
     @Override
     public void run() {
-        try {
-            while (running.get()) {
-                consume();
+        try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
+            JMSConsumer consumer = context.createConsumer(context.createQueue(baristasQueue));
+            while (true) {
+                Message message = consumer.receive();
+                if (message == null) {
+                    return;
+                }
+                OrderEvent event = serializer.deserialize(message.getBody(String.class));
+                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                events.fire(event);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // will wakeup for closing
-        } finally {
-            consumer.close();
+            throw new RuntimeException(e);
         }
-    }
-
-    private void consume() {
-        ConsumerRecords<String, OrderEvent> records = consumer.poll(Duration.ofMillis(100));
-        for (ConsumerRecord<String, OrderEvent> record : records) {
-            eventConsumer.accept(record.value());
-        }
-        consumer.commitSync();
-    }
-
-    public void stop() {
-        running.set(false);
-        consumer.wakeup();
     }
 }

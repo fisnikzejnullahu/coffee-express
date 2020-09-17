@@ -44,3 +44,9 @@ services:
       dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8082:8082"
+  baristas:
+    build:
+      context: barista
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - "8083:8083"

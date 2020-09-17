@@ -20,9 +20,6 @@ public class BaristaCommandService {
     @Inject
     EventProducer eventProducer;
 
-    @Inject
-    Properties kafkaProperties;
-
     public void orderStarted(UUID orderId, LocalDateTime readyBy) {
         eventProducer.publish(new OrderStarted(orderId, readyBy));
     }

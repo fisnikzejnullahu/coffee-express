@@ -1,18 +1,13 @@
 package com.fisnikz.coffee_express.events.control;
 
 import com.fisnikz.coffee_express.events.entity.OrderEvent;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.KafkaException;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.json.bind.JsonbBuilder;
-import java.lang.System.Logger;
-import java.util.Properties;
-import java.util.UUID;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.Session;
 
 /**
  * @author Fisnik Zejnullahu
@@ -20,40 +15,19 @@ import java.util.UUID;
 @ApplicationScoped
 public class EventProducer {
 
-    private Producer<String, OrderEvent> kafkaProducer;
-    private String topic;
+    @Inject
+    ConnectionFactory connectionFactory;
 
     @Inject
-    Properties kafkaProperties;
+    OrderEventJsonbSerializer serializer;
 
     @Inject
-    Logger LOG;
+    @ConfigProperty(name = "orders.topic")
+    String ordersTopic;
 
-    @PostConstruct
-    public void init(){
-        kafkaProperties.put("transactional.id", UUID.randomUUID().toString());
-        kafkaProducer = new KafkaProducer<>(kafkaProperties);
-        topic = kafkaProperties.getProperty("baristas.topic");
-        kafkaProducer.initTransactions();
-    }
-
-    public void publish(OrderEvent... events) {
-        try {
-            kafkaProducer.beginTransaction();
-            send(events);
-            kafkaProducer.commitTransaction();
-        }catch (KafkaException e){
-            kafkaProducer.abortTransaction();
-            e.printStackTrace();
+    public void publish(OrderEvent event) {
+        try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
+            context.createProducer().send(context.createTopic(ordersTopic), serializer.serialize(event));
         }
     }
-
-    private void send(OrderEvent... events) {
-        for (OrderEvent event : events) {
-            LOG.log(Logger.Level.INFO, "--Publishing: " + event.getClass().getName() + ", data: " + JsonbBuilder.create().toJson(event));
-            ProducerRecord<String, OrderEvent> record = new ProducerRecord<>(topic, event);
-            this.kafkaProducer.send(record);
-        }
-    }
-
 }

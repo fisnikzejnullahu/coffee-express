@@ -12,8 +12,6 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class UpperCaseWithUnderScoresHibernateNamingStrategy implements PhysicalNamingStrategy {
 
-    private final String SCHEMA_NAME = "baristas_service";
-
     @Override
     public Identifier toPhysicalCatalogName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
         return null;
@@ -21,12 +19,18 @@ public class UpperCaseWithUnderScoresHibernateNamingStrategy implements Physical
 
     @Override
     public Identifier toPhysicalSchemaName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        return Identifier.toIdentifier(SCHEMA_NAME);
+        return null;
     }
 
     @Override
     public Identifier toPhysicalTableName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        String newName = convert(identifier.getText());
+        /*
+            just for now I'm using only one instance of MySql which does not have schemas,
+            and therefore it cannot have two tables with same NAME.
+            So just for testing purposes I add a B (Baristas) at the begin of table name.
+         */
+
+        String newName = "B" + convert(identifier.getText());
         return newName.endsWith("S") ? Identifier.toIdentifier(newName) : Identifier.toIdentifier(newName + "S");
     }
 
