@@ -9,6 +9,7 @@ import com.fisnikz.coffee_express.orders.entity.Order;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -20,9 +21,6 @@ public class OrderCommandService {
 
     @Inject
     EventProducer eventProducer;
-
-    @Inject
-    Properties kafkaProperties;
 
     public void placeOrder(Order order) {
         eventProducer.publish(new OrderPlaced(order.id, order.customerId));

@@ -7,6 +7,13 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-artemis-jms</artifactId>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>orders</module>
         <module>barista</module>

@@ -18,7 +18,7 @@ public class OrderSystem {
     private RequestJsonBuider jsonBuilder;
 
     public OrderSystem() {
-        URI uri = URI.create("http://localhost:8081/");
+        URI uri = URI.create("http://localhost:8080/");
         this.client = RestClientBuilder.
                 newBuilder().
                 baseUri(uri).
