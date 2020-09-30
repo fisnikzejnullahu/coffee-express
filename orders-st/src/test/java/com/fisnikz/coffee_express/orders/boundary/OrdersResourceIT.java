@@ -30,15 +30,17 @@ public class OrdersResourceIT {
 
     @Test
     public void placeAndFind() {
-        Order order = newOrder();
-        URI createdOrderLocation = this.orderSystem.placeOrder(order);
-        assertNotNull(createdOrderLocation);
+        for (int i = 0; i < 1; i++) {
+            Order order = newOrder();
+            URI createdOrderLocation = this.orderSystem.placeOrder(order);
+            assertNotNull(createdOrderLocation);
 
-        String orderId = createdOrderLocation.toString().substring(createdOrderLocation.toString().lastIndexOf("/"));
-        JsonObject responseOrder = this.orderSystem.getOrder(orderId);
-        assertNotNull(responseOrder);
-        assertEquals("PLACED", responseOrder.getString("order-state"));
-        System.out.println(responseOrder);
+            String orderId = createdOrderLocation.toString().substring(createdOrderLocation.toString().lastIndexOf("/"));
+            JsonObject responseOrder = this.orderSystem.getOrder(orderId);
+            assertNotNull(responseOrder);
+            assertEquals("PLACED", responseOrder.getString("order-state"));
+            System.out.println(responseOrder);
+        }
     }
 
     Order newOrder(){

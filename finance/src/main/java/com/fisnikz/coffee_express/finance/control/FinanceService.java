@@ -36,9 +36,9 @@ public class FinanceService {
         Payment payment = new Payment();
         payment.id = UUID.randomUUID();
         payment.orderId = orderId;
-        payment.customerId = customerId;
+//        payment.customerId = customerId;
         payment.amount = amount;
-        payment.paymentInformation = paymentInformation;
+//        payment.paymentInformation = paymentInformation;
 
         payment.persist();
     }

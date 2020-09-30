@@ -26,38 +26,33 @@ public class OrdersResource {
     @Inject
     OrderService orderService;
 
-    @Counted
     @POST
     public Response place(Order order) {
         order.id = UUID.randomUUID();
-
         orderService.place(order);
-
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(OrdersResource.class, "find").build(order.id))
                 .build();
     }
 
     @GET
-    @Path("{orderId}")
-    public Response find(@PathParam("orderId") UUID orderId) {
-        Order order = Order.findById(orderId);
-        if (order != null) {
-            return Response.ok(order).build();
-        }
-        throw new NotFoundException("Order with id: " + orderId + ", was not found!");
+    public Response all(@QueryParam("page") int page){
+        return Response.ok(orderService.getOrders(page)).build();
     }
 
-    @POST
     @Path("{orderId}")
-    public Response cancel(@PathParam("orderId") UUID orderId) {
-        orderService.cancelOrder(orderId);
-        return Response.ok().build();
+    public OrderResource find(@PathParam("orderId") UUID orderId) {
+        return new OrderResource(orderId, this.orderService);
     }
 
+    /*
+        TODO: check permission: only allow personal orders, not anyone else
+        TODO: get payment information also, e.g. in html table show customer name, order details (date...) and total in money
+        total of order (call finance api via rest) -> @Traced
+     */
     @GET
     public Response ordersOfCustomer(@QueryParam("customerId") UUID customerId, @QueryParam("page") int page) {
-        // TODO: check permission: only allow personal orders, not anyone else
+
         return Response.ok(orderService.getOrdersOfCustomer(customerId, page)).build();
     }
 

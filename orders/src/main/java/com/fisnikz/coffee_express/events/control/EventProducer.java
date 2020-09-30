@@ -1,23 +1,16 @@
 package com.fisnikz.coffee_express.events.control;
 
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import com.fisnikz.coffee_express.events.entity.OrderEvent;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.Session;
-import javax.json.bind.Jsonb;
+import javax.json.Json;
 import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
-import javax.transaction.Transactional;
-
-import com.fisnikz.coffee_express.events.entity.OrderEvent;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import java.io.StringReader;
+import java.lang.System.Logger;
 
 /**
  * @author Fisnik Zejnullahu
@@ -31,9 +24,14 @@ public class EventProducer {
     @Inject
     OrderEventJsonbSerializer serializer;
 
+    @Inject
+    Logger LOG;
+
     public void publish(OrderEvent event, String queue) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createQueue(queue), serializer.serialize(event));
+            String serialize = serializer.serialize(event);
+            LOG.log(Logger.Level.INFO, "Publishing: " + serialize);
+            context.createProducer().send(context.createQueue(queue), serialize);
         }
     }
 }

@@ -1,11 +1,13 @@
-package com.fisnikz.coffee_express.orders.entity;
+package com.fisnikz.coffee_express.finance.entity;
 
 import javax.persistence.Embeddable;
 import java.time.LocalDate;
 
+/**
+ * @author Fisnik Zejnullahu
+ */
 @Embeddable
-public class PaymentInformation {
-
+public class CreditCardInfo {
 
     public long cardNumber;
     public LocalDate expirationDate;

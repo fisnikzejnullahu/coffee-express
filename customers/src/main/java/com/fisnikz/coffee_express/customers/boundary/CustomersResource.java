@@ -3,6 +3,7 @@ package com.fisnikz.coffee_express.customers.boundary;
 import com.fisnikz.coffee_express.customers.control.CustomerService;
 import com.fisnikz.coffee_express.customers.entity.Customer;
 import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -38,13 +39,15 @@ public class CustomersResource {
                 .build();
     }
 
+    @Traced
     @GET
     @Path("{customerId}")
     public Response find(@PathParam("customerId") UUID customerId) {
         Customer customer = customerService.getCustomer(customerId);
-        if (customer != null) {
-            return Response.ok(customer).build();
-        }
-        throw new NotFoundException("Customer with id: " + customerId + ", was not found!");
+        return Response.ok(customer).build();
+//        if (customer != null) {
+//            return Response.ok(customer).build();
+//        }
+//        throw new NotFoundException("Customer with id: " + customerId + ", was not found!");
     }
 }

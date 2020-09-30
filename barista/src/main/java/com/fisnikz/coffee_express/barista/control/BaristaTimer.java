@@ -22,7 +22,7 @@ public class BaristaTimer {
     void startPreparingCoffes() {
         List<Order> pendingOrders = baristaService.getPendingOrders();
         pendingOrders.forEach(order -> {
-            baristaService.orderStarted(order.id, order.acceptedAt.plusMinutes(new Random().nextInt(1) + 1));
+            baristaService.orderStarted(order.id, order.acceptedAt.plusMinutes(new Random().nextInt(1) + 2));
         });
     }
 
