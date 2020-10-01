@@ -1,8 +1,11 @@
 package com.fisnikz.coffee_express.finance.control;
 
+import com.fisnikz.coffee_express.events.FailMessages;
+import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
 import com.fisnikz.coffee_express.finance.boundary.FinanceCommandService;
 import com.fisnikz.coffee_express.finance.entity.PaymentInformation;
+import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,8 +22,10 @@ public class FinanceService {
     @Inject
     FinanceCommandService commandService;
 
-    public void authorize(UUID orderId, UUID customerId, double amount, PaymentInformation paymentInformation) {
+    @Counted
+    public void authorize(UUID orderId, UUID bankAccountId, double amount) {
         //TODO: call Stripe api and charge card
+        //TODO: validate that the bankAccounts belongs to the customer that want to make payment, not everyone can use bankAccountId to make payments
         //for now just simulate a wait and return a success
         try {
             Thread.sleep(1500);
@@ -28,18 +33,26 @@ public class FinanceService {
             e.printStackTrace();
         }
 
-        savePayment(orderId, customerId, amount, paymentInformation);
-        commandService.cardVerified(orderId);
+        BankAccount bankAccount = BankAccount.findById(bankAccountId);
+        if (bankAccount != null) {
+            savePayment(orderId, bankAccount, amount);
+            commandService.cardVerified(orderId);
+        }
+        else {
+            commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_FOUND);
+        }
+
     }
 
-    void savePayment(UUID orderId, UUID customerId, double amount, PaymentInformation paymentInformation) {
+    void savePayment(UUID orderId, BankAccount bankAccount, double amount) {
         Payment payment = new Payment();
         payment.id = UUID.randomUUID();
         payment.orderId = orderId;
-//        payment.customerId = customerId;
+        payment.account = bankAccount;
         payment.amount = amount;
-//        payment.paymentInformation = paymentInformation;
 
         payment.persist();
     }
+
+
 }

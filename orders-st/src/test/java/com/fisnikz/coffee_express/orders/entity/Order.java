@@ -9,17 +9,13 @@ import java.util.List;
 public class Order {
 
     private String customerId;
+    private String bankAccountId;
     private List<OrderItem> items;
-    private long cardNumber;
-    private LocalDate expirationDate;
-    private short cvc;
 
-    public Order(String customerId, List<OrderItem> items, long cardNumber, LocalDate expirationDate, short cvc) {
+    public Order(String customerId, String bankAccountId, List<OrderItem> items) {
         this.customerId = customerId;
+        this.bankAccountId = bankAccountId;
         this.items = items;
-        this.cardNumber = cardNumber;
-        this.expirationDate = expirationDate;
-        this.cvc = cvc;
     }
 
     public String getCustomerId() {
@@ -30,35 +26,19 @@ public class Order {
         this.customerId = customerId;
     }
 
+    public String getBankAccountId() {
+        return bankAccountId;
+    }
+
+    public void setBankAccountId(String bankAccountId) {
+        this.bankAccountId = bankAccountId;
+    }
+
     public List<OrderItem> getItems() {
         return items;
     }
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
-    }
-
-    public long getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(long cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
-    public LocalDate getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(LocalDate expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    public short getCvc() {
-        return cvc;
-    }
-
-    public void setCvc(short cvc) {
-        this.cvc = cvc;
     }
 }

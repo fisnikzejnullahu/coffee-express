@@ -66,20 +66,21 @@ public class OrderService {
     }
 
     public void orderFinished(UUID orderId) {
-        Order order = Order.findById(orderId);
-        order.finish();
+        updateOrder(orderId, Order::finish);
     }
 
     @Counted(name = "rejected_orders")
-    public void rejectOrder(UUID orderId, String message){
-        updateOrder(orderId, Order::cancel);
+    public void rejectOrder(UUID orderId, String reason){
+        Order order = Order.findById(orderId);
+        order.cancel(reason);
     }
 
     @Counted(name = "cancelled_orders")
-    public void cancelOrder(UUID orderId) {
+    public void cancelOrder(UUID orderId, String reason) {
         Order order = Order.findById(orderId);
         switch (order.orderState) {
             case PLACED:
+                order.cancel(reason);
                 commandService.cancelOrder(orderId);
                 break;
             case CANCELLED:

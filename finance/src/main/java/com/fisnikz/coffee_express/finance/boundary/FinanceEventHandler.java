@@ -18,6 +18,6 @@ public class FinanceEventHandler {
     FinanceService financeService;
 
     void handleEvent(@Observes AuthorizeCard event) {
-        financeService.authorize(event.orderId, event.customerId, event.amount, event.paymentInformation);
+        financeService.authorize(event.orderId, event.bankAccountId, event.amount);
     }
 }

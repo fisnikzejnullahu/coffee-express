@@ -20,15 +20,9 @@ public class RequestJsonBuider {
         String items = fromJsonB(order.getItems());
         JsonArray jsonItems = Json.createReader(new StringReader(items)).readArray();
 
-        JsonObject paymentInfo = Json.createObjectBuilder()
-                .add("card-number", order.getCardNumber())
-                .add("expiration-date", order.getExpirationDate().toString())
-                .add("cvc", order.getCvc())
-                .build();
-
         return builder.add("customer-id", order.getCustomerId())
                 .add("order-details", Json.createObjectBuilder().add("items", jsonItems).build())
-                .add("payment-information", paymentInfo)
+                .add("bank-account-id", order.getBankAccountId())
                 .build();
     }
 

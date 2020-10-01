@@ -2,7 +2,6 @@ package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.events.control.EventProducer;
 import com.fisnikz.coffee_express.events.entity.AuthorizeCard;
-import com.fisnikz.coffee_express.events.entity.CancelOrder;
 import com.fisnikz.coffee_express.events.entity.OrderAccepted;
 import com.fisnikz.coffee_express.events.entity.OrderPlaced;
 import com.fisnikz.coffee_express.orders.entity.Order;
@@ -10,9 +9,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.json.bind.JsonbBuilder;
-import javax.transaction.Transactional;
-import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -35,23 +31,22 @@ public class OrderCommandService {
     @Inject
     @ConfigProperty(name = "baristas.queue")
     String baristasQueue;
+    @Inject
+    System.Logger LOG;
 
     public void placeOrder(Order order) {
         eventProducer.publish(new OrderPlaced(order.id, order.customerId), customersQueue);
     }
 
-    @Inject
-    System.Logger LOG;
-
     public void authorizeCard(Order order) {
-        eventProducer.publish(new AuthorizeCard(order.id, order.customerId, order.orderDetails.getTotalOfOrder(), order.paymentInformation), financesQueue);
+        eventProducer.publish(new AuthorizeCard(order.id, order.bankAccountId, order.orderDetails.getTotalOfOrder()), financesQueue);
     }
 
     public void acceptOrder(Order order) {
         eventProducer.publish(new OrderAccepted(order.id, order.orderDetails.items), baristasQueue);
     }
 
-//  TODO: Maybe publish in a topic that all services consume the cancelorder
+    //  TODO: Maybe publish in a topic that all services consume the cancelorder
     public void cancelOrder(UUID orderId) {
 //        eventProducer.publish(new CancelOrder(orderId));
     }

@@ -9,17 +9,15 @@ import java.util.UUID;
  */
 public class AuthorizeCard extends OrderEvent {
 
-    public UUID customerId;
+    public UUID bankAccountId;
     public double amount;
-    public PaymentInformation paymentInformation;
 
     public AuthorizeCard() {
     }
 
-    public AuthorizeCard(UUID orderId, UUID customerId, double amount, PaymentInformation paymentInformation) {
+    public AuthorizeCard(UUID orderId, UUID bankAccountId, double amount) {
         super(orderId);
-        this.customerId = customerId;
+        this.bankAccountId = bankAccountId;
         this.amount = amount;
-        this.paymentInformation = paymentInformation;
     }
 }

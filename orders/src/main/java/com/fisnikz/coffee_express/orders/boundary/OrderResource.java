@@ -36,7 +36,7 @@ public class OrderResource {
 
     @POST
     public Response cancel() {
-        orderService.cancelOrder(orderId);
+        orderService.cancelOrder(orderId, "CANCELLED_FROM_USER");
         return Response.ok().build();
     }
 }

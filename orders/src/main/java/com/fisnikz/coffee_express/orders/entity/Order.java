@@ -3,6 +3,7 @@ package com.fisnikz.coffee_express.orders.entity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Type;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -25,11 +26,12 @@ public class Order extends PanacheEntityBase {
     @Type(type = "uuid-char")
     public UUID customerId;
 
+    @NotNull
+    @Type(type = "uuid-char")
+    public UUID bankAccountId;
+
     @Enumerated(EnumType.STRING)
     public OrderState orderState;
-
-    @Embedded
-    public PaymentInformation paymentInformation;
 
     public LocalDateTime placedAt;
     public LocalDateTime acceptedAt;
@@ -38,9 +40,12 @@ public class Order extends PanacheEntityBase {
     public LocalDateTime cancelledAt;
     public LocalDateTime pickedUpAt;
 
+    public String cancelledReason;
+
     @JsonbTransient
     @Version
     public long version;
+
 
     public Order() {
     }
@@ -71,8 +76,9 @@ public class Order extends PanacheEntityBase {
         this.orderState = OrderState.READY_FOR_PICKUP;
     }
 
-    public void cancel() {
+    public void cancel(String cancelledReason) {
         this.cancelledAt = LocalDateTime.now();
+        this.cancelledReason = cancelledReason;
         this.orderState = OrderState.CANCELLED;
     }
 
