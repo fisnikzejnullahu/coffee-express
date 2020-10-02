@@ -1,6 +1,5 @@
 package com.fisnikz.coffee_express.finance.entity;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Type;
 

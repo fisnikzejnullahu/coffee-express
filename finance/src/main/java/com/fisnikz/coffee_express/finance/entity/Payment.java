@@ -1,10 +1,8 @@
 package com.fisnikz.coffee_express.finance.entity;
 
-import com.fisnikz.coffee_express.finance.entity.PaymentInformation;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;

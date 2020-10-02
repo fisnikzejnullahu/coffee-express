@@ -22,16 +22,6 @@ services:
       ARTEMIS_USERNAME: "admin"
       ARTEMIS_PASSWORD: "123456"
 
-#  orders:
-#    build:
-#      context: orders
-#      dockerfile: src/main/docker/Dockerfile.jvm
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      db:
-#        condition: service_healthy
-
   jaeger-collector:
     image: jaegertracing/jaeger-collector
     command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra", "--collector.zipkin.http-port=9411" ]
@@ -53,6 +43,7 @@ services:
     restart: on-failure
     depends_on:
       - cassandra-schema
+
   jaeger-agent:
     image: jaegertracing/jaeger-agent
     command: [ "--reporter.grpc.host-port=jaeger-collector:14250" ]
@@ -64,6 +55,7 @@ services:
     restart: on-failure
     depends_on:
       - jaeger-collector
+
   cassandra:
     image: cassandra:3.9
 
@@ -71,6 +63,11 @@ services:
     image: jaegertracing/jaeger-cassandra-schema
     depends_on:
       - cassandra
+
+  mongodb:
+    image: mvertes/alpine-mongo
+    ports:
+    - "27017:27017"
 
 networks:
   default:

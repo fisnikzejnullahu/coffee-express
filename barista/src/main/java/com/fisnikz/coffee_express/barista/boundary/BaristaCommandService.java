@@ -6,9 +6,7 @@ import com.fisnikz.coffee_express.events.entity.OrderStarted;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Properties;
 import java.util.UUID;
 
 /**

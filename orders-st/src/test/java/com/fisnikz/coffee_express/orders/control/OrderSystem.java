@@ -1,7 +1,5 @@
 package com.fisnikz.coffee_express.orders.control;
 
-import com.fisnikz.coffee_express.orders.control.OrdersResourceClient;
-import com.fisnikz.coffee_express.orders.control.RequestJsonBuider;
 import com.fisnikz.coffee_express.orders.entity.Order;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 

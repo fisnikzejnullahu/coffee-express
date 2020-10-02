@@ -1,10 +1,9 @@
 package com.fisnikz.coffee_express.finance.control;
 
 import com.fisnikz.coffee_express.events.FailMessages;
+import com.fisnikz.coffee_express.finance.boundary.FinanceCommandService;
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
-import com.fisnikz.coffee_express.finance.boundary.FinanceCommandService;
-import com.fisnikz.coffee_express.finance.entity.PaymentInformation;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;

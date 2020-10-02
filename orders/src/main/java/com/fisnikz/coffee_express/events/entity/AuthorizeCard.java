@@ -1,7 +1,5 @@
 package com.fisnikz.coffee_express.events.entity;
 
-import com.fisnikz.coffee_express.orders.entity.PaymentInformation;
-
 import java.util.UUID;
 
 /**

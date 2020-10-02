@@ -3,7 +3,6 @@ package com.fisnikz.coffee_express.finance.control;
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;

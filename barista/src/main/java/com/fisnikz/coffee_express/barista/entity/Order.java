@@ -1,8 +1,6 @@
 package com.fisnikz.coffee_express.barista.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;

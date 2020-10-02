@@ -5,7 +5,6 @@ import io.quarkus.scheduler.Scheduled;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 

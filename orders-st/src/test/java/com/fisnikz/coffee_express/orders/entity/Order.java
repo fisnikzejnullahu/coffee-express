@@ -1,6 +1,5 @@
 package com.fisnikz.coffee_express.orders.entity;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**

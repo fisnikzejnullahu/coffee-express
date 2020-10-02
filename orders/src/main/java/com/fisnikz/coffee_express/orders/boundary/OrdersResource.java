@@ -2,12 +2,8 @@ package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.orders.control.OrderService;
 import com.fisnikz.coffee_express.orders.entity.Order;
-import io.quarkus.panache.common.Sort;
-import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;

@@ -6,7 +6,6 @@ import com.fisnikz.coffee_express.events.entity.CustomerVerified;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Properties;
 import java.util.UUID;
 
 /**

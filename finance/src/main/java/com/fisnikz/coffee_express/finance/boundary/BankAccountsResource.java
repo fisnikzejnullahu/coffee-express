@@ -5,10 +5,7 @@ import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;

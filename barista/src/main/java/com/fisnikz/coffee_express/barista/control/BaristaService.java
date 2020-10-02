@@ -1,18 +1,15 @@
 package com.fisnikz.coffee_express.barista.control;
 
-import com.fisnikz.coffee_express.barista.boundary.BaristaCommandService;
 import com.fisnikz.coffee_express.barista.entity.Order;
+import com.fisnikz.coffee_express.barista.boundary.BaristaCommandService;
 import com.fisnikz.coffee_express.barista.entity.OrderItem;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author Fisnik Zejnullahu
