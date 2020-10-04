@@ -13,31 +13,31 @@ public class OrderEventHandler {
     @Inject
     OrderService orderService;
 
-    void handleEvent(@Observes OrderCreated event) {
-        orderService.orderCreated(event.orderId, event.orderDetails, event.bankAccountId, event.customerId);
+    void handleEvent(@Observes OrderPlaced event) {
+        orderService.orderPlaced(event.getOrderId(), event.getOrderDetails(), event.getBankAccountId(), event.getCustomerId());
     }
 
     void handleEvent(@Observes OrderAccepted event){
-        orderService.orderAccepted(event.orderId, event.acceptedAt);
+        orderService.orderAccepted(event.getOrderId(), event.acceptedAt);
     }
 
     void handleEvent(@Observes CustomerVerificationFailed event) {
-        orderService.rejectOrder(event.orderId, event.message);
+        orderService.rejectOrder(event.getOrderId(), event.message);
     }
 
     void handleEvent(@Observes CardAuthorized event) {
-        orderService.paymentDone(event.orderId);
+        orderService.paymentDone(event.getOrderId());
     }
 
     void handleEvent(@Observes CardAuthorizationFailed event) {
-        orderService.rejectOrder(event.orderId, event.message);
+        orderService.rejectOrder(event.getOrderId(), event.message);
     }
 
     void handleEvent(@Observes OrderStarted event) {
-        orderService.orderStarted(event.orderId, event.readyBy);
+        orderService.orderStarted(event.getOrderId(), event.readyBy);
     }
 
     void handleEvent(@Observes OrderFinished event) {
-        orderService.orderFinished(event.orderId);
+        orderService.orderFinished(event.getOrderId());
     }
 }

@@ -1,5 +1,6 @@
 package com.fisnikz.coffee_express.events.control;
 
+import com.fisnikz.coffee_express.events.entity.OrderCommand;
 import com.fisnikz.coffee_express.events.entity.OrderEvent;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +25,7 @@ public class EventProducer {
     @Inject
     Logger LOG;
 
-    public void publish(OrderEvent event, String queue) {
+    public void publish(Object event, String queue) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
             String serialize = serializer.serialize(event);
             LOG.log(Logger.Level.INFO, "Publishing: " + serialize);

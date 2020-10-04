@@ -11,13 +11,21 @@ import java.util.UUID;
  */
 public class OrderAccepted extends OrderEvent {
 
-    public LocalDateTime acceptedAt;
+    private LocalDateTime acceptedAt;
 
     public OrderAccepted() {
     }
 
     public OrderAccepted(UUID orderId, LocalDateTime acceptedAt) {
         super(orderId);
+        this.acceptedAt = acceptedAt;
+    }
+
+    public LocalDateTime getAcceptedAt() {
+        return acceptedAt;
+    }
+
+    public void setAcceptedAt(LocalDateTime acceptedAt) {
         this.acceptedAt = acceptedAt;
     }
 }

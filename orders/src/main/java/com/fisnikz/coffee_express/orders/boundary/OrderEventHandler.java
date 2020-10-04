@@ -14,31 +14,31 @@ public class OrderEventHandler {
     OrderService orderService;
 
     void handleEvent(@Observes CustomerVerified event) {
-        orderService.customerVerified(event.orderId);
+        orderService.customerVerified(event.getOrderId());
     }
 
     void handleEvent(@Observes CustomerVerificationFailed event) {
-        orderService.rejectOrder(event.orderId, event.message);
+        orderService.rejectOrder(event.getOrderId(), event.getMessage());
         //TODO: Notify user from a notification-service that his user has cancelled
     }
 
     void handleEvent(@Observes CardAuthorized event) {
-        orderService.cardAuthorized(event.orderId);
+        orderService.cardAuthorized(event.getOrderId());
     }
 
     void handleEvent(@Observes CardAuthorizationFailed event) {
-        orderService.rejectOrder(event.orderId, event.message);
+        orderService.rejectOrder(event.getOrderId(), event.getMessage());
     }
 
     void handleEvent(@Observes OrderAccepted event) {
-        orderService.orderAccepted(event.orderId);
+        orderService.orderAccepted(event.getOrderId());
     }
 
     void handleEvent(@Observes OrderStarted event) {
-        orderService.orderStarted(event.orderId, event.readyBy);
+        orderService.orderStarted(event.getOrderId(), event.getReadyBy());
     }
 
     void handleEvent(@Observes OrderFinished event) {
-        orderService.orderFinished(event.orderId);
+        orderService.orderFinished(event.getOrderId());
     }
 }

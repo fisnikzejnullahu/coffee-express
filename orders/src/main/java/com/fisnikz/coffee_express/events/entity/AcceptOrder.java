@@ -8,15 +8,23 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class AcceptOrder extends OrderEvent {
+public class AcceptOrder extends OrderCommand {
 
-    public List<OrderItem> orderItems;
+    private List<OrderItem> orderItems;
 
     public AcceptOrder() {
     }
 
     public AcceptOrder(UUID orderId, List<OrderItem> orderItems) {
         super(orderId);
+        this.orderItems = orderItems;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 }

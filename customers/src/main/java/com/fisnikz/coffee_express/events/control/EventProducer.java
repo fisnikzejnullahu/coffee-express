@@ -25,7 +25,7 @@ public class EventProducer {
     @ConfigProperty(name = "orders.topic")
     String ordersTopic;
 
-    public void publish(OrderEvent event) {
+    public void publish(Object event) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
             context.createProducer().send(context.createTopic(ordersTopic), serializer.serialize(event));
         }

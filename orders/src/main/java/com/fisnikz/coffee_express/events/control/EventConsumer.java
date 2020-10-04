@@ -50,9 +50,14 @@ public class EventConsumer implements Runnable {
                 if (message == null) {
                     return;
                 }
-                OrderEvent event = serializer.deserialize(message.getBody(String.class));
+                Object event = serializer.deserialize(message.getBody(String.class));
+                if (event instanceof OrderEvent) {
+                    events.fire((OrderEvent) event);
+                }
+                else {
+//                    events.fire((OrderEvent) event);
+                }
                 LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
-                events.fire(event);
             }
         } catch (Exception e) {
             e.printStackTrace();

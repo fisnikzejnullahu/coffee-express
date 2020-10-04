@@ -7,13 +7,21 @@ import java.util.UUID;
  */
 public class CardAuthorizationFailed extends OrderEvent {
 
-    public String message;
+    private String message;
 
     public CardAuthorizationFailed() {
     }
 
     public CardAuthorizationFailed(UUID orderId, String message) {
         super(orderId);
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 }

@@ -7,12 +7,20 @@ import java.util.UUID;
  */
 public abstract class OrderEvent {
 
-    public UUID orderId;
+    private UUID orderId;
 
     public OrderEvent() {
     }
 
     public OrderEvent(UUID orderId) {
+        this.orderId = orderId;
+    }
+
+    public UUID getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(UUID orderId) {
         this.orderId = orderId;
     }
 }

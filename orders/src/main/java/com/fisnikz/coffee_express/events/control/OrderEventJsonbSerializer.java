@@ -1,5 +1,6 @@
 package com.fisnikz.coffee_express.events.control;
 
+import com.fisnikz.coffee_express.events.entity.OrderCommand;
 import com.fisnikz.coffee_express.events.entity.OrderEvent;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,7 +20,7 @@ public class OrderEventJsonbSerializer {
 
     private final Jsonb JSONB = JsonbBuilder.create();
 
-    public String serialize(final OrderEvent event) {
+    public String serialize(final Object event) {
 
         JsonObject data = Json.createReader(new StringReader(JSONB.toJson(event))).readObject();
         return Json.createObjectBuilder()
@@ -29,10 +30,10 @@ public class OrderEventJsonbSerializer {
                 .toString();
     }
 
-    public OrderEvent deserialize(String body) {
+    public Object deserialize(String body) {
         try {
             final JsonObject jsonObject = Json.createReader(new StringReader(body)).readObject();
-            final Class<? extends OrderEvent> eventClass = (Class<? extends OrderEvent>) Class.forName(jsonObject.getString("class"));
+            final Class<? extends Object> eventClass = Class.forName(jsonObject.getString("class"));
             return JSONB.fromJson(jsonObject.getJsonObject("data").toString(), eventClass);
         }catch (Exception e) {
             LOG.log(Logger.Level.ERROR, e.getMessage(), e.getCause());

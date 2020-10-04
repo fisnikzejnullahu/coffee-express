@@ -16,26 +16,10 @@ import java.lang.System.Logger;
 public class OrderEntityListener {
 
     @Inject
-    Logger LOG;
-
-    @Inject
     OrderCommandService commandService;
 
-    public void onInProgress(@Observes(during = TransactionPhase.IN_PROGRESS) Order order){
-        LOG.log(Logger.Level.INFO, "In progress: ");
-    }
-
     public void onSuccess(@Observes(during= TransactionPhase.AFTER_SUCCESS) Order order){
-        LOG.log(Logger.Level.INFO, "After success: ");
-
         commandService.placeOrder(order);
     }
 
-    public void onCompletion(@Observes(during = TransactionPhase.AFTER_COMPLETION) Order order){
-        LOG.log(Logger.Level.INFO, "Afte completion: ");
-    }
-
-    public void onFailure(@Observes(during= TransactionPhase.AFTER_FAILURE) Order order){
-        LOG.log(Logger.Level.INFO, "After failure: " + order.id);
-    }
 }

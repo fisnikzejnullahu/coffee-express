@@ -5,14 +5,14 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public abstract class OrderEvent {
+public abstract class OrderCommand {
 
     private UUID orderId;
 
-    public OrderEvent() {
+    public OrderCommand() {
     }
 
-    public OrderEvent(UUID orderId) {
+    public OrderCommand(UUID orderId) {
         this.orderId = orderId;
     }
 

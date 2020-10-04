@@ -50,7 +50,6 @@ public class EventOrdersTopicConsumer implements Runnable {
                 if (message == null) {
                     return;
                 }
-                LOG.log(Logger.Level.INFO, message.getBody(String.class));
                 OrderEvent event = serializer.deserialize(message.getBody(String.class));
                 LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
                 events.fire(event);

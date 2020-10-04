@@ -19,7 +19,7 @@ public class OrderEventJsonbSerializer {
 
     private final Jsonb JSONB = JsonbBuilder.create();
 
-    public String serialize(final OrderEvent event) {
+    public String serialize(final Object event) {
 
         JsonObject data = Json.createReader(new StringReader(JSONB.toJson(event))).readObject();
         return Json.createObjectBuilder()
@@ -29,7 +29,7 @@ public class OrderEventJsonbSerializer {
                 .toString();
     }
 
-    public OrderEvent deserialize(String body) {
+    public Object deserialize(String body) {
         try {
             final JsonObject jsonObject = Json.createReader(new StringReader(body)).readObject();
             final Class<? extends OrderEvent> eventClass = (Class<? extends OrderEvent>) Class.forName(jsonObject.getString("class"));

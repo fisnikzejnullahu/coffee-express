@@ -15,7 +15,7 @@ import java.util.UUID;
 @ApplicationScoped
 public class OrderService {
 
-    public void orderCreated(UUID orderId, OrderDetails orderDetails, UUID bankAccountId, UUID customerId) {
+    public void orderPlaced(UUID orderId, OrderDetails orderDetails, UUID bankAccountId, UUID customerId) {
         Order order = new Order();
         order.setPlacedAt(LocalDateTime.now());
         order.setOrderState(Order.OrderState.PLACED);

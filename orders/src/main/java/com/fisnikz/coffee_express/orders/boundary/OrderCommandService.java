@@ -38,8 +38,8 @@ public class OrderCommandService {
     System.Logger LOG;
 
     public void placeOrder(Order order) {
-        eventProducer.publish(new OrderCreated(order.id, order.orderDetails, order.customerId, order.bankAccountId), ordersHistoryQueue);
-        eventProducer.publish(new OrderPlaced(order.id, order.customerId), customersQueue);
+        eventProducer.publish(new OrderPlaced(order.id, order.orderDetails, order.customerId, order.bankAccountId), ordersHistoryQueue);
+        eventProducer.publish(new VerifyCustomer(order.id, order.customerId), customersQueue);
     }
 
     public void authorizeCard(Order order) {

@@ -17,13 +17,9 @@ import java.time.LocalDateTime;
 public class OrderEntityListener {
 
     @Inject
-    Logger LOG;
-
-    @Inject
     BaristaCommandService commandService;
 
     public void onSuccess(@Observes(during= TransactionPhase.AFTER_SUCCESS) Order order){
-        LOG.log(Logger.Level.INFO, "After success: ");
         commandService.orderAccepted(order, LocalDateTime.now());
     }
 }
