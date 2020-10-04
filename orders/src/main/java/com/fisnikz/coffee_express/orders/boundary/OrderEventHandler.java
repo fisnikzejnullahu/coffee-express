@@ -30,6 +30,10 @@ public class OrderEventHandler {
         orderService.rejectOrder(event.orderId, event.message);
     }
 
+    void handleEvent(@Observes OrderAccepted event) {
+        orderService.orderAccepted(event.orderId);
+    }
+
     void handleEvent(@Observes OrderStarted event) {
         orderService.orderStarted(event.orderId, event.readyBy);
     }

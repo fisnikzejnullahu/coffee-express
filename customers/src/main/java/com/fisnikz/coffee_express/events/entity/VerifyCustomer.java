@@ -5,13 +5,13 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class CustomerVerified extends OrderEvent {
+public class VerifyCustomer extends OrderCommand {
     private UUID customerId;
 
-    public CustomerVerified() {
+    public VerifyCustomer() {
     }
 
-    public CustomerVerified(UUID customerId, UUID orderId) {
+    public VerifyCustomer(UUID orderId, UUID customerId) {
         super(orderId);
         this.customerId = customerId;
     }

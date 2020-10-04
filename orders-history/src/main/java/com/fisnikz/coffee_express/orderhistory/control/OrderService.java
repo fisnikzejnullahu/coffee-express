@@ -26,9 +26,9 @@ public class OrderService {
         order.persist();
     }
 
-    public void orderAccepted(UUID orderId) {
+    public void orderAccepted(UUID orderId, LocalDateTime acceptedAt) {
         Order order = findByOrderId(orderId);
-        order.setAcceptedAt(LocalDateTime.now());
+        order.setAcceptedAt(acceptedAt);
         order.setOrderState(Order.OrderState.ACCEPTED);
         order.update();
     }

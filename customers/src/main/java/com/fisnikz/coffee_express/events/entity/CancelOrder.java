@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class CancelOrder extends OrderEvent{
+public class CancelOrder extends OrderCommand{
     public CancelOrder() {
     }
 

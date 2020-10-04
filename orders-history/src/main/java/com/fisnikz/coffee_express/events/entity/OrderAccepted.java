@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.events.entity;
 
 import com.fisnikz.coffee_express.orderhistory.entity.OrderItem;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,14 +11,14 @@ import java.util.UUID;
  */
 public class OrderAccepted extends OrderEvent {
 
-    public List<OrderItem> orderItems;
+    public LocalDateTime acceptedAt;
 
     public OrderAccepted() {
     }
 
-    public OrderAccepted(UUID orderId, List<OrderItem> orderItems) {
+    public OrderAccepted(UUID orderId, LocalDateTime acceptedAt) {
         super(orderId);
-        this.orderItems = orderItems;
+        this.acceptedAt = acceptedAt;
     }
 }
 

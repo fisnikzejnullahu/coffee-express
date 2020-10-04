@@ -33,12 +33,8 @@ public class Order extends PanacheEntityBase {
     public OrderState orderState;
 
     public LocalDateTime placedAt;
-    public LocalDateTime acceptedAt;
-    public LocalDateTime readyBy;
-    public LocalDateTime finishedAt;
-    public LocalDateTime cancelledAt;
     public LocalDateTime pickedUpAt;
-
+    public LocalDateTime cancelledAt;
     public String cancelledReason;
 
     @JsonbTransient
@@ -61,17 +57,14 @@ public class Order extends PanacheEntityBase {
     }
 
     public void accept() {
-        this.acceptedAt = LocalDateTime.now();
         this.orderState = OrderState.ACCEPTED;
     }
 
-    public void start(LocalDateTime readyBy) {
-        this.readyBy = readyBy;
+    public void start() {
         this.orderState = OrderState.PREPARING;
     }
 
     public void finish() {
-        this.finishedAt = LocalDateTime.now();
         this.orderState = OrderState.READY_FOR_PICKUP;
     }
 

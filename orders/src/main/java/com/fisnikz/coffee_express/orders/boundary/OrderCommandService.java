@@ -1,10 +1,7 @@
 package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.events.control.EventProducer;
-import com.fisnikz.coffee_express.events.entity.AuthorizeCard;
-import com.fisnikz.coffee_express.events.entity.OrderAccepted;
-import com.fisnikz.coffee_express.events.entity.OrderCreated;
-import com.fisnikz.coffee_express.events.entity.OrderPlaced;
+import com.fisnikz.coffee_express.events.entity.*;
 import com.fisnikz.coffee_express.orders.entity.Order;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -50,7 +47,7 @@ public class OrderCommandService {
     }
 
     public void acceptOrder(Order order) {
-        eventProducer.publish(new OrderAccepted(order.id, order.orderDetails.items), baristasQueue);
+        eventProducer.publish(new AcceptOrder(order.id, order.orderDetails.items), baristasQueue);
     }
 
     //  TODO: Maybe publish in a topic that all services consume the cancelorder

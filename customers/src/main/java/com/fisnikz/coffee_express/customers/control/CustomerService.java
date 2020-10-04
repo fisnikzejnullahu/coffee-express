@@ -37,7 +37,7 @@ public class CustomerService {
         return Customer.findById(customerId);
     }
 
-    public void verifyCustomer(UUID customerId, UUID orderId) {
+    public void verifyCustomer(UUID orderId, UUID customerId) {
         LOG.log(Logger.Level.INFO, "verifying customer: " + customerId + ", for order: " + orderId);
         Customer customer = Customer.findById(customerId);
         if (customer == null) {

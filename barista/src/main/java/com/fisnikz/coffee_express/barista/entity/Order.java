@@ -26,6 +26,7 @@ public class Order extends PanacheEntityBase {
     public List<OrderItem> items;
 
     public LocalDateTime acceptedAt;
+    public LocalDateTime startedAt;
     public LocalDateTime finishedAt;
     public LocalDateTime readyBy;
 
@@ -42,6 +43,7 @@ public class Order extends PanacheEntityBase {
     }
 
     public void start(LocalDateTime readyBy) {
+        this.startedAt = LocalDateTime.now();
         this.readyBy = readyBy;
     }
 

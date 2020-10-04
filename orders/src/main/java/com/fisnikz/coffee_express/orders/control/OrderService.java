@@ -40,7 +40,6 @@ public class OrderService {
         order.place();
         order.persist();
         event.fire(order);
-//        commandService.placeOrder(order);
     }
 
     public void customerVerified(UUID orderId) {
@@ -55,14 +54,17 @@ public class OrderService {
 
     public void cardAuthorized(UUID orderId) {
         Order order = Order.findById(orderId);
-        updateOrder(orderId, Order::accept);
         commandService.acceptOrder(order);
     }
 
-    @Counted
+    @Counted(name = "accepted_orders")
+    public void orderAccepted(UUID orderId) {
+        updateOrder(orderId, Order::accept);
+    }
+
     public void orderStarted(UUID orderId, LocalDateTime readyBy) {
-        Order order = Order.findById(orderId);
-        order.start(readyBy);
+        updateOrder(orderId, Order::start);
+        //notify user with that order has satrted with a readyby time
     }
 
     public void orderFinished(UUID orderId) {
@@ -108,4 +110,6 @@ public class OrderService {
                 .page(page, 7)
                 .list();
     }
+
+
 }

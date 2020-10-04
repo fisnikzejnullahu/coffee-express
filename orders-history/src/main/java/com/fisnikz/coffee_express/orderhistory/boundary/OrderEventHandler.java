@@ -18,7 +18,7 @@ public class OrderEventHandler {
     }
 
     void handleEvent(@Observes OrderAccepted event){
-        orderService.orderAccepted(event.orderId);
+        orderService.orderAccepted(event.orderId, event.acceptedAt);
     }
 
     void handleEvent(@Observes CustomerVerificationFailed event) {

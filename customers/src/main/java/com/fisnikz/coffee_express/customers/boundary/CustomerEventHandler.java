@@ -1,7 +1,7 @@
 package com.fisnikz.coffee_express.customers.boundary;
 
 import com.fisnikz.coffee_express.customers.control.CustomerService;
-import com.fisnikz.coffee_express.events.entity.OrderPlaced;
+import com.fisnikz.coffee_express.events.entity.VerifyCustomer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -13,7 +13,7 @@ public class CustomerEventHandler {
     @Inject
     CustomerService customerService;
 
-    void handleEvent(@Observes OrderPlaced event) {
-        customerService.verifyCustomer(event.customerId, event.orderId);
+    void handleEvent(@Observes VerifyCustomer event) {
+        customerService.verifyCustomer(event.getOrderId(), event.getCustomerId());
     }
 }

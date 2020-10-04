@@ -48,7 +48,7 @@ public class OrdersResourceIT {
                 new OrderItem(2, "machiato", 0.5d, (short) 1)
         ).collect(Collectors.toList());
 
-        return new Order("045cf19e-34b9-4d1e-a566-921874129ff1", "70d273a8-03ec-11eb-adc1-0242ac120002",items);
+        return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", "70d273a8-03ec-11eb-adc1-0242ac120002",items);
     }
 
 
