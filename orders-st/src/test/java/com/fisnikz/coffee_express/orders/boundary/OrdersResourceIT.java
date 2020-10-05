@@ -29,7 +29,7 @@ public class OrdersResourceIT {
 
     @Test
     public void placeAndFind() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 50; i++) {
             Order order = newOrder();
             URI createdOrderLocation = this.orderSystem.placeOrder(order);
             assertNotNull(createdOrderLocation);

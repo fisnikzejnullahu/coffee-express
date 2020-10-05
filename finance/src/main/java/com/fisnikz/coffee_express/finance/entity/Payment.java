@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -25,6 +26,8 @@ public class Payment extends PanacheEntityBase {
 
     @NotNull
     public double amount;
+
+    public LocalDateTime timestamp;
 
     @OneToOne
     @NotNull

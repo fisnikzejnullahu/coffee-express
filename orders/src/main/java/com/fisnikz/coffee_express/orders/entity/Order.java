@@ -32,9 +32,6 @@ public class Order extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     public OrderState orderState;
 
-    public LocalDateTime placedAt;
-    public LocalDateTime pickedUpAt;
-    public LocalDateTime cancelledAt;
     public String cancelledReason;
 
     @JsonbTransient
@@ -52,7 +49,6 @@ public class Order extends PanacheEntityBase {
     }
 
     public void place() {
-        this.placedAt = LocalDateTime.now();
         this.orderState = OrderState.PLACED;
     }
 
@@ -69,13 +65,11 @@ public class Order extends PanacheEntityBase {
     }
 
     public void cancel(String cancelledReason) {
-        this.cancelledAt = LocalDateTime.now();
         this.cancelledReason = cancelledReason;
         this.orderState = OrderState.CANCELLED;
     }
 
     public void pickedUp() {
-        this.pickedUpAt = LocalDateTime.now();
         this.orderState = OrderState.PICKED_UP;
     }
 

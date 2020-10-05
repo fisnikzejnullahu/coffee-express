@@ -9,6 +9,7 @@ import org.eclipse.microprofile.metrics.annotation.Counted;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -49,6 +50,7 @@ public class FinanceService {
         payment.orderId = orderId;
         payment.account = bankAccount;
         payment.amount = amount;
+        payment.timestamp = LocalDateTime.now();
 
         payment.persist();
     }

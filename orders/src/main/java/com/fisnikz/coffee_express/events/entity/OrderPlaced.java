@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.events.entity;
 
 import com.fisnikz.coffee_express.orders.entity.OrderDetails;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -12,6 +13,7 @@ public class OrderPlaced extends OrderEvent {
     private OrderDetails orderDetails;
     private UUID customerId;
     private UUID bankAccountId;
+    private LocalDateTime placedAt;
 
     public OrderPlaced() {
     }
@@ -21,6 +23,7 @@ public class OrderPlaced extends OrderEvent {
         this.orderDetails = orderDetails;
         this.customerId = customerId;
         this.bankAccountId = bankAccountId;
+        this.placedAt = LocalDateTime.now();
     }
 
     public OrderDetails getOrderDetails() {
@@ -45,5 +48,13 @@ public class OrderPlaced extends OrderEvent {
 
     public void setBankAccountId(UUID bankAccountId) {
         this.bankAccountId = bankAccountId;
+    }
+
+    public LocalDateTime getPlacedAt() {
+        return placedAt;
+    }
+
+    public void setPlacedAt(LocalDateTime placedAt) {
+        this.placedAt = placedAt;
     }
 }

@@ -31,25 +31,9 @@ public class OrdersResource {
                 .build();
     }
 
-    @GET
-    public Response all(@QueryParam("page") int page){
-        return Response.ok(orderService.getOrders(page)).build();
-    }
-
     @Path("{orderId}")
     public OrderResource find(@PathParam("orderId") UUID orderId) {
         return new OrderResource(orderId, this.orderService);
-    }
-
-    /*
-        TODO: check permission: only allow personal orders, not anyone else
-        TODO: get payment information also, e.g. in html table show customer name, order details (date...) and total in money
-        total of order (call finance api via rest) -> @Traced
-     */
-    @GET
-    public Response ordersOfCustomer(@QueryParam("customerId") UUID customerId, @QueryParam("page") int page) {
-
-        return Response.ok(orderService.getOrdersOfCustomer(customerId, page)).build();
     }
 
 }

@@ -99,17 +99,4 @@ public class OrderService {
         }
     }
 
-    public List<Order> getOrdersOfCustomer(UUID customerId, int page) {
-        return Order.find("customerId", Sort.descending("placedAt"), customerId)
-                .page(page, 5)
-                .list();
-    }
-
-    public List<Order> getOrders(int page) {
-        return Order.findAll(Sort.descending("placedAt"))
-                .page(page, 7)
-                .list();
-    }
-
-
 }

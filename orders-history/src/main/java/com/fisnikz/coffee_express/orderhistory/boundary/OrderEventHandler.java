@@ -14,7 +14,7 @@ public class OrderEventHandler {
     OrderService orderService;
 
     void handleEvent(@Observes OrderPlaced event) {
-        orderService.orderPlaced(event.getOrderId(), event.getOrderDetails(), event.getBankAccountId(), event.getCustomerId());
+        orderService.orderPlaced(event.getOrderId(), event.getOrderDetails(), event.getBankAccountId(), event.getCustomerId(), event.getPlacedAt());
     }
 
     void handleEvent(@Observes OrderAccepted event){

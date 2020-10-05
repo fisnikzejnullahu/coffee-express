@@ -1,0 +1,11 @@
+FROM adoptopenjdk/openjdk11-openj9:alpine
+
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
+ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+
+RUN mkdir /opt/app
+
+COPY target/lib/* /opt/app/lib/
+COPY target/*-runner.jar /opt/app/app.jar
+
+CMD java ${JAVA_OPTIONS} -jar /opt/app/app.jar

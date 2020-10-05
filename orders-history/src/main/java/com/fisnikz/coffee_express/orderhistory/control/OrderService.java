@@ -3,10 +3,12 @@ package com.fisnikz.coffee_express.orderhistory.control;
 import com.fisnikz.coffee_express.orderhistory.entity.Order;
 import com.fisnikz.coffee_express.orderhistory.entity.OrderDetails;
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
+import io.quarkus.panache.common.Sort;
 import org.bson.types.ObjectId;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -15,9 +17,9 @@ import java.util.UUID;
 @ApplicationScoped
 public class OrderService {
 
-    public void orderPlaced(UUID orderId, OrderDetails orderDetails, UUID bankAccountId, UUID customerId) {
+    public void orderPlaced(UUID orderId, OrderDetails orderDetails, UUID bankAccountId, UUID customerId, LocalDateTime placedAt) {
         Order order = new Order();
-        order.setPlacedAt(LocalDateTime.now());
+        order.setPlacedAt(placedAt);
         order.setOrderState(Order.OrderState.PLACED);
         order.setOrderId(orderId.toString());
         order.setCustomerId(customerId.toString());
@@ -63,5 +65,11 @@ public class OrderService {
 
     private Order findByOrderId(UUID orderId) {
         return Order.find("orderId", orderId.toString()).firstResult();
+    }
+
+    public List<Order> getOrdersOfCustomer(String customerId, int page) {
+        return Order.find("customerId", Sort.descending("placedAt"), customerId)
+                .page(page, 5)
+                .list();
     }
 }
