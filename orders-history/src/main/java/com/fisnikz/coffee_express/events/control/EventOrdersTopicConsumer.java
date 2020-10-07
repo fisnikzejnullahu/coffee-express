@@ -51,8 +51,10 @@ public class EventOrdersTopicConsumer implements Runnable {
                     return;
                 }
                 com.fisnikz.coffee_express.events.entity.Event event = (com.fisnikz.coffee_express.events.entity.Event) serializer.deserialize(message.getBody(String.class));
-                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
-                events.fire(event);
+                if (event != null) {
+                    LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                    events.fire(event);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

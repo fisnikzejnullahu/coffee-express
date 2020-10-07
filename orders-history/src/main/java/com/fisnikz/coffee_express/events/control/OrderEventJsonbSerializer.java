@@ -37,7 +37,8 @@ public class OrderEventJsonbSerializer {
             return JSONB.fromJson(jsonObject.getJsonObject("data").toString(), eventClass);
         }catch (Exception e) {
             LOG.log(Logger.Level.ERROR, e.getMessage(), e.getCause());
-            throw new RuntimeException("Something went wrong");
+            return null;
+//            throw new RuntimeException("Something went wrong");
         }
     }
 }

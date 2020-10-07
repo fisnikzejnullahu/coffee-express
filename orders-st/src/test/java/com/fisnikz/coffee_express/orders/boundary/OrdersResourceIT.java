@@ -45,8 +45,8 @@ public class OrdersResourceIT {
 
     Order newOrder(){
         List<OrderItem> items = Stream.of(
-                new OrderItem(1, (short) 5),
-                new OrderItem(2, (short) 5)
+                new OrderItem(2, (short) 2),
+                new OrderItem(3, (short) 1)
         ).collect(Collectors.toList());
 
         return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", "70d273a8-03ec-11eb-adc1-0242ac120002",items);
