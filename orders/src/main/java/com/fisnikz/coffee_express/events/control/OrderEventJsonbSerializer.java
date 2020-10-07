@@ -33,7 +33,7 @@ public class OrderEventJsonbSerializer {
     public Object deserialize(String body) {
         try {
             final JsonObject jsonObject = Json.createReader(new StringReader(body)).readObject();
-            final Class<? extends Object> eventClass = Class.forName(jsonObject.getString("class"));
+            Class<?> eventClass = Class.forName(jsonObject.getString("class"));
             return JSONB.fromJson(jsonObject.getJsonObject("data").toString(), eventClass);
         }catch (Exception e) {
             LOG.log(Logger.Level.ERROR, e.getMessage(), e.getCause());

@@ -21,8 +21,8 @@ public class RequestJsonBuider {
         JsonArray jsonItems = Json.createReader(new StringReader(items)).readArray();
 
         return builder.add("customer-id", order.getCustomerId())
-                .add("order-details", Json.createObjectBuilder().add("items", jsonItems).build())
                 .add("bank-account-id", order.getBankAccountId())
+                .add("items", jsonItems)
                 .build();
     }
 

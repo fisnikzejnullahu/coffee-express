@@ -42,10 +42,11 @@ public class Order extends PanacheEntityBase {
     public Order() {
     }
 
-    public Order(UUID customerId, List<OrderItem> items) {
-        this.id = UUID.randomUUID();
+    public Order(UUID orderId, UUID customerId, UUID bankAccountId, OrderDetails orderDetails) {
+        this.id = orderId;
         this.customerId = customerId;
-        this.orderDetails = new OrderDetails(items);
+        this.bankAccountId = bankAccountId;
+        this.orderDetails = orderDetails;
     }
 
     public void place() {

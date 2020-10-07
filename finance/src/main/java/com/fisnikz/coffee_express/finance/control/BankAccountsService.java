@@ -34,6 +34,7 @@ public class BankAccountsService {
         if (customerServiceResponse.getStatus() == 404) {
             throw new NotFoundException("Customer was not found!");
         }
+        account.persist();
     }
 
     public BankAccount find(UUID id) {

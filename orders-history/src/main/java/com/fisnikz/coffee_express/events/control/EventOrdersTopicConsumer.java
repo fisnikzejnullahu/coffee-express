@@ -22,7 +22,7 @@ public class EventOrdersTopicConsumer implements Runnable {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Inject
-    Event<OrderEvent> events;
+    Event<com.fisnikz.coffee_express.events.entity.Event> events;
 
     @Inject
     ConnectionFactory connectionFactory;
@@ -50,7 +50,7 @@ public class EventOrdersTopicConsumer implements Runnable {
                 if (message == null) {
                     return;
                 }
-                OrderEvent event = serializer.deserialize(message.getBody(String.class));
+                com.fisnikz.coffee_express.events.entity.Event event = (com.fisnikz.coffee_express.events.entity.Event) serializer.deserialize(message.getBody(String.class));
                 LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
                 events.fire(event);
             }

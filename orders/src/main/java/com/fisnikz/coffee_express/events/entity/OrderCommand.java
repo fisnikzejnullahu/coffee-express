@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public abstract class OrderCommand {
+public abstract class OrderCommand implements Command{
 
     private UUID orderId;
 

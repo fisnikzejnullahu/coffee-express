@@ -1,6 +1,7 @@
 package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.orders.control.OrderService;
+import com.fisnikz.coffee_express.orders.entity.CreateOrderRequest;
 import com.fisnikz.coffee_express.orders.entity.Order;
 
 import javax.inject.Inject;
@@ -23,11 +24,12 @@ public class OrdersResource {
     OrderService orderService;
 
     @POST
-    public Response place(Order order) {
-        order.id = UUID.randomUUID();
-        orderService.place(order);
+    public Response place(CreateOrderRequest createOrderRequest) {
+        UUID orderId = UUID.randomUUID();
+        orderService.place(orderId, createOrderRequest);
+
         return Response
-                .created(uriInfo.getRequestUriBuilder().path(OrdersResource.class, "find").build(order.id))
+                .created(uriInfo.getRequestUriBuilder().path(OrdersResource.class, "find").build(orderId))
                 .build();
     }
 

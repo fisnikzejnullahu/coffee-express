@@ -29,7 +29,7 @@ public class OrdersResourceIT {
 
     @Test
     public void placeAndFind() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1; i++) {
             Order order = newOrder();
             URI createdOrderLocation = this.orderSystem.placeOrder(order);
             assertNotNull(createdOrderLocation);
@@ -37,15 +37,16 @@ public class OrdersResourceIT {
             String orderId = createdOrderLocation.toString().substring(createdOrderLocation.toString().lastIndexOf("/"));
             JsonObject responseOrder = this.orderSystem.getOrder(orderId);
             assertNotNull(responseOrder);
-            assertEquals("PLACED", responseOrder.getString("order-state"));
+            System.out.println(responseOrder);
+            assertEquals("PLACED", responseOrder.getString("state"));
             System.out.println(responseOrder);
         }
     }
 
     Order newOrder(){
         List<OrderItem> items = Stream.of(
-                new OrderItem(1, "espresso", 0.7d, (short) 1),
-                new OrderItem(2, "machiato", 0.5d, (short) 3)
+                new OrderItem(1, (short) 5),
+                new OrderItem(2, (short) 5)
         ).collect(Collectors.toList());
 
         return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", "70d273a8-03ec-11eb-adc1-0242ac120002",items);

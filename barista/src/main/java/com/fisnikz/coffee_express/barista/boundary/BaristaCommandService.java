@@ -1,14 +1,14 @@
 package com.fisnikz.coffee_express.barista.boundary;
 
+import com.fisnikz.coffee_express.barista.entity.MenuItem;
 import com.fisnikz.coffee_express.barista.entity.Order;
 import com.fisnikz.coffee_express.events.control.EventProducer;
-import com.fisnikz.coffee_express.events.entity.OrderAccepted;
-import com.fisnikz.coffee_express.events.entity.OrderFinished;
-import com.fisnikz.coffee_express.events.entity.OrderStarted;
+import com.fisnikz.coffee_express.events.entity.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,4 +32,15 @@ public class BaristaCommandService {
         eventProducer.publish(new OrderFinished(orderId));
     }
 
+    public void menuItemAdded(MenuItem menuItem) {
+        eventProducer.publish(new MenuItemAdded(menuItem));
+    }
+
+    public void menuItemRemoved(long id) {
+        eventProducer.publish(new MenuItemRemoved(id));
+    }
+
+    public void menuItemsAdded(List<MenuItem> menuItems) {
+        eventProducer.publish(new MenuItemsAdded(menuItems));
+    }
 }

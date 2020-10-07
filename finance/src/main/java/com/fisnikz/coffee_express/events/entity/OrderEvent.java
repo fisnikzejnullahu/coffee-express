@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public abstract class OrderEvent {
+public abstract class OrderEvent implements Event{
 
     private UUID orderId;
 

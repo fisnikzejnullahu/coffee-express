@@ -1,5 +1,7 @@
 package com.fisnikz.coffee_express.events.control;
 
+import com.fisnikz.coffee_express.events.entity.Command;
+import com.fisnikz.coffee_express.events.entity.OrderCommand;
 import com.fisnikz.coffee_express.events.entity.OrderEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -22,7 +24,10 @@ public class EventConsumer implements Runnable {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Inject
-    Event<OrderEvent> events;
+    Event<com.fisnikz.coffee_express.events.entity.Event> events;
+
+    @Inject
+    Event<Command> commands;
 
     @Inject
     ConnectionFactory connectionFactory;
@@ -51,13 +56,13 @@ public class EventConsumer implements Runnable {
                     return;
                 }
                 Object event = serializer.deserialize(message.getBody(String.class));
-                if (event instanceof OrderEvent) {
-                    events.fire((OrderEvent) event);
-                }
-                else {
-//                    events.fire((OrderEvent) event);
-                }
                 LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                if (event instanceof com.fisnikz.coffee_express.events.entity.Event) {
+                    events.fire((com.fisnikz.coffee_express.events.entity.Event) event);
+                }
+                else if (event instanceof Command) {
+                    commands.fire((Command) event);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

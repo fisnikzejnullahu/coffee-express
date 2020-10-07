@@ -41,4 +41,16 @@ public class OrderEventHandler {
     void handleEvent(@Observes OrderFinished event) {
         orderService.orderFinished(event.getOrderId());
     }
+
+    void handleEvent(@Observes MenuItemAdded event){
+        orderService.addMenuItem(event.getItem());
+    }
+
+    void handleEvent(@Observes MenuItemsAdded event){
+        orderService.addMenuItems(event.getItems());
+    }
+
+    void handleEvent(@Observes MenuItemRemoved event){
+        orderService.removeMenuItem(event.getMenuItemId());
+    }
 }

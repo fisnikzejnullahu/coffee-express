@@ -1,6 +1,7 @@
 package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.orders.control.OrderService;
+import com.fisnikz.coffee_express.orders.entity.CreateOrderResponse;
 import com.fisnikz.coffee_express.orders.entity.Order;
 
 import javax.enterprise.context.Dependent;
@@ -29,7 +30,8 @@ public class OrderResource {
     public Response find(){
         Order order = Order.findById(orderId);
         if (order != null) {
-            return Response.ok(order).build();
+            CreateOrderResponse response = new CreateOrderResponse(orderId, order.orderDetails, order.orderState);
+            return Response.ok(response).build();
         }
         throw new NotFoundException("Order with id: " + orderId + ", was not found!");
     }
