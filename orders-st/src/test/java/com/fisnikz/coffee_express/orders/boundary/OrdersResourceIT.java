@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import javax.json.JsonObject;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,12 +24,12 @@ public class OrdersResourceIT {
     private OrderSystem orderSystem;
 
     @BeforeEach
-    public void init(){
+    void init(){
         this.orderSystem = new OrderSystem();
     }
 
     @Test
-    public void placeAndFind() {
+    void placeAndFind() {
         for (int i = 0; i < 1; i++) {
             Order order = newOrder();
             URI createdOrderLocation = this.orderSystem.placeOrder(order);
@@ -43,6 +44,14 @@ public class OrdersResourceIT {
         }
     }
 
+    @Test
+    void placeOrderFail() {
+        Order order = newOrder();
+        order.getItems().get(0).setMenuItemId(-99);
+
+        this.orderSystem.placeInvalidOrder(order);
+    }
+
     Order newOrder(){
         List<OrderItem> items = Stream.of(
                 new OrderItem(2, (short) 2),
@@ -51,6 +60,4 @@ public class OrdersResourceIT {
 
         return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", "70d273a8-03ec-11eb-adc1-0242ac120002",items);
     }
-
-
 }

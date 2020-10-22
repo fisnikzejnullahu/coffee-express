@@ -5,7 +5,6 @@ import com.fisnikz.coffee_express.orders.entity.*;
 import com.fisnikz.coffee_express.orders.boundary.OrderCommandService;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -15,7 +14,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.lang.System.Logger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -38,24 +36,24 @@ public class OrderService {
     Event<Order> event;
 
     @Counted(name = "placed_orders")
-    public void place(UUID orderId, CreateOrderRequest createOrderRequest) {
-        Order order = new Order(orderId, createOrderRequest.getCustomerId(), createOrderRequest.getBankAccountId(), new OrderDetails(makeOrderItems(createOrderRequest.getItems())));
-        LOG.log(Logger.Level.INFO, "Placing order: " + JsonbBuilder.create().toJson(createOrderRequest));
+    public void place(UUID orderId, PlaceOrderRequest placeOrderRequest) {
+        Order order = new Order(orderId, placeOrderRequest.getCustomerId(), placeOrderRequest.getBankAccountId(), new OrderDetails(makeOrderItems(placeOrderRequest.getItems())));
+        LOG.log(Logger.Level.INFO, "Placing order: " + JsonbBuilder.create().toJson(placeOrderRequest));
         order.place();
         order.persist();
         event.fire(order);
     }
 
-    private List<OrderItem> makeOrderItems(List<CreateOrderRequest._OrderItem> items) {
+    private List<OrderItem> makeOrderItems(List<PlaceOrderRequest._OrderItem> items) {
         List<MenuItem> menuItems = MenuItem.listAll();
         return items.stream().map(it -> convertItem(it, menuItems)).collect(Collectors.toList());
     }
 
-    private OrderItem convertItem(CreateOrderRequest._OrderItem item, List<MenuItem> menuItems){
+    private OrderItem convertItem(PlaceOrderRequest._OrderItem item, List<MenuItem> menuItems){
         MenuItem menuItem = menuItems.stream().filter(it -> it.id == item.getMenuItemId() && !it.removed).findFirst()
                 .orElseThrow(() -> new InvalidMenuItemException("Menuitem with id: " + item.getMenuItemId() + ", does not exists!"));
 
-        return new OrderItem(menuItem.id, menuItem.name, menuItem.price, item.getQuantity());
+        return new OrderItem(menuItem, item.getQuantity());
     }
 
     public void customerVerified(UUID orderId) {

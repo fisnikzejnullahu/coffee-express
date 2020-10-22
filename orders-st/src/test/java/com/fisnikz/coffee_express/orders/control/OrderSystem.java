@@ -16,7 +16,7 @@ public class OrderSystem {
     private RequestJsonBuider jsonBuilder;
 
     public OrderSystem() {
-        URI uri = URI.create("http://localhost:8080/");
+        URI uri = URI.create("http://localhost:8088/");
         this.client = RestClientBuilder.
                 newBuilder().
                 baseUri(uri).
@@ -29,6 +29,11 @@ public class OrderSystem {
         Response response = sendRequest(order);
         verifySuccess(response);
         return response.getLocation();
+    }
+
+    public void placeInvalidOrder(Order order) {
+        Response response = sendRequest(order);
+        verifyClientError(response);
     }
 
     public JsonObject getOrder(String orderId) {
@@ -45,6 +50,10 @@ public class OrderSystem {
 
     private void verifySuccess(Response response) {
         verifyStatus(response, Response.Status.Family.SUCCESSFUL);
+    }
+
+    private void verifyClientError(Response response) {
+        verifyStatus(response, Response.Status.Family.CLIENT_ERROR);
     }
 
     private void verifyStatus(Response response, Response.Status.Family statusFamily) {

@@ -33,7 +33,7 @@ public class BaristasResource {
 
     @GET
     @Path("items/{id}")
-    public MenuItem findItem(long id) {
+    public MenuItem findItem(@PathParam("id") long id) {
         return MenuItem.findById(id);
     }
 

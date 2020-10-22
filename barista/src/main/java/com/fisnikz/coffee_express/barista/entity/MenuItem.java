@@ -15,6 +15,8 @@ public class MenuItem extends PanacheEntity {
 
     public String name;
     public double price;
+    public String thumbnail;
+    public String picture;
     public boolean removed;
 
     public MenuItem() {

@@ -9,6 +9,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.*;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.lang.System.Logger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,7 +53,7 @@ public class EventOrderHistoryQueueConsumer implements Runnable {
                     return;
                 }
                 com.fisnikz.coffee_express.events.entity.Event event = (com.fisnikz.coffee_express.events.entity.Event) serializer.deserialize(message.getBody(String.class));
-                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName() + ", DATA: " + JsonbBuilder.create().toJson(event));
                 events.fire(event);
             }
         } catch (Exception e) {

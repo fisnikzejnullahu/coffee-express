@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-@Path("orders")
+@Path("history")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class OrdersResource {

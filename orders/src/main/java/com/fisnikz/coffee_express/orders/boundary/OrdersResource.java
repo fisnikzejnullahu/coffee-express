@@ -1,10 +1,10 @@
 package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.orders.control.OrderService;
-import com.fisnikz.coffee_express.orders.entity.CreateOrderRequest;
-import com.fisnikz.coffee_express.orders.entity.Order;
+import com.fisnikz.coffee_express.orders.entity.PlaceOrderRequest;
 
 import javax.inject.Inject;
+import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -24,9 +24,10 @@ public class OrdersResource {
     OrderService orderService;
 
     @POST
-    public Response place(CreateOrderRequest createOrderRequest) {
+    public Response place(PlaceOrderRequest placeOrderRequest) {
+        System.out.println(JsonbBuilder.create().toJson(placeOrderRequest));
         UUID orderId = UUID.randomUUID();
-        orderService.place(orderId, createOrderRequest);
+        orderService.place(orderId, placeOrderRequest);
 
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(OrdersResource.class, "find").build(orderId))

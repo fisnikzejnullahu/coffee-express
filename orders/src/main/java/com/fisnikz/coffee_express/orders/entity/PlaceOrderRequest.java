@@ -6,16 +6,16 @@ import java.util.UUID;
 /**
  * @author Fisnik Zejnullahu
  */
-public class CreateOrderRequest {
+public class PlaceOrderRequest {
 
     private UUID customerId;
     private UUID bankAccountId;
     private List<_OrderItem> items;
 
-    public CreateOrderRequest() {
+    public PlaceOrderRequest() {
     }
 
-    public CreateOrderRequest(UUID customerId, UUID bankAccountId, List<_OrderItem> items) {
+    public PlaceOrderRequest(UUID customerId, UUID bankAccountId, List<_OrderItem> items) {
         this.customerId = customerId;
         this.bankAccountId = bankAccountId;
         this.items = items;

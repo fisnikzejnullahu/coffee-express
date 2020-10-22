@@ -9,6 +9,6 @@ import javax.ws.rs.core.Response;
 public class InvalidMenuItemException extends WebApplicationException {
 
     public InvalidMenuItemException(String message) {
-        super(Response.status(500).header("message", message).build());
+        super(Response.status(400).header("message", message).build());
     }
 }

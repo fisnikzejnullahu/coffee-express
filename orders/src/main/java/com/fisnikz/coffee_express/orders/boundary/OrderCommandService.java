@@ -3,10 +3,14 @@ package com.fisnikz.coffee_express.orders.boundary;
 import com.fisnikz.coffee_express.events.control.EventProducer;
 import com.fisnikz.coffee_express.events.entity.*;
 import com.fisnikz.coffee_express.orders.entity.Order;
+import com.fisnikz.coffee_express.orders.entity.OrderDetails;
+import com.fisnikz.coffee_express.orders.entity.OrderItem;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.json.bind.JsonbBuilder;
+import java.util.List;
 import java.util.UUID;
 
 /**

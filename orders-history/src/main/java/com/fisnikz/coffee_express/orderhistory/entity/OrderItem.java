@@ -1,23 +1,37 @@
 package com.fisnikz.coffee_express.orderhistory.entity;
 
+import javax.json.JsonObject;
+
 public class OrderItem {
 
-    public int menuItemId;
-    public String menuItemName;
-    public double menuItemPrice;
-    public short quantity;
+    private MenuItem menuItem;
+    private short quantity;
 
     public OrderItem() {
     }
 
-    public OrderItem(int menuItemId, String menuItemName, double menuItemPrice, short quantity) {
-        this.menuItemId = menuItemId;
-        this.menuItemName = menuItemName;
-        this.menuItemPrice = menuItemPrice;
+    public OrderItem(MenuItem menuItem, short quantity) {
+        this.menuItem = menuItem;
+        this.quantity = quantity;
+    }
+
+    public MenuItem getMenuItem() {
+        return menuItem;
+    }
+
+    public void setMenuItem(MenuItem menuItem) {
+        this.menuItem = menuItem;
+    }
+
+    public short getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(short quantity) {
         this.quantity = quantity;
     }
 
     public double getTotalPrice() {
-        return menuItemPrice * quantity;
+        return menuItem.getPrice() * quantity;
     }
 }

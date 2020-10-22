@@ -1,26 +1,24 @@
 package com.fisnikz.coffee_express.orders.entity;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.ManyToOne;
 
 @Embeddable
 public class OrderItem {
 
-    public long menuItemId;
-    public String menuItemName;
-    public double menuItemPrice;
+    @ManyToOne
+    public MenuItem menuItem;
     public short quantity;
 
     public OrderItem() {
     }
 
-    public OrderItem(long menuItemId, String menuItemName, double menuItemPrice, short quantity) {
-        this.menuItemId = menuItemId;
-        this.menuItemName = menuItemName;
-        this.menuItemPrice = menuItemPrice;
+    public OrderItem(MenuItem menuItem, short quantity) {
+        this.menuItem = menuItem;
         this.quantity = quantity;
     }
 
     public double getTotalPrice() {
-        return menuItemPrice * quantity;
+        return menuItem.price * quantity;
     }
 }
