@@ -41,6 +41,12 @@ public class BankAccountsResource {
     }
 
     @GET
+    @Path("popular")
+    public BankAccount popularAccount(@QueryParam("customerId") UUID customerId){
+        return service.getMostPopular(customerId);
+    }
+
+    @GET
     @Path("{id}")
     public Response find(@PathParam("id") UUID id) {
         BankAccount bankAccount = service.find(id);

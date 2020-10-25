@@ -5,12 +5,18 @@ import com.fisnikz.coffee_express.orderhistory.entity.Order;
 import org.bson.types.ObjectId;
 
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.bind.JsonbBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.StringReader;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -37,7 +43,11 @@ public class OrdersResource {
      */
     @GET
     public Response ordersOfCustomer(@QueryParam("customerId") String customerId, @QueryParam("page") int page) {
-        return Response.ok(orderService.getOrdersOfCustomer(customerId, page)).build();
+        JsonObject response = Json.createObjectBuilder()
+                .add("orders", Json.createReader(new StringReader(JsonbBuilder.create().toJson(orderService.getOrdersOfCustomer(customerId, page)))).readValue())
+                .add("total-pages", orderService.totalPages())
+                .build();
+        return Response.ok(response).build();
     }
 
 }

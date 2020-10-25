@@ -67,6 +67,10 @@ public class OrderService {
         return Order.find("orderId", orderId.toString()).firstResult();
     }
 
+    public int totalPages(){
+        return (int) (Order.count() / 5);
+    }
+
     public List<Order> getOrdersOfCustomer(String customerId, int page) {
         return Order.find("customerId", Sort.descending("placedAt"), customerId)
                 .page(page, 5)
