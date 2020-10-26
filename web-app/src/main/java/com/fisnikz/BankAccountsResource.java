@@ -1,14 +1,13 @@
 package com.fisnikz;
 
 import com.fisnikz.model.BankAccount;
-import com.fisnikz.model.CreateOrderRequest;
-import com.fisnikz.model.Order;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,4 +30,11 @@ public interface BankAccountsResource {
     @GET
     @Path("popular")
     BankAccount popularAccount(@QueryParam("customerId") UUID customerId);
+
+    @GET
+    List<BankAccount> accountsOfCustomer(@QueryParam("customerId") UUID customerId);
+
+    @DELETE
+    @Path("{accountId}")
+    Response delete(@PathParam("accountId") UUID accountId);
 }

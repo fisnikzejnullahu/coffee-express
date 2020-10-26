@@ -13,6 +13,14 @@ public class BankAccount {
     private UUID customerId;
     private CreditCardInfo creditCardInfo;
 
+    public BankAccount() {
+    }
+
+    public BankAccount(UUID customerId, CreditCardInfo creditCardInfo) {
+        this.customerId = customerId;
+        this.creditCardInfo = creditCardInfo;
+    }
+
     public UUID getId() {
         return id;
     }

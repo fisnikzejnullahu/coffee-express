@@ -5,12 +5,15 @@ import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -30,7 +33,6 @@ public class BankAccountsResource {
     @Traced
     @POST
     public Response create(BankAccount account) {
-        System.out.println(JsonbBuilder.create().toJson(account));
         UUID id = UUID.randomUUID();
         account.id = id;
         service.create(account);
@@ -55,10 +57,21 @@ public class BankAccountsResource {
         }
         return Response.ok(bankAccount).build();
     }
-//
-//    @GET
-//    @QueryParam("customerId")
-//    public Response accountsOfCustomer(@QueryParam("customerId") UUID customerId) {
-//        return Response.ok().build();
-//    }
+
+    @DELETE
+    @Path("{accountId}")
+    public Response delete(@PathParam("accountId") UUID accountId) {
+        boolean deleted = service.delete(accountId);
+        JsonObject data = Json.createObjectBuilder()
+                .add("id", accountId.toString())
+                .add("success", deleted)
+                .build();
+        return Response.ok(data).build();
+    }
+
+    @GET
+    @QueryParam("customerId")
+    public List<BankAccount> accountsOfCustomer(@QueryParam("customerId") UUID customerId) {
+        return service.accountsOfCustomer(customerId);
+    }
 }

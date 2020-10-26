@@ -14,8 +14,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,17 +33,18 @@ public class BankAccountsService {
     @Inject
     @RegistryType(type = MetricRegistry.Type.APPLICATION)
     MetricRegistry metricRegistry;
+
     @Inject
     EntityManager em;
 
     public void create(BankAccount account) {
         Response customerServiceResponse = restClient.find(account.customerId);
-        System.out.println(account.customerId + ", " + customerServiceResponse.getStatus());
         metricRegistry.counter("customer_service_find_status_" + customerServiceResponse.getStatus()).inc();
         if (customerServiceResponse.getStatus() == 404) {
-            throw new NotFoundException("Customer was not found!");
+            throw new WebApplicationException(Response.status(400).header("cause", customerServiceResponse.getHeaderString("cause")).build());
+        } else {
+            account.persist();
         }
-        account.persist();
     }
 
     public BankAccount find(UUID id) {
@@ -60,7 +62,17 @@ public class BankAccountsService {
                         .groupBy(from.get("id"))
                         .orderBy(cb.desc(cb.count(payments)));
 
-        Object[] data = em.createQuery(bankAccountCriteriaQuery).getResultList().get(0);
-        return (data.length == 0) ? null : (BankAccount) data[0];
+        List<Object[]> rs = em.createQuery(bankAccountCriteriaQuery).getResultList();
+        if (rs.size() == 0) return BankAccount.findAll().firstResult();
+        Object[] data = rs.get(0);
+        return (BankAccount) data[0];
+    }
+
+    public List<BankAccount> accountsOfCustomer(UUID customerId) {
+        return BankAccount.find("customerId", customerId).list();
+    }
+
+    public boolean delete(UUID accountId) {
+        return BankAccount.deleteById(accountId);
     }
 }

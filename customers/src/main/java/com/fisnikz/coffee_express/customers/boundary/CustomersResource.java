@@ -44,10 +44,9 @@ public class CustomersResource {
     @Path("{customerId}")
     public Response find(@PathParam("customerId") UUID customerId) {
         Customer customer = customerService.getCustomer(customerId);
+        if (customer == null){
+            return Response.status(404).header("cause", "Customer with id: " + customerId + ", was not found!").build();
+        }
         return Response.ok(customer).build();
-//        if (customer != null) {
-//            return Response.ok(customer).build();
-//        }
-//        throw new NotFoundException("Customer with id: " + customerId + ", was not found!");
     }
 }
