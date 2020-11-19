@@ -22,15 +22,10 @@
                   v-bind:key="item.id"
                 >
                   <td class="product-remove">
-                    <form
-                      action="/web-app/mvc/cart/removeFromCart"
-                      method="post"
-                    >
-                      <a href="javascript:" onclick="parentNode.submit();">
-                        <span class="icon-close"></span>
-                      </a>
-                      <input name="menuItemId" value="1" type="hidden" />
-                    </form>
+                    <a type="button" @click="removeFromCart(item)">
+                      <span class="icon-close"></span>
+                    </a>
+                    <input name="menuItemId" value="1" type="hidden" />
                   </td>
                   <td class="image-prod">
                     <div
@@ -106,11 +101,14 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   computed: {
     ...mapGetters(["cartItems", "total"]),
+  },
+  methods: {
+    ...mapActions(["removeFromCart"]),
   },
 };
 </script>

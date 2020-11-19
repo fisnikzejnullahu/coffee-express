@@ -20,14 +20,18 @@ export const getMenu = async ({commit}) => {
 //   })
 // }
 
-export const addToCart = ({ commit }, menuItem) => {
-  console.log('ACTIONS: ADDTOCART: ' + menuItem.id);
-  commit('ADD_TO_CART', menuItem.id)
+export const addToCart = ({ commit }, menuItem, quantity) => {
+  console.log('ACTIONS: ADDTOCART: ' + menuItem.id + ", qnt: " + quantity);
+  if (!quantity || quantity < 1) {
+    quantity = 1;
+  }
+  commit('ADD_TO_CART', menuItem.id, quantity)
 }
 
-// export const removeFromCart = ({ commit }, product) => {
-//   commit('REMOVE_FROM_CART', product)
-// }
+export const removeFromCart = ({ commit }, menuItem) => {
+  console.log('ACTIONS: REMOVEFROMCART: ' + menuItem.id);
+  commit('REMOVE_FROM_CART', menuItem)
+}
 
 // export const toggleCoupon = ({ commit }, coupon) => {
 //   commit('TOGGLE_COUPON', coupon)

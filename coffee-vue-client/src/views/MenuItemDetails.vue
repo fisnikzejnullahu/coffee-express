@@ -16,8 +16,6 @@
           <p class="price">
             <span>${{ menuItem.price }}</span>
           </p>
-          <form id="form" action="/web-app/mvc/cart/addInCart" method="post">
-            <input type="hidden" name="menuItemId" value="3" />
             <div class="row mt-4">
               <div class="input-group col-md-6 d-flex mb-3">
                 <span class="input-group-btn mr-2">
@@ -32,6 +30,7 @@
                   </button>
                 </span>
                 <input
+                  v-model="quantity"
                   type="text"
                   id="quantity"
                   name="quantity"
@@ -55,14 +54,13 @@
             </div>
             <p>
               <a
+                type="button"
                 class="btn btn-primary py-3 px-5"
-                href="javascript:"
-                onclick="document.querySelector('#form').submit();"
+                @click="addToCart(menuItem, quantity)"
               >
                 Add to Cart
               </a>
             </p>
-          </form>
         </div>
       </div>
     </div>
@@ -71,13 +69,16 @@
 
 <script>
 import Api from "@/API";
+import { mapActions } from 'vuex';
 
 export default {
   data() {
     return {
+      quantity: 1,
       menuItem: {},
     };
   },
+  methods: mapActions(["addToCart"]),
   async created() {
     console.log("MenuItemDetails.vue created()");
     var result = await Api.getMenuItem(this.$route.params.id);

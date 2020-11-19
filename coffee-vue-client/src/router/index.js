@@ -8,10 +8,16 @@ import OrderTrack from "../views/OrderTrack.vue";
 import Cart from "../views/Cart.vue";
 import Checkout from "../views/Checkout.vue";
 import BankAccounts from "../views/BankAccounts.vue";
+import PageNotFound from "../views/PageNotFound.vue";
+
 
 Vue.use(VueRouter);
 
 const routes = [{
+    path: "*",
+    component: PageNotFound
+  },
+  {
     path: "/",
     name: "Home",
     component: Home

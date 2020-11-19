@@ -22,6 +22,9 @@ const mutations = {
   },
 
   REMOVE_FROM_CART (state, item) {
+    console.log('REMOVE_FROM_CART mutation: ');
+    console.log(item);
+    console.log('REMOVE_FROM_CART mutation: ');
     const index = state.items.findIndex(items => items.id === item.id)
     state.items.splice(index, 1)
   }

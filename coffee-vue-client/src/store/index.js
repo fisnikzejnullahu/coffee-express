@@ -6,6 +6,7 @@ import menuItems from './modules/menuitems'
 import profile from './modules/profile'
 import orders from './modules/orders'
 import shoppingCart from './modules/shopping-cart'
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
@@ -18,4 +19,5 @@ export default new Vuex.Store({
     orders,
     shoppingCart
   },
+  plugins: [createPersistedState()],
 });
