@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.finance.boundary;
 
 import com.fisnikz.coffee_express.finance.control.BankAccountsService;
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
+import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.inject.Inject;
@@ -25,6 +26,10 @@ import java.util.UUID;
 public class BankAccountsResource {
 
     @Inject
+    @Claim("customer_id")
+    String authorizedCustomerId;
+
+    @Inject
     BankAccountsService service;
 
     @Context
@@ -35,7 +40,7 @@ public class BankAccountsResource {
     public Response create(BankAccount account) {
         UUID id = UUID.randomUUID();
         account.id = id;
-        service.create(account);
+        service.create(account, authorizedCustomerId);
 
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(BankAccountsResource.class, "find").build(id))
@@ -45,13 +50,13 @@ public class BankAccountsResource {
     @GET
     @Path("popular")
     public BankAccount popularAccount(@QueryParam("customerId") UUID customerId){
-        return service.getMostPopular(customerId);
+        return service.getMostPopular(customerId, authorizedCustomerId);
     }
 
     @GET
     @Path("{id}")
     public Response find(@PathParam("id") UUID id) {
-        BankAccount bankAccount = service.find(id);
+        BankAccount bankAccount = service.find(id, authorizedCustomerId);
         if (bankAccount == null) {
             throw new NotFoundException("Account was not found!");
         }
@@ -61,7 +66,7 @@ public class BankAccountsResource {
     @DELETE
     @Path("{accountId}")
     public Response delete(@PathParam("accountId") UUID accountId) {
-        boolean deleted = service.delete(accountId);
+        boolean deleted = service.delete(accountId, authorizedCustomerId);
         JsonObject data = Json.createObjectBuilder()
                 .add("id", accountId.toString())
                 .add("success", deleted)
@@ -72,6 +77,6 @@ public class BankAccountsResource {
     @GET
     @QueryParam("customerId")
     public List<BankAccount> accountsOfCustomer(@QueryParam("customerId") UUID customerId) {
-        return service.accountsOfCustomer(customerId);
+        return service.accountsOfCustomer(customerId, authorizedCustomerId);
     }
 }

@@ -9,12 +9,19 @@
         The page you are looking for might have been removed had its name
         changed or is temporarily unavailable.
       </p>
+      {{ message }}
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      message: ''
+    }
+  }
+};
 </script>
 
 <style>

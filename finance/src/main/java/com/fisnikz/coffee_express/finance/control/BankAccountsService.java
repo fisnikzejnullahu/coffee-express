@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.finance.control;
 
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -37,21 +38,25 @@ public class BankAccountsService {
     @Inject
     EntityManager em;
 
-    public void create(BankAccount account) {
+    public void create(BankAccount account, String authorizedCustomerId) {
+        checkForAuthorizedCustomerId(account.customerId, authorizedCustomerId);
         Response customerServiceResponse = restClient.find(account.customerId);
         metricRegistry.counter("customer_service_find_status_" + customerServiceResponse.getStatus()).inc();
         if (customerServiceResponse.getStatus() == 404) {
-            throw new WebApplicationException(Response.status(400).header("cause", customerServiceResponse.getHeaderString("cause")).build());
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).header("cause", customerServiceResponse.getHeaderString("cause")).build());
         } else {
             account.persist();
         }
     }
 
-    public BankAccount find(UUID id) {
-        return BankAccount.findById(id);
+    public BankAccount find(UUID id, String authorizedCustomerId) {
+        BankAccount bankAccount = BankAccount.findById(id);
+        checkForAuthorizedCustomerId(bankAccount.customerId, authorizedCustomerId);
+        return bankAccount;
     }
 
-    public BankAccount getMostPopular(UUID customerId) {
+    public BankAccount getMostPopular(UUID customerId, String authorizedCustomerId) {
+        checkForAuthorizedCustomerId(customerId, authorizedCustomerId);
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<BankAccount> from = query.from(BankAccount.class);
@@ -68,11 +73,19 @@ public class BankAccountsService {
         return (BankAccount) data[0];
     }
 
-    public List<BankAccount> accountsOfCustomer(UUID customerId) {
+    public List<BankAccount> accountsOfCustomer(UUID customerId, String authorizedCustomerId) {
+        checkForAuthorizedCustomerId(customerId, authorizedCustomerId);
         return BankAccount.find("customerId", customerId).list();
     }
 
-    public boolean delete(UUID accountId) {
+    public boolean delete(UUID accountId, String authorizedCustomerId) {
+        find(accountId, authorizedCustomerId);
         return BankAccount.deleteById(accountId);
+    }
+
+    private void checkForAuthorizedCustomerId(UUID customerId, String authorizedCustomerId) {
+        if (!customerId.equals(UUID.fromString(authorizedCustomerId))) {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+        }
     }
 }

@@ -1,26 +1,37 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
-    <Navbar />
+    <Navbar v-if="!currentPageIsLogin" />
     <router-view />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Navbar from "@/components/Navbar.vue";
 
 export default {
   name: "Home",
   components: {
-    Navbar
-  }
+    Navbar,
+  },
+  data() {
+    return {
+      currentPageIsLogin:
+        this.$router.currentRoute.path === "/signin" ||
+        this.$router.currentRoute.path === "/signup",
+    };
+  },
+  watch: {
+    $route(to, from) {
+      console.log(to);
+      if (to.path === "/signin" || to.path === "/signup") {
+        this.currentPageIsLogin = true;
+      } else {
+        this.currentPageIsLogin = false;
+      }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-
 </style>

@@ -3,6 +3,7 @@ package com.fisnikz.coffee_express.orderhistory.boundary;
 import com.fisnikz.coffee_express.orderhistory.control.OrderService;
 import com.fisnikz.coffee_express.orderhistory.entity.Order;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.jwt.Claim;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -30,10 +31,18 @@ public class OrdersResource {
     @Inject
     OrderService orderService;
 
+    @Inject
+    @Claim("customer_id")
+    String authorizedCustomerId;
+
     @GET
     @Path("{orderId}")
     public Order find(@PathParam("orderId") String orderId) {
-        return Order.find("orderId", orderId).firstResult();
+        Order order = Order.findById(orderId);
+        if (!order.getCustomerId().equals(authorizedCustomerId)) {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+        }
+        return order;
     }
 
     /*
@@ -43,6 +52,9 @@ public class OrdersResource {
      */
     @GET
     public Response ordersOfCustomer(@QueryParam("customerId") String customerId, @QueryParam("page") int page) {
+        if (customerId.equals(authorizedCustomerId)) {
+            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+        }
         JsonObject response = Json.createObjectBuilder()
                 .add("orders", Json.createReader(new StringReader(JsonbBuilder.create().toJson(orderService.getOrdersOfCustomer(customerId, page)))).readValue())
                 .add("total-pages", orderService.totalPages())

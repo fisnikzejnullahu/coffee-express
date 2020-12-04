@@ -11,16 +11,16 @@ const BARISTAS_SERVICE_URL = "http://localhost:8083"
 async function call(url, object, httpMethod) {
   console.log("CALLED API from /" + url);
 
-  const response = await fetch(url, {
+  return await fetch(url, {
     method: httpMethod,
     body: object ? JSON.stringify(object) : null,
+    credentials: "include",
+    mode: 'cors',
     headers: {
       "content-type": "application/json",
       // authorization: `${sessionStorage.token}`
     }
   });
-
-  return response.json();
 }
 
 export default {
@@ -29,5 +29,11 @@ export default {
   },
   async getMenuItem(itemId) {
     return await call(`${BARISTAS_SERVICE_URL}/baristas/items/${itemId}`, null, "GET");
+  },
+  async login(userInfo) {
+    return await call(`http://localhost:8080/login`, userInfo, "POST");
+  },
+  async logout() {
+    return await call(`http://localhost:8080/logout`, null, "POST");
   },
 };

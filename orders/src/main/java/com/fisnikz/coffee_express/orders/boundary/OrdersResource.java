@@ -2,7 +2,10 @@ package com.fisnikz.coffee_express.orders.boundary;
 
 import com.fisnikz.coffee_express.orders.control.OrderService;
 import com.fisnikz.coffee_express.orders.entity.PlaceOrderRequest;
+import org.eclipse.microprofile.jwt.Claim;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.*;
@@ -15,6 +18,7 @@ import java.util.UUID;
 @Path("orders")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@DenyAll
 public class OrdersResource {
 
     @Context
@@ -23,7 +27,12 @@ public class OrdersResource {
     @Inject
     OrderService orderService;
 
+    @Inject
+    @Claim("customer_id")
+    String authorizedCustomerId;
+
     @POST
+    @RolesAllowed({"user", "admin"})
     public Response place(PlaceOrderRequest placeOrderRequest) {
         System.out.println(JsonbBuilder.create().toJson(placeOrderRequest));
         UUID orderId = UUID.randomUUID();
@@ -35,8 +44,9 @@ public class OrdersResource {
     }
 
     @Path("{orderId}")
+    @RolesAllowed({"user", "admin"})
     public OrderResource find(@PathParam("orderId") UUID orderId) {
-        return new OrderResource(orderId, this.orderService);
+        return new OrderResource(orderId, this.orderService, this.authorizedCustomerId);
     }
 
 }

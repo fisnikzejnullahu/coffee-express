@@ -9,6 +9,9 @@ import Cart from "../views/Cart.vue";
 import Checkout from "../views/Checkout.vue";
 import BankAccounts from "../views/BankAccounts.vue";
 import PageNotFound from "../views/PageNotFound.vue";
+import SigninPage from "../views/SigninPage.vue";
+import SignupPage from "../views/SignupPage.vue";
+import Logout from "../views/Logout.vue";
 
 
 Vue.use(VueRouter);
@@ -56,7 +59,22 @@ const routes = [{
     path: "/menu/details/:id",
     name: "MenuItemDetails",
     component: MenuItemDetails
-  }
+  },
+  {
+    path: "/signin",
+    name: "SigninPage",
+    component: SigninPage,
+  },
+  {
+    path: "/signup",
+    name: "SignupPage",
+    component: SignupPage,
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    component: Logout,
+  },
 ];
 
 const router = new VueRouter({

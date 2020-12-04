@@ -1,24 +1,11 @@
 import Api from "@/API";
 
-// export const getProfile = ({
-//   commit
-// }) => {
-// api.getProfile(profile => {
-//   commit('RECEIVE_PROFILE', profile)
-// })
-// }
-
 export const getMenu = async ({commit}) => {
   console.log('ACTIONS: GETMENU');
-  const menu = await Api.getMenu();
+  const response = await Api.getMenu();
+  const menu = await response.json();
   commit('MENU_FETCHED', menu);
 }
-
-// export const getPromotions = ({ commit }) => {
-//   api.getPromotions(promotions => {
-//     commit('RECEIVE_PROMOTIONS', promotions)
-//   })
-// }
 
 export const addToCart = ({ commit }, menuItem, quantity) => {
   console.log('ACTIONS: ADDTOCART: ' + menuItem.id + ", qnt: " + quantity);
@@ -33,6 +20,19 @@ export const removeFromCart = ({ commit }, menuItem) => {
   commit('REMOVE_FROM_CART', menuItem)
 }
 
-// export const toggleCoupon = ({ commit }, coupon) => {
-//   commit('TOGGLE_COUPON', coupon)
-// }
+export const login = async ({commit}, userInfo) => {
+  console.log('ACTIONS: LOGIN');
+  const response = await Api.login(userInfo);
+  console.log(response);
+  commit('LOGGED_IN', {
+    username: userInfo.username
+  });
+  return response;
+}
+
+export const logout = async ({commit}) => {
+  console.log('LOGOUT ACTION');
+  await Api.logout();
+  commit('LOGGED_OUT');
+  window.location.href = '/';
+}

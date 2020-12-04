@@ -15,20 +15,25 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 public class OrderResource {
 
+    private UUID authorizedCustomerId;
     private UUID orderId;
     private OrderService orderService;
 
     public OrderResource() {
     }
 
-    public OrderResource(UUID orderId, OrderService orderService) {
+    public OrderResource(UUID orderId, OrderService orderService, String authorizedCustomerId) {
         this.orderId = orderId;
         this.orderService = orderService;
+        this.authorizedCustomerId = UUID.fromString(authorizedCustomerId);
     }
 
     @GET
     public Response find() {
         Order order = Order.findById(orderId);
+        if (!order.customerId.equals(this.authorizedCustomerId)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         if (order != null) {
             return Response.ok(order).build();
         }

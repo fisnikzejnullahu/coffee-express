@@ -81,9 +81,10 @@ export default {
   methods: mapActions(["addToCart"]),
   async created() {
     console.log("MenuItemDetails.vue created()");
-    var result = await Api.getMenuItem(this.$route.params.id);
-    this.menuItem = result;
-    console.log(result);
+    let response = await Api.getMenuItem(this.$route.params.id);
+    let menuItem = response.json();
+    this.menuItem = menuItem;
+    console.log(menuItem);
   },
 };
 </script>

@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import * as actions from './actions'
 import * as getters from './getters'
 import menuItems from './modules/menuitems'
-import profile from './modules/profile'
+import auth from './modules/auth'
 import orders from './modules/orders'
 import shoppingCart from './modules/shopping-cart'
 import createPersistedState from 'vuex-persistedstate';
@@ -15,7 +15,7 @@ export default new Vuex.Store({
   getters,
   modules: {
     menuItems,
-    profile,
+    auth,
     orders,
     shoppingCart
   },
