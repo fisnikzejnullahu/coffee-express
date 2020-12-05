@@ -5,6 +5,7 @@ import Menu from "../views/Menu.vue";
 import MenuItemDetails from "../views/MenuItemDetails.vue";
 import Orders from "../views/Orders.vue";
 import OrderTrack from "../views/OrderTrack.vue";
+import OrderDetails from "../views/OrderDetails.vue";
 import Cart from "../views/Cart.vue";
 import Checkout from "../views/Checkout.vue";
 import BankAccounts from "../views/BankAccounts.vue";
@@ -36,7 +37,12 @@ const routes = [{
     component: Orders
   },
   {
-    path: "/track",
+    path: "/orders/details/:id",
+    name: "OrderDetails",
+    component: OrderDetails
+  },
+  {
+    path: "/orders/track/:id",
     name: "OrderTrack",
     component: OrderTrack
   },

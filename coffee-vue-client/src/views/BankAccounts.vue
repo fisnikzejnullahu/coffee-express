@@ -54,29 +54,34 @@
           class="col-4 ftco-animate fadeInUp ftco-animated"
           div-acc-id="70d273a8-03ec-11eb-adc1-0242ac120002"
         >
-          <div class="row mt-2 pt-3 d-flex">
-            <div class="col">
-              <div class="cart-detail ftco-bg-dark p-3 p-md-4">
-                <div class="form-group">
-                  <div class="col">
-                    <p style="font-weight: bold; color: #fff">Card</p>
-                    <p>Card Number: 378282246310005</p>
-                    <p>Expiration Date: 2022-11-16</p>
-                    <button
-                      type="button"
-                      style="
-                        background: transparent;
-                        border: 0;
-                        cursor: pointer;
-                      "
-                      data-toggle="modal"
-                      data-target="#exampleModal"
-                      data-cid="70d273a8-03ec-11eb-adc1-0242ac120002"
-                    >
-                      <span style="text-decoration: underline; color: #fff"
-                        >Delete</span
+          <div v-for="account in bankAccounts" :key="account.id">
+            <div class="row mt-2 pt-3 d-flex">
+              <div class="col">
+                <div class="cart-detail ftco-bg-dark p-3 p-md-4">
+                  <div class="form-group">
+                    <div class="col">
+                      <p style="font-weight: bold; color: #fff">Card</p>
+                      <p>
+                        Card Number:
+                        {{ account["credit-card-info"]["card-number"] }}
+                      </p>
+                      <p>Expiration Date: 2022-11-16</p>
+                      <button
+                        type="button"
+                        style="
+                          background: transparent;
+                          border: 0;
+                          cursor: pointer;
+                        "
+                        data-toggle="modal"
+                        data-target="#exampleModal"
+                        data-cid="70d273a8-03ec-11eb-adc1-0242ac120002"
                       >
-                    </button>
+                        <span style="text-decoration: underline; color: #fff"
+                          >Delete</span
+                        >
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -91,7 +96,23 @@
 </template>
 
 <script>
-export default {};
+import { mapGetters } from "vuex";
+import Api from "@/API";
+export default {
+  data() {
+    return {
+      bankAccounts: [],
+    };
+  },
+  async created() {
+    let id = this.currentUser().id;
+    const response = await Api.getMyBankAccounts(id);
+    this.bankAccounts = await response.json();
+  },
+  methods: {
+    ...mapGetters(["currentUser"]),
+  },
+};
 </script>
 
 <style>

@@ -24,13 +24,13 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @EnableConfigurationProperties
 public class OrderConfiguration {
 
-    @Bean
-    public HeaderRoutePredicateFactory headerRoutePredicateFactory() {
-        return new HeaderRoutePredicateFactory();
-    }
+//    @Bean
+//    public HeaderRoutePredicateFactory headerRoutePredicateFactory() {
+//        return new HeaderRoutePredicateFactory();
+//    }
 
     @Bean
-    public RouteLocator orderProxyRouting(RouteLocatorBuilder builder, HeaderRoutePredicateFactory predicateFactory) {
+    public RouteLocator orderProxyRouting(RouteLocatorBuilder builder) {
         return builder.routes()
 //                .route(r -> r.path("/orders").and().method("GET").uri("http://localhost:9999/orders"))
                 .route(r -> r.path("/orders/**").and().method("GET").uri("http://localhost:9999/orders"))

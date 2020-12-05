@@ -18,7 +18,6 @@ async function call(url, object, httpMethod) {
     mode: 'cors',
     headers: {
       "content-type": "application/json",
-      // authorization: `${sessionStorage.token}`
     }
   });
 }
@@ -36,4 +35,22 @@ export default {
   async logout() {
     return await call(`http://localhost:8080/logout`, null, "POST");
   },
+  async placeOrder(placeOrderRequestData) {
+    return await call(`http://localhost:8080/logout`, null, "POST");
+  },
+  async getMyOrders(customerId, page) {
+    return await call(`http://localhost:8084/history?customerId=${customerId}&page=${page}`, null, "GET");
+  },
+  async getOrder(orderId) {
+    return await call(`http://localhost:8080/logout`, null, "POST");
+  },
+  async trackOrder(orderId) {
+    return await call(`http://localhost:8088/orders/${orderId}`, null, "GET");
+  },
+  async getMyBankAccounts(customerId) {
+    return await call(`http://localhost:8082/accounts?customerId=${customerId}`, null, "GET");
+  },
+  async getMyPayments(customerId) {
+    return await call(`http://localhost:8080/logout`, null, "POST");
+  }
 };

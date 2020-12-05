@@ -22,12 +22,14 @@ export const removeFromCart = ({ commit }, menuItem) => {
 
 export const login = async ({commit}, userInfo) => {
   console.log('ACTIONS: LOGIN');
-  const response = await Api.login(userInfo);
+  let response = await Api.login(userInfo);
   console.log(response);
-  commit('LOGGED_IN', {
-    username: userInfo.username
-  });
-  return response;
+  if (response.status === 200) {
+    let customerInfo = await response.json();
+    commit('LOGGED_IN', customerInfo);
+    return response;
+  }
+  return null;
 }
 
 export const logout = async ({commit}) => {
@@ -35,4 +37,11 @@ export const logout = async ({commit}) => {
   await Api.logout();
   commit('LOGGED_OUT');
   window.location.href = '/';
+}
+
+export const placeOrder = async ({commit}, customerId, bankAccountId, menuItems) => {
+  console.log('placeOrder ACTION');
+  console.log(customerId);
+  console.log(bankAccountId);
+  console.log(menuItems);
 }

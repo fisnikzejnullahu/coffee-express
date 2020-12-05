@@ -25,27 +25,59 @@
             <a class="nav-link">Menu</a>
           </router-link>
 
-          <router-link tag="li" v-if="currentUser === null" to="/signin" class="nav-item" exact>
+          <router-link
+            tag="li"
+            v-if="currentUser === null"
+            to="/signin"
+            class="nav-item"
+            exact
+          >
             <a class="nav-link">Sign in</a>
           </router-link>
 
-          <router-link tag="li" v-if="currentUser === null" to="/signup" class="nav-item" exact>
+          <router-link
+            tag="li"
+            v-if="currentUser === null"
+            to="/signup"
+            class="nav-item"
+            exact
+          >
             <a class="nav-link">Join Now</a>
           </router-link>
 
-          <router-link v-if="currentUser !== null" tag="li" to="/orders" class="nav-item" exact>
+          <router-link
+            v-if="currentUser !== null"
+            tag="li"
+            to="/orders"
+            class="nav-item"
+            exact
+          >
             <a class="nav-link">My Orders</a>
           </router-link>
-          <router-link v-if="currentUser !== null" tag="li" to="/bankaccounts" class="nav-item" exact>
+          <router-link
+            v-if="currentUser !== null"
+            tag="li"
+            to="/bankaccounts"
+            class="nav-item"
+            exact
+          >
             <a class="nav-link">My Bank Accounts</a>
           </router-link>
-                    <router-link v-if="currentUser !== null" tag="li" to="/bankaccounts" class="nav-item" exact>
-            <a class="nav-link">My Bank Accounts</a>
-          </router-link>
-          <router-link v-if="currentUser !== null" tag="li" to="/profile" class="nav-item" exact>
+          <router-link
+            v-if="currentUser !== null"
+            tag="li"
+            to="/profile"
+            class="nav-item"
+            exact
+          >
             <a class="nav-link">My Profile</a>
           </router-link>
-          <router-link v-if="currentUser !== null" tag="li" to="/logout" class="nav-item">
+          <router-link
+            v-if="currentUser !== null"
+            tag="li"
+            to="/logout"
+            class="nav-item"
+          >
             <a class="nav-link">Logout</a>
           </router-link>
           <li v-if="currentUser !== null" class="nav-item cart">
@@ -72,7 +104,7 @@ export default {
   },
   mounted() {
     console.log(this.currentUser === null);
-  }
+  },
 };
 </script>
 

@@ -21,7 +21,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -92,28 +91,52 @@ public class KeycloakService {
                     }
                 })
                 .flatMap(jsonObject -> {
-                    ResponseCookie[] tokensCookies = tokensOfUserIntoCookies(jsonObject.getString("username"), jsonObject.getString("password"));
-                    return ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .cookie(tokensCookies[0])
-                            .cookie(tokensCookies[1])
-                            .build();
+                    return this.fetchUserInfo(tokensOfUserIntoCookies(jsonObject.getString("username"), jsonObject.getString("password")));
+//                    Object[] data = tokensOfUserIntoCookies(jsonObject.getString("username"), jsonObject.getString("password"));
+//                    ResponseCookie[] tokensCookies = (ResponseCookie[]) data[0];
+//                    return ServerResponse.ok()
+//                            .contentType(MediaType.APPLICATION_JSON)
+//                            .cookie(tokensCookies[0])
+//                            .cookie(tokensCookies[1])
+//                            .bodyValue("{\"customerId\":\"" + data[1].toString() + "\"}");
                 })
                 .onErrorResume(throwable -> {
                     throwable.printStackTrace();
-                    if (throwable.getMessage().equals("HTTP 401 Unauthorized")) {
+                    if (throwable.getMessage().contains("HTTP 401 Unauthorized")) {
                         return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
                     }
                     return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username and password are required!"));
                 });
     }
 
-    private ResponseCookie[] tokensOfUserIntoCookies(String username, String password) {
+    private Mono<ServerResponse> fetchUserInfo(Object[] data) {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://localhost:8081/customers/" + data[1].toString())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(String.class)
+                .flatMap(customerJson -> {
+                    System.out.println(customerJson);
+                    ResponseCookie[] tokensCookies = (ResponseCookie[]) data[0];
+                    return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                            .cookie(tokensCookies[0])
+                            .cookie(tokensCookies[1])
+                            .bodyValue(customerJson);
+                });
+    }
+
+    private Object[] tokensOfUserIntoCookies(String username, String password) {
         Keycloak keycloak = KeycloakClient.getUserKeycloak(username, password);
+
+        UserRepresentation user = keycloak.realm("public").users().search(username).get(0);
+        String customerId = user.getAttributes().get("customerId").get(0);
 
         TokenManager tokenManager = keycloak.tokenManager();
 
-        return tokensToCookies(tokenManager.getAccessTokenString(), tokenManager.refreshToken().getRefreshToken(), tokenManager.getAccessToken().getExpiresIn(), tokenManager.refreshToken().getExpiresIn());
+        return new Object[]{
+                tokensToCookies(tokenManager.getAccessTokenString(), tokenManager.refreshToken().getRefreshToken(), tokenManager.getAccessToken().getExpiresIn(), tokenManager.refreshToken().getExpiresIn()),
+                customerId
+        };
     }
 
     private ResponseCookie[] tokensToCookies(String accessToken, String refreshToken, long accessTokenExpiresIn, long refreshTokenExpiresIn) {
@@ -163,20 +186,6 @@ public class KeycloakService {
     }
 
     public Mono<ServerResponse> refreshToken(ServerRequest serverRequest) {
-//        return serverRequest.bodyToMono(MultiValueMap.class)
-//                .flatMap(multiValueMap -> {
-//                    System.out.println(multiValueMap.get("refresh_token").toString());
-//                    return webClientBuilder.build()
-//                            .post()
-//                            .uri("http://localhost:9099/auth/realms/public/protocol/openid-connect/token")
-//                            .body(BodyInserters.fromFormData("grant_type", "refresh_token")
-//                                    .with("client_id", "coffee-express-admin-api-client")
-//                                    .with("refresh_token", removeBracketsFromParam(multiValueMap.get("refresh_token").toString())))
-//                            .retrieve()
-//                            .bodyToMono(String.class)
-//                            .flatMap(this::tokensFromBody);
-//                });
-
         return webClientBuilder.build()
                 .post()
                 .uri("http://localhost:9099/auth/realms/public/protocol/openid-connect/token")
@@ -190,7 +199,7 @@ public class KeycloakService {
 
     private Mono<ServerResponse> tokensFromBody(String body) {
         JsonObject jsonBody = Json.createReader(new StringReader(body)).readObject();
-        ResponseCookie[] tokensCookies = tokensOfUserIntoCookies(jsonBody.getString("access_token"), jsonBody.getString("refresh_token"));
+        ResponseCookie[] tokensCookies = (ResponseCookie[]) tokensOfUserIntoCookies(jsonBody.getString("access_token"), jsonBody.getString("refresh_token"))[0];
         return ServerResponse.ok()
                 .cookie(tokensCookies[0])
                 .cookie(tokensCookies[1])

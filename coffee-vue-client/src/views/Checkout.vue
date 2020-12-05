@@ -76,19 +76,17 @@
                   <span>Total</span>
                   <span style="text-align: end">$17.60</span>
                 </p>
-                <form action="/web-app/mvc/orders/place" method="post">
-                  <a
-                    href="javascript:"
-                    onclick="parentNode.submit();"
+                <!-- <form action="/web-app/mvc/orders/place" method="post"> -->
+                  <button
+                    @click="place"
                     class="btn btn-primary py-3 px-4"
-                    >Place Order</a
-                  >
+                    >Place Order</button>
                   <input
                     name="bankAccountId"
                     value="70d273a8-03ec-11eb-adc1-0242ac120002"
                     type="hidden"
                   />
-                </form>
+                <!-- </form> -->
               </div>
             </div>
           </div>
@@ -99,7 +97,21 @@
 </template>
 
 <script>
-export default {};
+import { mapActions } from 'vuex';
+export default {
+  data() {
+    return {
+      bankAccount: {}
+    }
+  },
+  methods: {
+    ...mapActions(['placeOrder', 'currentUser', 'cartItems']),
+    place() {
+      let customerId = this.currentUser().customerId;
+      this.placeOrder(customerId, this.bankAccount.id, this.cartItems());
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

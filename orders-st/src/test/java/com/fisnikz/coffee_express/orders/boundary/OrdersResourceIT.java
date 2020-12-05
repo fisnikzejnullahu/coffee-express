@@ -31,7 +31,7 @@ public class OrdersResourceIT {
 
     @Test
     void placeAndFind() {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 1; i++) {
             Order order = newOrder();
             URI createdOrderLocation = this.orderSystem.placeOrder(order);
             assertNotNull(createdOrderLocation);
@@ -62,6 +62,6 @@ public class OrdersResourceIT {
         List<String> accs = List.of("70d273a8-03ec-11eb-adc1-0242ac120002", "47918cc0-96e9-4bd7-9486-9fbdcc9b147b", "3ce1ce5c-46aa-4ddb-8430-0d2c0d27c7fb");
         String bankAccountId = accs.get(new Random().nextInt(3));
 
-        return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", "999ee611-690c-4aa4-be5a-008dfdb172b6" ,items);
+        return new Order("045cf19e-34b9-4d1e-a566-921874129ff0", "70d273a8-03ec-11eb-adc1-0242ac120002" ,items);
     }
 }

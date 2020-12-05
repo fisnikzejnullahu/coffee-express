@@ -3,44 +3,69 @@
     <div class="card mb-3">
       <div class="p-4 text-center text-white text-lg bg-dark rounded-top">
         <span class="text-uppercase">Tracking Order No - </span
-        ><span class="text-medium">e1d14010-9aab-46d4-93ca-c3d92e913162</span>
+        ><span class="text-medium">{{ this.$route.params.id }}</span>
       </div>
       <div
         class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary"
       >
         <div class="w-100 text-center py-1 px-2">
-          <span class="text-medium" id="order-status">Status:</span>
+          <span class="text-medium" id="order-status"
+            >Status: {{ order["order-state"] }}</span
+          >
+          <span v-if="order['cancelled-reason']"
+            >, Reason: {{ order["cancelled-reason"] }}</span
+          >
         </div>
       </div>
       <div class="card-body">
         <div
           class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x"
         >
-          <div class="step completed" id="placed">
+          <div
+            class="step"
+            :class="{ completed: stepsCompleted >= 1 }"
+            id="placed"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-more"></i></div>
             </div>
             <h4 class="step-title">Order Placed</h4>
           </div>
-          <div class="step" id="accepted">
+          <div
+            class="step"
+            :class="{ completed: stepsCompleted >= 2 }"
+            id="accepted"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-check"></i></div>
             </div>
             <h4 class="step-title">Order Accepted</h4>
           </div>
-          <div class="step" id="preparing">
+          <div
+            class="step"
+            :class="{ completed: stepsCompleted >= 3 }"
+            id="preparing"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
             <h4 class="step-title">Preparing</h4>
           </div>
-          <div class="step" id="ready">
+          <div
+            class="step"
+            :class="{ completed: stepsCompleted >= 4 }"
+            id="ready"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-car"></i></div>
             </div>
             <h4 class="step-title">Ready for pickup</h4>
           </div>
-          <div class="step" id="pickedup">
+          <div
+            class="step"
+            :class="{ completed: stepsCompleted >= 5 }"
+            id="pickedup"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
@@ -53,10 +78,10 @@
       class="d-flex flex-wrap flex-md-nowrap justify-content-center justify-content-sm-between align-items-center"
     >
       <div class="text-left text-sm-right">
-        <a
+        <router-link
+          :to="{ name: 'OrderDetails', params: { id: order.id } }"
           class="btn btn-outline-primary btn-rounded btn-sm"
-          href="/web-app/mvc/orders/e1d14010-9aab-46d4-93ca-c3d92e913162"
-          >View Order Details</a
+          >View Order Details</router-link
         >
       </div>
     </div>
@@ -64,7 +89,53 @@
 </template>
 
 <script>
-export default {};
+import Api from "@/API";
+export default {
+  data() {
+    return {
+      order: {},
+      stepsCompleted: 1,
+    };
+  },
+  created() {
+    this.trackOrder();
+  },
+  methods: {
+    async trackOrder() {
+      const response = await Api.trackOrder(this.$route.params.id);
+      const body = await response.json();
+      this.order = body;
+      console.log(body);
+      this.orderStateCheck(this.order["order-state"]);
+
+      console.log(this.stepsCompleted < 4);
+      if (this.stepsCompleted < 4) {
+        setTimeout(() => {
+          this.trackOrder();
+        }, 1000);
+      }
+    },
+    orderStateCheck(state) {
+      switch (state) {
+        case "PLACED":
+          this.stepsCompleted = 1;
+          break;
+        case "ACCEPTED":
+          this.stepsCompleted = 2;
+          break;
+        case "PREPARING":
+          this.stepsCompleted = 3;
+          break;
+        case "READY_FOR_PICKUP":
+          this.stepsCompleted = 4;
+          break;
+        case "PICKED_UP":
+          this.stepsCompleted = 5;
+          break;
+      }
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

@@ -6,7 +6,7 @@
           <h4>Order Details:</h4>
         </div>
         <div class="col" style="text-align: end">
-          <p>Order Number: e1d14010-9aab-46d4-93ca-c3d92e913162</p>
+          <p>Order Number: {{ this.$route.params.id }}</p>
         </div>
       </div>
       <div class="row">
@@ -111,7 +111,11 @@
 </template>
 
 <script>
-export default {};
+export default {
+  created() {
+    console.log(this.$route.params.id);
+  },
+};
 </script>
 
 <style>
