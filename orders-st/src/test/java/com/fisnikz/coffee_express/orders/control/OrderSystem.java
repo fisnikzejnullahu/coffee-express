@@ -17,10 +17,10 @@ public class OrderSystem {
 
     public OrderSystem() {
         URI uri = URI.create("http://localhost:8088/");
-        this.client = RestClientBuilder.
-                newBuilder().
-                baseUri(uri).
-                build(OrdersResourceClient.class);
+        this.client = RestClientBuilder
+                .newBuilder()
+                .baseUri(uri)
+                .build(OrdersResourceClient.class);
 
         this.jsonBuilder = new RequestJsonBuider();
     }

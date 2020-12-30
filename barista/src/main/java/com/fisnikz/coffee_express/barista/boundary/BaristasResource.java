@@ -2,7 +2,9 @@ package com.fisnikz.coffee_express.barista.boundary;
 
 import com.fisnikz.coffee_express.barista.control.MenuService;
 import com.fisnikz.coffee_express.barista.entity.MenuItem;
+import com.fisnikz.coffee_express.logging.Logged;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -20,6 +22,7 @@ import java.util.List;
 @Path("baristas")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Logged
 public class BaristasResource {
 
     @Inject
@@ -27,14 +30,18 @@ public class BaristasResource {
 
     @GET
     @Path("items")
-    public List<MenuItem> allItems() {
-        return MenuItem.listAll();
+    public Response allItems() {
+        return Response.ok(MenuItem.listAll()).build();
     }
 
     @GET
     @Path("items/{id}")
-    public MenuItem findItem(@PathParam("id") long id) {
-        return MenuItem.findById(id);
+    public Response findItem(@PathParam("id") long id) {
+        MenuItem item = MenuItem.findById(id);
+        if (item == null) {
+            return Response.status(404).build();
+        }
+        return Response.ok(item).build();
     }
 
     @POST
@@ -53,6 +60,7 @@ public class BaristasResource {
 
     @DELETE
     @Path("items/{id}")
+    @RolesAllowed({"full_access"})
     public Response removeItem(@PathParam("id") long id) {
         int updated = menuService.removeItem(id);
 

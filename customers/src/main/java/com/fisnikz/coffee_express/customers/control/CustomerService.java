@@ -7,6 +7,10 @@ import com.fisnikz.coffee_express.events.FailMessages;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.lang.System.Logger;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,6 +29,9 @@ public class CustomerService {
     CustomerCommandService commandService;
 
     public UUID create(Customer customer) {
+        if (usernameExists(customer.username)) {
+            throw new WebApplicationException("Customer exists with same username", Response.Status.CONFLICT);
+        }
         customer.id = UUID.randomUUID();
         customer.registeredAt = LocalDateTime.now();
         customer.banned = false;
@@ -34,7 +41,12 @@ public class CustomerService {
     }
 
     public Customer getCustomer(UUID customerId) {
-        return Customer.findById(customerId);
+        Customer customer = Customer.findById(customerId);
+        if (customer == null) {
+            throw new WebApplicationException(Response.status(404).header("cause", "Customer with id: " + customerId + ", was not found!").build());
+        }
+
+        return customer;
     }
 
     public void verifyCustomer(UUID orderId, UUID customerId) {
@@ -49,5 +61,9 @@ public class CustomerService {
         else {
             commandService.customerVerified(customerId, orderId);
         }
+    }
+
+    private boolean usernameExists(String username) {
+        return Customer.find("username", username).singleResultOptional().isPresent();
     }
 }

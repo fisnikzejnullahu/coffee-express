@@ -84,8 +84,10 @@ public class BankAccountsService {
     }
 
     private void checkForAuthorizedCustomerId(UUID customerId, String authorizedCustomerId) {
-        if (!customerId.equals(UUID.fromString(authorizedCustomerId))) {
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+        if (authorizedCustomerId != null) {
+            if (!customerId.equals(UUID.fromString(authorizedCustomerId))) {
+                throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+            }
         }
     }
 }

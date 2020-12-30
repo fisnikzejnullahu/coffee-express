@@ -1,7 +1,6 @@
 package com.fisnikz.coffee_express.customers.control;
 
 import com.fisnikz.coffee_express.customers.entity.Customer;
-import com.fisnikz.coffee_express.customers.entity.CustomerName;
 import io.quarkus.runtime.StartupEvent;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,8 +19,9 @@ public class Initializer {
     void onStart(@Observes StartupEvent event) {
         Customer customer = new Customer();
         customer.id = UUID.fromString("045cf19e-34b9-4d1e-a566-921874129ff0");
-        customer.fullName = new CustomerName("Fisnik", "Zejnullahu");
-        customer.nickname = "fisnikz";
+        customer.firstName = "Fisnik";
+        customer.lastName = "Zejnullahu";
+        customer.username = "fisnikz";
         customer.registeredAt = LocalDateTime.now();
 
         customer.persist();

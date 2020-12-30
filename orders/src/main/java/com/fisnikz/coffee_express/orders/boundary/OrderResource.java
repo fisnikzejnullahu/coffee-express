@@ -22,6 +22,11 @@ public class OrderResource {
     public OrderResource() {
     }
 
+    public OrderResource(UUID orderId, OrderService orderService) {
+        this.orderId = orderId;
+        this.orderService = orderService;
+    }
+
     public OrderResource(UUID orderId, OrderService orderService, String authorizedCustomerId) {
         this.orderId = orderId;
         this.orderService = orderService;
@@ -31,13 +36,15 @@ public class OrderResource {
     @GET
     public Response find() {
         Order order = Order.findById(orderId);
-        if (!order.customerId.equals(this.authorizedCustomerId)) {
-            return Response.status(Response.Status.FORBIDDEN).build();
+        if (order == null) {
+            throw new NotFoundException("Order with id: " + orderId + ", was not found!");
         }
-        if (order != null) {
-            return Response.ok(order).build();
+        if (authorizedCustomerId != null) {
+            if (!order.customerId.equals(this.authorizedCustomerId)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
         }
-        throw new NotFoundException("Order with id: " + orderId + ", was not found!");
+        return Response.ok(order).build();
     }
 
     @POST

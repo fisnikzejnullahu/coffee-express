@@ -20,11 +20,14 @@ public class Customer extends PanacheEntityBase {
     @Type(type = "uuid-char")
     public UUID id;
 
-    @Embedded
-    public CustomerName fullName;
+    @NotNull
+    public String firstName;
 
     @NotNull
-    public String nickname;
+    public String lastName;
+
+    @NotNull
+    public String username;
 
     @NotNull
     public LocalDateTime registeredAt;

@@ -35,6 +35,9 @@ export default {
   async logout() {
     return await call(`http://localhost:8080/logout`, null, "POST");
   },
+  async register(userInfo) {
+    return await call(`http://localhost:8080/register`, null, "POST");
+  },
   async placeOrder(placeOrderRequestData) {
     return await call(`http://localhost:8080/logout`, null, "POST");
   },

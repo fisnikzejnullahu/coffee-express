@@ -1,10 +1,13 @@
 package com.fisnikz.coffee_express.orders.boundary;
 
+import com.fisnikz.coffee_express.logging.Logged;
 import com.fisnikz.coffee_express.orders.control.OrderService;
 import com.fisnikz.coffee_express.orders.entity.PlaceOrderRequest;
 import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
@@ -19,6 +22,7 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @DenyAll
+@Logged
 public class OrdersResource {
 
     @Context
@@ -28,11 +32,11 @@ public class OrdersResource {
     OrderService orderService;
 
     @Inject
-    @Claim("customer_id")
-    String authorizedCustomerId;
+    JsonWebToken jsonWebToken;
 
     @POST
-    @RolesAllowed({"user", "admin"})
+    @PermitAll
+//    @RolesAllowed({"full_access", "manage_orders"})
     public Response place(PlaceOrderRequest placeOrderRequest) {
         System.out.println(JsonbBuilder.create().toJson(placeOrderRequest));
         UUID orderId = UUID.randomUUID();
@@ -44,9 +48,14 @@ public class OrdersResource {
     }
 
     @Path("{orderId}")
-    @RolesAllowed({"user", "admin"})
+    @RolesAllowed({"full_access", "manage_orders"})
     public OrderResource find(@PathParam("orderId") UUID orderId) {
-        return new OrderResource(orderId, this.orderService, this.authorizedCustomerId);
+        // if user from token is admin
+        if (jsonWebToken.getGroups().contains("full_access")) {
+            return new OrderResource(orderId, this.orderService);
+        }
+        System.out.println("authorizedCustomerId = " + jsonWebToken.getClaim("customer_id"));
+        return new OrderResource(orderId, this.orderService, jsonWebToken.getClaim("customer_id"));
     }
 
 }

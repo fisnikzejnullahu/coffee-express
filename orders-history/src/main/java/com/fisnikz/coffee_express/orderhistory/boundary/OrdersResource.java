@@ -1,24 +1,18 @@
 package com.fisnikz.coffee_express.orderhistory.boundary;
 
+import com.fisnikz.coffee_express.logging.Logged;
 import com.fisnikz.coffee_express.orderhistory.control.OrderService;
 import com.fisnikz.coffee_express.orderhistory.entity.Order;
-import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.inject.Inject;
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.bind.JsonbBuilder;
-import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import java.io.StringReader;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Fisnik Zejnullahu
@@ -26,23 +20,27 @@ import java.util.UUID;
 @Path("history")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Logged
 public class OrdersResource {
 
     @Inject
     OrderService orderService;
 
     @Inject
-    @Claim("customer_id")
-    String authorizedCustomerId;
+    JsonWebToken jsonWebToken;
 
     @GET
     @Path("{orderId}")
-    public Order find(@PathParam("orderId") String orderId) {
-        Order order = Order.findById(orderId);
-        if (!order.getCustomerId().equals(authorizedCustomerId)) {
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+    public Response find(@PathParam("orderId") String orderId) {
+        Order order = Order.find("orderId", orderId).firstResult();
+        if (order == null) {
+            return Response.status(404).build();
         }
-        return order;
+        if (!order.getCustomerId().equals(jsonWebToken.getClaim("customer_id"))) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        return Response.ok(order).build();
     }
 
     /*
@@ -52,8 +50,8 @@ public class OrdersResource {
      */
     @GET
     public Response ordersOfCustomer(@QueryParam("customerId") String customerId, @QueryParam("page") int page) {
-        if (customerId.equals(authorizedCustomerId)) {
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN).build());
+        if (customerId.equals(jsonWebToken.getClaim("customer_id"))) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
         JsonObject response = Json.createObjectBuilder()
                 .add("orders", Json.createReader(new StringReader(JsonbBuilder.create().toJson(orderService.getOrdersOfCustomer(customerId, page)))).readValue())

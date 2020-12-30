@@ -20,15 +20,15 @@ public class RequestJsonBuider {
         String items = fromJsonB(order.getItems());
         JsonArray jsonItems = Json.createReader(new StringReader(items)).readArray();
 
-        return builder.add("customer-id", order.getCustomerId())
-                .add("bank-account-id", order.getBankAccountId())
+        return builder.add("customer_id", order.getCustomerId())
+                .add("bank_account_id", order.getBankAccountId())
                 .add("items", jsonItems)
                 .build();
     }
 
     String fromJsonB(Object object){
         JsonbConfig jsonbConfig = new JsonbConfig();
-        jsonbConfig.withPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CASE_WITH_DASHES);
+        jsonbConfig.withPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES);
 
         Jsonb jsonb = JsonbBuilder.newBuilder()
                 .withConfig(jsonbConfig)

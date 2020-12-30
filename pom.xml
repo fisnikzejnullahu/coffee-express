@@ -13,6 +13,7 @@
         <module>finance</module>
         <module>customers</module>
         <module>orders-history</module>
+        <module>api-gateway</module>
         <module>orders-st</module>
     </modules>
 

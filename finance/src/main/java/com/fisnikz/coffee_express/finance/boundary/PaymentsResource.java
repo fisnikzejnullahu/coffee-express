@@ -1,6 +1,8 @@
 package com.fisnikz.coffee_express.finance.boundary;
 
+import com.fisnikz.coffee_express.logging.Logged;
 import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.RolesAllowed;
@@ -17,12 +19,11 @@ import java.util.UUID;
 @Path("payments")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed({"user", "admin"})
+@Logged
 public class PaymentsResource {
 
     @Inject
-    @Claim("customer_id")
-    String authorizedCustomerId;
+    JsonWebToken jsonWebToken;
 
     @GET
     public Response paymentsOfCustomer(@QueryParam("customerId") UUID customerId) {
