@@ -39,6 +39,12 @@ export const logout = async ({commit}) => {
   window.location.href = '/';
 }
 
+export const signup = async ({commit}, customerInfo) => {
+  console.log('SIGNUP ACTION');
+  const response = await Api.createCustomer(customerInfo);
+  return response;
+}
+
 export const placeOrder = async ({commit}, customerId, bankAccountId, menuItems) => {
   console.log('placeOrder ACTION');
   console.log(customerId);

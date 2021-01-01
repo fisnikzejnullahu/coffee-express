@@ -30,9 +30,18 @@ public class CustomersService {
             throw new WebApplicationException(createCustomerResponse);
         }
         String customerId = getCustomerIdFromLocationHeader(createCustomerResponse.getLocation());
+        System.out.println("1");
+        System.out.println("customerId = " + customerId);
+        System.out.println("1");
 
-        Response createAccountResponse = identityService.createUserAccount(createCustomerRequest, customerId);
-
+        Response createAccountResponse = null;
+        try {
+            createAccountResponse = identityService.createUserAccount(createCustomerRequest, customerId);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(createAccountResponse.getLocation());
+        System.out.println(createAccountResponse.getStatus());
         if (createAccountResponse.getStatus() != 201) {
             throw new WebApplicationException(createCustomerResponse);
         }
@@ -44,7 +53,7 @@ public class CustomersService {
         return location.toString().substring(location.toString().lastIndexOf("/") + 1);
     }
 
-    public Response find(String toBearerToken, String customerId) {
-        return customersRestClient.find(toBearerToken, customerId);
+    public Response find(String token, String customerId) {
+        return customersRestClient.find(token, customerId);
     }
 }

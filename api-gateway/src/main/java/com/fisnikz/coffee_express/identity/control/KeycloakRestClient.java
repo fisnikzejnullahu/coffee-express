@@ -26,7 +26,8 @@ public interface KeycloakRestClient {
 
     @POST
     @Path("admin/realms/public/users")
-    Response create(JsonObject body);
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response create(@HeaderParam("Authorization") String authorization, JsonObject body);
 
     @GET
     @Path("admin/realms/public/users")

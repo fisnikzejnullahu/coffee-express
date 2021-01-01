@@ -42,6 +42,7 @@ public class CustomersResource {
     Logger LOG;
 
     @GET
+    @RolesAllowed({"full_access"})
     public Response all(){
         return Response.ok(Customer.listAll()).build();
     }

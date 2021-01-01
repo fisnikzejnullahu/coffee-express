@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.identity.boundary;
 
 import com.fisnikz.coffee_express.identity.control.IdentityService;
 import com.fisnikz.coffee_express.identity.entity.LoginInfo;
+import com.fisnikz.coffee_express.logging.Logged;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
 @Path("/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Logged
 public class IdentityResource {
 
     @Inject

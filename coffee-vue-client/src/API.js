@@ -1,13 +1,7 @@
-// const BASE_URL = "http://localhost:3001";
-// const API_URL = `${BASE_URL}/api`;
-const BARISTAS_SERVICE_URL = "http://localhost:8083"
+const BASE_URL = "http://localhost:8080";
+const API_VERSION = "v1"
+const API_URL = `${BASE_URL}/api/${API_VERSION}`;
 
-// export default API_URL;
-
-// GET = async resource => {
-//   const response = await fetch(`${API_URL}/${resource}`);
-//   return response.json();
-// };
 async function call(url, object, httpMethod) {
   console.log("CALLED API from /" + url);
 
@@ -24,36 +18,45 @@ async function call(url, object, httpMethod) {
 
 export default {
   async getMenu() {
-    return await call(`${BARISTAS_SERVICE_URL}/baristas/items`, null, "GET");
+    return await call(`${API_URL}/baristas/items`, null, "GET");
   },
   async getMenuItem(itemId) {
-    return await call(`${BARISTAS_SERVICE_URL}/baristas/items/${itemId}`, null, "GET");
+    return await call(`${API_URL}/baristas/items/${itemId}`, null, "GET");
   },
   async login(userInfo) {
-    return await call(`http://localhost:8080/login`, userInfo, "POST");
+    return await call(`${API_URL}/login`, userInfo, "POST");
+  },
+  async refreshLogin() {
+    return await call(`${API_URL}/login/refresh`, null, "POST");
   },
   async logout() {
-    return await call(`http://localhost:8080/logout`, null, "POST");
+    return await call(`${API_URL}/logout`, null, "POST");
   },
-  async register(userInfo) {
-    return await call(`http://localhost:8080/register`, null, "POST");
+  async createCustomer(customerInfo) {
+    return await call(`${API_URL}/customers/`, customerInfo, "POST");
+  },
+  async getMyAccountInfo(customerId) {
+    return await call(`${API_URL}/customers/${customerId}`, null, "GET");
   },
   async placeOrder(placeOrderRequestData) {
-    return await call(`http://localhost:8080/logout`, null, "POST");
+    return await call(`${API_URL}/orders/`, null, "POST");
   },
   async getMyOrders(customerId, page) {
-    return await call(`http://localhost:8084/history?customerId=${customerId}&page=${page}`, null, "GET");
-  },
-  async getOrder(orderId) {
-    return await call(`http://localhost:8080/logout`, null, "POST");
+    return await call(`${API_URL}/orders?customerId=${customerId}&page=${page}`, null, "GET");
   },
   async trackOrder(orderId) {
-    return await call(`http://localhost:8088/orders/${orderId}`, null, "GET");
+    return await call(`${API_URL}/orders/track/${orderId}`, null, "GET");
+  },
+  async getOrder(orderId) {
+    return await call(`${API_URL}/orders/${orderId}`, null, "GET");
   },
   async getMyBankAccounts(customerId) {
-    return await call(`http://localhost:8082/accounts?customerId=${customerId}`, null, "GET");
+    return await call(`${API_URL}/bank-accounts?customerId=${customerId}`, null, "GET");
+  },
+  async getMyPopularBankAccount(customerId) {
+    return await call(`${API_URL}/bank-accounts/popular?customerId=${customerId}`, null, "GET");
   },
   async getMyPayments(customerId) {
-    return await call(`http://localhost:8080/logout`, null, "POST");
+    return await call(`${API_URL}/payments?customerId=${customerId}`, null, "GET");
   }
 };

@@ -5,6 +5,8 @@ import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
 import com.fisnikz.coffee_express.logging.Logged;
 
 import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -35,6 +37,8 @@ public class CustomersResource {
     @POST
     public Response create(@Valid CreateCustomerRequest createCustomerRequest) {
         String customerId = customersService.create(createCustomerRequest);
+        System.out.println("---------------------------------");
+        System.out.println("customerId = " + customerId);
 
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(CustomersResource.class, "find").build(customerId))

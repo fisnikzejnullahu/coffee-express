@@ -4,6 +4,7 @@ import com.fisnikz.coffee_express.customers.control.CustomersRestClient;
 import com.fisnikz.coffee_express.identity.entity.LoginInfo;
 import com.fisnikz.coffee_express.identity.entity.Token;
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
+import com.fisnikz.coffee_express.logging.Logged;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
  * @author Fisnik Zejnullahu
  */
 @ApplicationScoped
+@Logged
 public class IdentityService {
 
     @Inject
@@ -33,6 +35,9 @@ public class IdentityService {
         Token accessToken = (Token) loginData[0];
         Token refreshToken = (Token) loginData[1];
         String customerId = (String) loginData[2];
+        System.out.println("customerId = " + customerId);
+
+        System.out.println(accessToken.getTokenString());
 
         Response response = customersRestClient.find(toBearerToken(accessToken.getTokenString()), customerId);
 
@@ -67,7 +72,7 @@ public class IdentityService {
         return logoutResponse;
     }
 
-    @Fallback(fallbackMethod = "onCreateUserAccountFail")
+//    @Fallback(fallbackMethod = "onCreateUserAccountFail")
     public Response createUserAccount(CreateCustomerRequest createCustomerRequest, String customerId) {
         return keycloakService.createAccount(createCustomerRequest, customerId);
     }

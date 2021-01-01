@@ -12,7 +12,7 @@ import javax.json.*;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import static com.fisnikz.coffee_express.identity.control.IdentityService.*;
+import static com.fisnikz.coffee_express.identity.control.IdentityService.toBearerToken;
 
 /**
  * @author Fisnik Zejnullahu
@@ -41,13 +41,17 @@ public class KeycloakService {
 
     private Object[] loginAndGetUserTokensAndCustomerId(String username, String password) {
         Response loginResponse = keycloakRestClient.login(username, password, "password", keycloakClientId, null);
-        if (loginResponse.getStatus() != 200) {
-            throw new WebApplicationException(loginResponse);
-        }
-
         JsonObject tokenData = loginResponse.readEntity(JsonObject.class);
 
-        Response userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
+        Response userResponse = null;
+        try {
+            userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
+        } catch (WebApplicationException ex) {
+            if (ex.getResponse().getStatus() == 401) {
+                getAdminToken();
+                userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
+            }
+        }
         if (userResponse.getStatus() == 401) {
             getAdminToken();
             keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
@@ -60,6 +64,7 @@ public class KeycloakService {
         String customerId = null;
 
         JsonArray usersJson = userResponse.readEntity(JsonArray.class);
+        System.out.println(usersJson);
 
         for (JsonValue u : usersJson) {
             JsonObject object = u.asJsonObject();
@@ -68,6 +73,8 @@ public class KeycloakService {
                 break;
             }
         }
+
+        System.out.println(customerId);
 
         return new Object[]{
                 new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
@@ -92,6 +99,7 @@ public class KeycloakService {
     }
 
     private void getAdminToken() {
+        System.out.println("GET admin token");
         JsonObject data = keycloakRestClient.login("fisnikz", "123456", "password", keycloakClientId, null).readEntity(JsonObject.class);
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
     }
@@ -105,18 +113,36 @@ public class KeycloakService {
         JsonObjectBuilder customerIdAttribute = Json.createObjectBuilder()
                 .add("customerId", Json.createArrayBuilder().add(customerId));
 
+        JsonObjectBuilder password = Json.createObjectBuilder()
+                .add("type", "password")
+                .add("temporary", false)
+                .add("value", createCustomerRequest.getPassword());
+
+        JsonArrayBuilder credentialsArray = Json.createArrayBuilder()
+                .add(password);
+
         JsonObject createAccountBody = Json.createObjectBuilder()
                 .add("firstName", createCustomerRequest.getFirstName())
                 .add("lastName", createCustomerRequest.getFirstName())
                 .add("username", createCustomerRequest.getUsername())
-                .add("password", createCustomerRequest.getPassword())
+                .add("credentials", credentialsArray)
                 .add("emailVerified", true)
                 .add("enabled", true)
                 .add("groups", Json.createArrayBuilder().add("USERS"))
-                .add("realmRoles", Json.createArrayBuilder().add("manage_orders"))
                 .add("attributes", customerIdAttribute)
                 .build();
 
-        return keycloakRestClient.create(createAccountBody);
+        System.out.println(createAccountBody);
+
+        Response response = null;
+        try {
+            response = keycloakRestClient.create(toBearerToken(adminToken.getTokenString()), createAccountBody);
+        } catch (WebApplicationException ex) {
+            if (ex.getResponse().getStatus() == 401) {
+                getAdminToken();
+                response = keycloakRestClient.create(toBearerToken(adminToken.getTokenString()), createAccountBody);
+            }
+        }
+        return response;
     }
 }
