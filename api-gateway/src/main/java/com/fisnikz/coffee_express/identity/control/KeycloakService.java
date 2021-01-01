@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.identity.control;
 
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
 import com.fisnikz.coffee_express.identity.entity.Token;
+import io.quarkus.runtime.Startup;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -18,6 +19,7 @@ import static com.fisnikz.coffee_express.identity.control.IdentityService.toBear
  * @author Fisnik Zejnullahu
  */
 @ApplicationScoped
+@Startup
 public class KeycloakService {
 
     @Inject
@@ -28,7 +30,7 @@ public class KeycloakService {
     @ConfigProperty(name = "keycloak.client.id", defaultValue = "coffee-express-admin-api-client")
     String keycloakClientId;
 
-    private Token adminToken;
+    public static Token adminToken;
 
     @PostConstruct
     public void init() {
@@ -64,7 +66,6 @@ public class KeycloakService {
         String customerId = null;
 
         JsonArray usersJson = userResponse.readEntity(JsonArray.class);
-        System.out.println(usersJson);
 
         for (JsonValue u : usersJson) {
             JsonObject object = u.asJsonObject();
@@ -73,8 +74,6 @@ public class KeycloakService {
                 break;
             }
         }
-
-        System.out.println(customerId);
 
         return new Object[]{
                 new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
@@ -131,8 +130,6 @@ public class KeycloakService {
                 .add("groups", Json.createArrayBuilder().add("USERS"))
                 .add("attributes", customerIdAttribute)
                 .build();
-
-        System.out.println(createAccountBody);
 
         Response response = null;
         try {

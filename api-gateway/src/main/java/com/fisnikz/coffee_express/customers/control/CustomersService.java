@@ -10,6 +10,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
+import static com.fisnikz.coffee_express.identity.control.KeycloakService.adminToken;
+
 /**
  * @author Fisnik Zejnullahu
  */
@@ -24,7 +26,7 @@ public class CustomersService {
     IdentityService identityService;
 
     public String create(CreateCustomerRequest createCustomerRequest) {
-        Response createCustomerResponse = customersRestClient.create(createCustomerRequest);
+        Response createCustomerResponse = customersRestClient.create(adminToken.getTokenString(), createCustomerRequest);
 
         if (createCustomerResponse.getStatus() != 201) {
             throw new WebApplicationException(createCustomerResponse);

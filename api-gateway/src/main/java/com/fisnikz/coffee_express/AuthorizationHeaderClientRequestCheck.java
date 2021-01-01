@@ -11,10 +11,11 @@ public class AuthorizationHeaderClientRequestCheck implements ClientRequestFilte
 
     @Override
     public void filter(ClientRequestContext requestContext) {
-//        String authorization = requestContext.getHeaderString("Authorization");
-//        if (authorization == null || authorization.isEmpty()) {
-            System.out.println("FILTER /..///");
-//            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-//        }
+        System.out.println("AuthorizationHeaderClientRequestCheck...");
+        String authorization = requestContext.getHeaderString("Authorization");
+        System.out.println(authorization);
+        if (authorization == null || authorization.isEmpty()) {
+            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+        }
     }
 }

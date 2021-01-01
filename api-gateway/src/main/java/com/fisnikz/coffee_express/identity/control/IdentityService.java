@@ -35,9 +35,6 @@ public class IdentityService {
         Token accessToken = (Token) loginData[0];
         Token refreshToken = (Token) loginData[1];
         String customerId = (String) loginData[2];
-        System.out.println("customerId = " + customerId);
-
-        System.out.println(accessToken.getTokenString());
 
         Response response = customersRestClient.find(toBearerToken(accessToken.getTokenString()), customerId);
 
