@@ -68,7 +68,8 @@ public class BankAccountsService {
                         .orderBy(cb.desc(cb.count(payments)));
 
         List<Object[]> rs = em.createQuery(bankAccountCriteriaQuery).getResultList();
-        if (rs.size() == 0) return BankAccount.findAll().firstResult();
+        if (rs.size() == 0)
+            return BankAccount.find("customerId", customerId).firstResult();
         Object[] data = rs.get(0);
         return (BankAccount) data[0];
     }

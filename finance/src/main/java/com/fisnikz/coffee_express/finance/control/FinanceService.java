@@ -23,9 +23,6 @@ public class FinanceService {
     @Inject
     FinanceCommandService commandService;
 
-    @Inject
-    JsonWebToken jsonWebToken;
-
     @Counted
     public void authorize(UUID orderId, UUID bankAccountId, double amount) {
         //TODO: call Stripe api and charge card
@@ -40,15 +37,9 @@ public class FinanceService {
         BankAccount bankAccount = BankAccount.findById(bankAccountId);
         if (bankAccount == null) {
             commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_FOUND);
-        }
-        else {
-            if (bankAccount.customerId.equals(UUID.fromString(jsonWebToken.getClaim("customer_id")))) {
-                savePayment(orderId, bankAccount, amount);
-                commandService.cardVerified(orderId);
-            }
-            else {
-                commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_BELONGS_CUSTOMER);
-            }
+        } else {
+            savePayment(orderId, bankAccount, amount);
+            commandService.cardVerified(orderId);
         }
 
     }

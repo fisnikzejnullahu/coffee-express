@@ -13,6 +13,7 @@ import PageNotFound from "../views/PageNotFound.vue";
 import SigninPage from "../views/SigninPage.vue";
 import SignupPage from "../views/SignupPage.vue";
 import Logout from "../views/Logout.vue";
+import AddBankAccount from "../components/AddBankAccount.vue";
 
 import store from "../store";
 
@@ -82,6 +83,11 @@ const routes = [{
     path: "/logout",
     name: "Logout",
     component: Logout,
+  },
+  {
+    path: "/add-bankacc",
+    name: "AddBankAccount",
+    component: AddBankAccount,
   },
 ];
 

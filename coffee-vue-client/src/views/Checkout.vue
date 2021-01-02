@@ -35,15 +35,29 @@
                 <div class="form-group">
                   <div class="col">
                     <p style="font-weight: bold; color: #fff">Payment Method</p>
-                    <p>
+                    <p v-if="this.bankAccount !== null">
                       Ending with {{lastDigitsOfCC}}
                       <span
                         style="
                           text-decoration: underline;
                           margin-left: 5px;
                           color: #fff;
+                          cursor: pointer;
                         "
                         >Edit</span
+                      >
+                    </p>
+
+                    <p v-else>
+                      You don't have any payment method
+                      <span @click="addPaymentMethod"
+                        style="
+                          text-decoration: underline;
+                          margin-left: 5px;
+                          color: #fff;
+                          cursor: pointer;
+                        "
+                        >Add</span
                       >
                     </p>
                   </div>
@@ -106,11 +120,17 @@ export default {
   },
   created() {
     this.bankAccount = this.$store.getters.popularBankAccount;
-    console.log(this.bankAccount);
   },
   methods: {
     ...mapActions(['placeOrder', 'resetCart']),
+    addPaymentMethod() {
+      this.$router.push({ path: '/add-bankacc', query: { redirectTo: '/checkout' }})
+    },
     async place() {
+      if (this.bankAccount === null) {
+        alert('no payment method found');
+        return;
+      }
       let customerId = this.currentUser.id;
       let response = await this.placeOrder({
         "customer_id": customerId,
@@ -127,6 +147,8 @@ export default {
   computed: {
     ...mapGetters(["currentUser", "cartItems", "total"]),
     lastDigitsOfCC() {
+      console.log('kast');
+      console.log(this.bankAccount["credit_card_info"]["card_number"]);
       return this.bankAccount["credit_card_info"]["card_number"].toString().substring(11);
     }
   }

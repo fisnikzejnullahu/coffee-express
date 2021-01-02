@@ -19,7 +19,7 @@
           <tbody>
             <tr v-for="(order, index) in orders" :key="order.orderId">
               <td>{{ 1 + index + page * 5 }}</td>
-              <td>{{ order.finishedAt }}</td>
+              <td>{{ order.placedAt }}</td>
               <td><span class="status">•</span> {{ order.orderState }}</td>
               <td>${{ order.orderDetails.totalOfOrder }}</td>
               <td>
@@ -99,11 +99,13 @@ export default {
   created() {
     this.fetchMyOrders();
   },
-  methods: {
+  computed: {
     ...mapGetters(["currentUser"]),
+  },
+  methods: {
     async fetchMyOrders() {
       console.log(this.page);
-      const response = await Api.getMyOrders(this.currentUser().id, this.page);
+      const response = await Api.getMyOrders(this.currentUser.id, this.page);
       const body = await response.json();
       console.log(body);
       this.totalPages = body["total_pages"];

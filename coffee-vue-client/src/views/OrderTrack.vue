@@ -119,6 +119,9 @@ export default {
         case "PICKED_UP":
           this.stepsCompleted = 5;
           break;
+        case "CANCELLED":
+          this.stepsCompleted = 6;
+          break;
       }
     },
   },

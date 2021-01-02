@@ -3016,3 +3016,19 @@ textarea.form-control {
 		stroke-dashoffset: -136px;
 	}
 }
+
+.load-button svg {
+	display: none;
+	opacity: 0;
+	margin: auto;
+}
+
+button.loading-start span {
+	display: none;
+	opacity: 0;
+}
+
+button.loading-start svg {
+	display: block;
+	opacity: 1;
+}

@@ -22,7 +22,7 @@ public class BankAccountsResource {
     BankAccountsRestClient bankAccountsRestClient;
 
     @POST
-    public Response accountsOfCustomer(JsonObject account) {
+    public Response create(JsonObject account) {
         return bankAccountsRestClient.create(account);
     }
 

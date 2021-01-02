@@ -64,6 +64,12 @@ export default {
   async getOrder(orderId) {
     return await call(`${API_URL}/orders/${orderId}`, null, "GET");
   },
+  async createBankAccount(body) {
+    return await call(`${API_URL}/bank-accounts`, body, "POST");
+  },
+  async deleteBankAccount(id) {
+    return await call(`${API_URL}/bank-accounts/${id}`, null, "DELETE");
+  },
   async getMyBankAccounts(customerId) {
     return await call(`${API_URL}/bank-accounts?customerId=${customerId}`, null, "GET");
   },

@@ -33,9 +33,14 @@ export const login = async ({commit}, userInfo) => {
     let customerInfo = await response.json();
     
     let popularBankAccountResponse = await Api.getMyPopularBankAccount(customerInfo.id);
-    let popularBankAccount = await popularBankAccountResponse.json();
-    delete popularBankAccount["customer_id"];
-    customerInfo.popularBankAccount = popularBankAccount;
+    console.log(popularBankAccountResponse.headers.get("content-length"));
+    if (popularBankAccountResponse.headers.get("content-length") == 0) {
+      customerInfo.popularBankAccount = null;
+    }else {
+      let popularBankAccount = await popularBankAccountResponse.json();
+      delete popularBankAccount["customer_id"];
+      customerInfo.popularBankAccount = popularBankAccount;
+    }
 
     commit('LOGGED_IN', customerInfo);
     return response;

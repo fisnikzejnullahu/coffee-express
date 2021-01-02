@@ -6,6 +6,8 @@ import com.fisnikz.coffee_express.finance.control.FinanceService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.lang.System.Logger;
 
 @ApplicationScoped

@@ -3,72 +3,59 @@
     <LoadingScreen />
   </div>
   <section v-else class="ftco-section">
+    <b-alert
+      :show="dismissCountDown"
+      dismissible
+      variant="success"
+      @dismissed="dismissCountDown = 0"
+      @dismiss-count-down="countDownChanged"
+    >
+      <p>Success</p>
+    </b-alert>
+
+    <ConfirmationModal
+      message="Are you sure you want to delete?"
+      :onConfirm="onDeleteConfirmed"
+      :id="whichId"
+    />
+
     <div class="container">
-      <div
-        class="modal fade"
-        id="exampleModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel" style="color: inherit">
-                Delete Confirmation
-              </h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">Are you sure you want to delete?</div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-                id="closeModalBtn"
-              >
-                Close
-              </button>
-              <button type="button" class="btn btn-danger" id="deleteConfirmBtn">
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+      <div class="pl-1 mt-2">
+        <button
+          class="btn btn-primary btn-outline-primary btn-lg btn-block"
+          @click="showNewBankAccView"
+        >
+          Add new bank account
+        </button>
       </div>
       <div class="row">
-        <div
-          class="col-4 ftco-animate fadeInUp ftco-animated"
-          div-acc-id="70d273a8-03ec-11eb-adc1-0242ac120002"
-        >
-          <div v-for="account in bankAccounts" :key="account.id">
-            <div class="row mt-2 pt-3 d-flex">
-              <div class="col">
-                <div class="cart-detail ftco-bg-dark p-3 p-md-4">
-                  <div class="form-group">
-                    <div class="col">
-                      <p style="font-weight: bold; color: #fff">Card</p>
-                      <p>
-                        Card Number:
-                        {{ account["credit_card_info"]["card_number"] }}
-                      </p>
-                      <p>Expiration Date: {{ account["expiration_date"] }}</p>
-                      <button
-                        type="button"
-                        style="background: transparent; border: 0; cursor: pointer"
-                        data-toggle="modal"
-                        data-target="#exampleModal"
-                        data-cid="70d273a8-03ec-11eb-adc1-0242ac120002"
-                      >
-                        <span style="text-decoration: underline; color: #fff"
-                          >Delete</span
-                        >
-                      </button>
-                    </div>
-                  </div>
+        <div v-for="account in bankAccounts" :key="account.id">
+          <div class="col mt-2 ml-2 pt-3 d-flex">
+            <div class="cart-detail ftco-bg-dark p-3 p-md-4">
+              <div class="form-group">
+                <div class="col">
+                  <p style="font-weight: bold; color: #fff">Card</p>
+                  <p>
+                    Card Number:
+                    {{ account["credit_card_info"]["card_number"] }}
+                  </p>
+                  <p>
+                    Expiration Date:
+                    {{ account["credit_card_info"]["expiration_date"] }}
+                  </p>
+                  <button
+                    type="button"
+                    style="background: transparent; border: 0; cursor: pointer"
+                    data-toggle="modal"
+                    data-target="#exampleModal"
+                    data-cid="70d273a8-03ec-11eb-adc1-0242ac120002"
+                  >
+                    <span
+                      style="text-decoration: underline; color: #fff"
+                      @click="showConfirmationDialog(account.id)"
+                      >Delete</span
+                    >
+                  </button>
                 </div>
               </div>
             </div>
@@ -84,16 +71,24 @@
 <script>
 import { mapGetters } from "vuex";
 import LoadingScreen from "@/components/LoadingScreen";
+import ConfirmationModal from "@/components/ConfirmationModal";
 import Api from "@/API";
+
 export default {
   data() {
     return {
       bankAccounts: [],
       loaded: false,
+      isModalVisible: false,
+      whichId: "",
+      dismissSecs: 3,
+      dismissCountDown: 0,
+      showDismissibleAlert: false,
     };
   },
   components: {
     LoadingScreen,
+    ConfirmationModal,
   },
   async created() {
     let id = this.currentUser().id;
@@ -103,9 +98,46 @@ export default {
     console.log(this.bankAccounts);
   },
   methods: {
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown;
+    },
+    showAlert() {
+      this.dismissCountDown = this.dismissSecs;
+    },
     ...mapGetters(["currentUser"]),
+    showConfirmationDialog(accountId) {
+      this.whichId = accountId;
+      this.$bvModal.show("confirm-modal");
+    },
+    async onDeleteConfirmed(id) {
+      let response = await Api.deleteBankAccount(id);
+      if (response.status === 200) {
+        let index = this.bankAccounts
+          .map(function (item) {
+            return item.id;
+          })
+          .indexOf(id);
+
+        this.showAlert();
+        setTimeout(() => {
+          this.bankAccounts.splice(index, 1);
+        }, 1000)
+      }
+    },
+    showNewBankAccView() {
+      this.$router.push("/add-bankacc");
+    },
   },
 };
 </script>
 
-<style></style>
+<style>
+.alert {
+  position: absolute !important;
+  z-index: 300;
+  right: 0;
+  margin-right: 2%;
+  top: 5%;
+  width: 20%;
+}
+</style>
