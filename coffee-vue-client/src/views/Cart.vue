@@ -88,11 +88,10 @@
             </p>
           </div>
           <p class="text-center">
-            <a
-              href="/web-app/mvc/cart/checkout"
+            <router-link
+              to="/checkout"
               class="btn btn-primary py-3 px-4"
-              >Proceed to Checkout</a
-            >
+              >Proceed to Checkout</router-link>
           </p>
         </div>
       </div>

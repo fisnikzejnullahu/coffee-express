@@ -20,12 +20,23 @@ export const removeFromCart = ({ commit }, menuItem) => {
   commit('REMOVE_FROM_CART', menuItem)
 }
 
+export const resetCart = ({ commit }) => {
+  console.log('ACTIONS: RESET CART: ');
+  commit('RESET_CART');
+}
+
 export const login = async ({commit}, userInfo) => {
   console.log('ACTIONS: LOGIN');
   let response = await Api.login(userInfo);
   console.log(response);
   if (response.status === 200) {
     let customerInfo = await response.json();
+    
+    let popularBankAccountResponse = await Api.getMyPopularBankAccount(customerInfo.id);
+    let popularBankAccount = await popularBankAccountResponse.json();
+    delete popularBankAccount["customer_id"];
+    customerInfo.popularBankAccount = popularBankAccount;
+
     commit('LOGGED_IN', customerInfo);
     return response;
   }
@@ -45,9 +56,16 @@ export const signup = async ({commit}, customerInfo) => {
   return response;
 }
 
-export const placeOrder = async ({commit}, customerId, bankAccountId, menuItems) => {
+export const placeOrder = async ({commit}, placeOrderRequestData) => {
   console.log('placeOrder ACTION');
-  console.log(customerId);
-  console.log(bankAccountId);
-  console.log(menuItems);
+  let items = [];
+  placeOrderRequestData.items.forEach(item => {
+    items.push({
+      "menu_item_id": item.id,
+      "quantity": item.quantity
+    });
+  });
+  placeOrderRequestData.items = items;
+  const response = await Api.placeOrder(placeOrderRequestData);
+  return response;
 }

@@ -1,5 +1,8 @@
 <template>
-  <div class="container padding-bottom-3x mb-1" style="padding-top: 7em">
+  <div v-if="!loaded">
+    <LoadingScreen />
+  </div>
+  <div v-else class="container padding-bottom-3x mb-1" style="padding-top: 7em">
     <div class="card mb-3">
       <div class="p-4 text-center text-white text-lg bg-dark rounded-top">
         <span class="text-uppercase">Tracking Order No - </span
@@ -10,10 +13,10 @@
       >
         <div class="w-100 text-center py-1 px-2">
           <span class="text-medium" id="order-status"
-            >Status: {{ order["order-state"] }}</span
+            >Status: {{ order["order_state"] }}</span
           >
-          <span v-if="order['cancelled-reason']"
-            >, Reason: {{ order["cancelled-reason"] }}</span
+          <span v-if="order['cancelled_reason']"
+            >, Reason: {{ order["cancelled_reason"] }}</span
           >
         </div>
       </div>
@@ -21,51 +24,31 @@
         <div
           class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x"
         >
-          <div
-            class="step"
-            :class="{ completed: stepsCompleted >= 1 }"
-            id="placed"
-          >
+          <div class="step" :class="{ completed: stepsCompleted >= 1 }" id="placed">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-more"></i></div>
             </div>
             <h4 class="step-title">Order Placed</h4>
           </div>
-          <div
-            class="step"
-            :class="{ completed: stepsCompleted >= 2 }"
-            id="accepted"
-          >
+          <div class="step" :class="{ completed: stepsCompleted >= 2 }" id="accepted">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-check"></i></div>
             </div>
             <h4 class="step-title">Order Accepted</h4>
           </div>
-          <div
-            class="step"
-            :class="{ completed: stepsCompleted >= 3 }"
-            id="preparing"
-          >
+          <div class="step" :class="{ completed: stepsCompleted >= 3 }" id="preparing">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
             <h4 class="step-title">Preparing</h4>
           </div>
-          <div
-            class="step"
-            :class="{ completed: stepsCompleted >= 4 }"
-            id="ready"
-          >
+          <div class="step" :class="{ completed: stepsCompleted >= 4 }" id="ready">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-car"></i></div>
             </div>
             <h4 class="step-title">Ready for pickup</h4>
           </div>
-          <div
-            class="step"
-            :class="{ completed: stepsCompleted >= 5 }"
-            id="pickedup"
-          >
+          <div class="step" :class="{ completed: stepsCompleted >= 5 }" id="pickedup">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
@@ -89,33 +72,37 @@
 </template>
 
 <script>
+import LoadingScreen from "@/components/LoadingScreen";
 import Api from "@/API";
 export default {
   data() {
     return {
       order: {},
       stepsCompleted: 1,
+      loaded: false,
     };
   },
   created() {
     this.trackOrder();
+  },
+  components: {
+    LoadingScreen,
   },
   methods: {
     async trackOrder() {
       const response = await Api.trackOrder(this.$route.params.id);
       const body = await response.json();
       this.order = body;
-      console.log(body);
-      this.orderStateCheck(this.order["order-state"]);
-
-      console.log(this.stepsCompleted < 4);
+      this.orderStateCheck(this.order["order_state"]);
+      this.loaded = true;
       if (this.stepsCompleted < 4) {
         setTimeout(() => {
           this.trackOrder();
-        }, 1000);
+        }, 2000);
       }
     },
     orderStateCheck(state) {
+      console.log(state);
       switch (state) {
         case "PLACED":
           this.stepsCompleted = 1;

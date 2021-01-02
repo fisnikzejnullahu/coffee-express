@@ -1,5 +1,9 @@
 <template>
-  <div class="container" style="padding-top: 7em">
+  <div v-if="!loaded">
+    <LoadingScreen />
+  </div>
+
+  <div v-else class="container" style="padding-top: 7em">
     <div class="table-responsive" style="overflow: hidden">
       <div class="table-wrapper">
         <table class="table table-striped table-hover">
@@ -14,7 +18,7 @@
           </thead>
           <tbody>
             <tr v-for="(order, index) in orders" :key="order.orderId">
-              <td>{{ index }}</td>
+              <td>{{ 1 + index + page * 5 }}</td>
               <td>{{ order.finishedAt }}</td>
               <td><span class="status">•</span> {{ order.orderState }}</td>
               <td>${{ order.orderDetails.totalOfOrder }}</td>
@@ -25,7 +29,9 @@
                   title="View Details"
                   data-toggle="tooltip"
                   data-original-title="View Details"
-                  ><i class="icon-fullscreen-enter"></i></router-link
+                  ><i class="icon-fullscreen-enter" style="font-size: 1.5em"
+                    ></i
+                  ></router-link
                 >
                 <router-link
                   :to="{ name: 'OrderTrack', params: { id: order.orderId } }"
@@ -33,7 +39,7 @@
                   title="Track"
                   data-toggle="tooltip"
                   data-original-title="Track"
-                  ><i class="icon-eye"></i
+                  ><i class="icon-eye" style="font-size: 1.5em"></i
                 ></router-link>
               </td>
             </tr>
@@ -44,9 +50,10 @@
           <div class="row" style="font-size: 1.5em">
             <div class="col" style="text-align: end">
               <a
-                href="#"
-                class="view text-muted"
-                style="pointer-events: none"
+                type="button"
+                class="view"
+                :class="page == 0 ? 'text-muted' : ''"
+                @click="page != 0 ? previousPage() : null"
                 title=""
                 data-toggle="tooltip"
                 data-original-title="View Details"
@@ -55,9 +62,10 @@
             </div>
             <div class="col" style="text-align: start">
               <a
-                href="#"
-                class="view text-muted"
-                style="pointer-events: none"
+                type="button"
+                class="view"
+                :class="page + 1 == totalPages ? 'text-muted' : ''"
+                @click="page + 1 != totalPages ? nextPage() : null"
                 title=""
                 data-toggle="tooltip"
                 data-original-title="View Details"
@@ -73,6 +81,7 @@
 
 <script>
 import Api from "@/API";
+import LoadingScreen from "@/components/LoadingScreen";
 import { mapGetters } from "vuex";
 export default {
   name: "Orders",
@@ -80,7 +89,12 @@ export default {
     return {
       orders: [],
       page: 0,
+      totalPages: 0,
+      loaded: false,
     };
+  },
+  components: {
+    LoadingScreen,
   },
   created() {
     this.fetchMyOrders();
@@ -88,13 +102,20 @@ export default {
   methods: {
     ...mapGetters(["currentUser"]),
     async fetchMyOrders() {
+      console.log(this.page);
       const response = await Api.getMyOrders(this.currentUser().id, this.page);
       const body = await response.json();
+      console.log(body);
+      this.totalPages = body["total_pages"];
       this.orders = body.orders;
-      console.log(this.orders);
+      this.loaded = true;
     },
     async nextPage() {
       this.page++;
+      this.fetchMyOrders();
+    },
+    async previousPage() {
+      this.page--;
       this.fetchMyOrders();
     },
   },
@@ -105,4 +126,16 @@ export default {
 .table {
   color: gray;
 }
-</style>>
+.table-hover tbody tr {
+  cursor: pointer;
+}
+
+.table-hover tbody tr:hover {
+  color: #ffffff;
+}
+
+.view:hover {
+  filter: brightness(0.8);
+}
+</style>
+>

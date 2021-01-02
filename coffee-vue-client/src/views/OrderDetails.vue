@@ -1,5 +1,9 @@
 <template>
-  <section class="ftco-section ftco-cart">
+  <div v-if="!loaded">
+    <LoadingScreen />
+  </div>
+
+  <section v-else class="ftco-section ftco-cart">
     <div class="container">
       <div class="row">
         <div class="col">
@@ -23,21 +27,25 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="text-center">
+                <tr
+                  class="text-center"
+                  v-for="item in order.orderDetails.items"
+                  :key="item.menuItem.id"
+                >
                   <td class="image-prod">
                     <div
                       class="img"
-                      style="
-                        background-image: url('https://globalassets.starbucks.com/assets/f12bc8af498d45ed92c5d6f1dac64062.jpg?impolicy=1by1_tight_288');
-                      "
+                      :style="{
+                        'background-image': 'url(' + item.menuItem.thumbnail + ')',
+                      }"
                     ></div>
                   </td>
 
                   <td class="product-name">
-                    <h3>Caffè Americano</h3>
+                    <h3>{{ item.menuItem.name }}</h3>
                   </td>
 
-                  <td class="price">$1.03</td>
+                  <td class="price">${{ item.menuItem.price }}</td>
 
                   <td class="quantity">
                     <div class="input-group mb-3">
@@ -45,16 +53,14 @@
                         type="text"
                         name="quantity"
                         class="quantity form-control input-number"
-                        value="1"
-                        min="1"
-                        max="100"
+                        :value="item.quantity"
+                        disabled
                       />
                     </div>
                   </td>
 
-                  <td class="total">$ 1.03</td>
+                  <td class="total">$ {{ item.totalPrice }}</td>
                 </tr>
-                <!-- END TR-->
               </tbody>
             </table>
           </div>
@@ -64,17 +70,22 @@
         <div class="col mt-5 cart-wrap ftco-animate fadeInUp ftco-animated">
           <div class="cart-total mb-3">
             <h3>Kitchen details:</h3>
+            <p class="d-flex total-price">
+              <span>Order State</span>
+              <span>{{ order.orderState }}</span>
+            </p>
             <p class="d-flex">
               <span>Placed at</span>
-              <span>16 Nov 2020, 18:21:19</span>
+              <!-- <span>16 Nov 2020, 18:21:19</span> -->
+              <span>{{ order.placedAt }}</span>
             </p>
             <p class="d-flex">
               <span>Accepted at</span>
-              <span>16 Nov 2020, 18:21:21</span>
+              <span>{{ order.acceptedAt }}</span>
             </p>
             <p class="d-flex">
               <span>Finished at</span>
-              <span>16 Nov 2020, 18:23:13</span>
+              <span>{{ order.finishedAt }}</span>
             </p>
             <hr />
             <p class="d-flex total-price">
@@ -88,7 +99,7 @@
             <h3>Cart Totals</h3>
             <p class="d-flex">
               <span>Subtotal</span>
-              <span>$1.03</span>
+              <span>${{ order.orderDetails.totalOfOrder }}</span>
             </p>
             <p class="d-flex">
               <span>Delivery</span>
@@ -96,12 +107,12 @@
             </p>
             <p class="d-flex">
               <span>Discount</span>
-              <span>$3.00</span>
+              <span>$0.00</span>
             </p>
             <hr />
             <p class="d-flex total-price">
               <span>Total</span>
-              <span>$ 1.03</span>
+              <span>${{ order.orderDetails.totalOfOrder }}</span>
             </p>
           </div>
         </div>
@@ -111,12 +122,26 @@
 </template>
 
 <script>
+import Api from "@/API";
+import LoadingScreen from "@/components/LoadingScreen";
+
 export default {
-  created() {
-    console.log(this.$route.params.id);
+  data() {
+    return {
+      loaded: false,
+      order: {},
+    };
+  },
+  components: {
+    LoadingScreen,
+  },
+  async created() {
+    let response = await Api.getOrder(this.$route.params.id);
+    let body = await response.json();
+    this.order = body;
+    this.loaded = true;
   },
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -27,6 +27,11 @@ export const total = state => {
   return total;
 }
 
+export const popularBankAccount = state => {
+  console.log('popularBankAccount getters');
+  return state.auth.user.popularBankAccount;
+}
+
 export const currentUser = state => {
   console.log('currentUser getters');
   console.log(currentUser);

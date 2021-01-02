@@ -4,6 +4,7 @@ import com.fisnikz.coffee_express.events.FailMessages;
 import com.fisnikz.coffee_express.finance.boundary.FinanceCommandService;
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,6 +23,9 @@ public class FinanceService {
     @Inject
     FinanceCommandService commandService;
 
+    @Inject
+    JsonWebToken jsonWebToken;
+
     @Counted
     public void authorize(UUID orderId, UUID bankAccountId, double amount) {
         //TODO: call Stripe api and charge card
@@ -34,12 +38,17 @@ public class FinanceService {
         }
 
         BankAccount bankAccount = BankAccount.findById(bankAccountId);
-        if (bankAccount != null) {
-            savePayment(orderId, bankAccount, amount);
-            commandService.cardVerified(orderId);
+        if (bankAccount == null) {
+            commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_FOUND);
         }
         else {
-            commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_FOUND);
+            if (bankAccount.customerId.equals(UUID.fromString(jsonWebToken.getClaim("customer_id")))) {
+                savePayment(orderId, bankAccount, amount);
+                commandService.cardVerified(orderId);
+            }
+            else {
+                commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_BELONGS_CUSTOMER);
+            }
         }
 
     }

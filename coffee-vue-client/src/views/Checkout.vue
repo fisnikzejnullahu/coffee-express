@@ -36,7 +36,7 @@
                   <div class="col">
                     <p style="font-weight: bold; color: #fff">Payment Method</p>
                     <p>
-                      Ending with 005
+                      Ending with {{lastDigitsOfCC}}
                       <span
                         style="
                           text-decoration: underline;
@@ -61,7 +61,7 @@
                 <h3 class="billing-heading mb-4">Cart Total</h3>
                 <p class="d-flex">
                   <span>Subtotal</span>
-                  <span style="text-align: end">$20.60</span>
+                  <span style="text-align: end">${{ total }}</span>
                 </p>
                 <p class="d-flex">
                   <span>Delivery</span>
@@ -69,12 +69,12 @@
                 </p>
                 <p class="d-flex">
                   <span>Discount</span>
-                  <span style="text-align: end">$3.00</span>
+                  <span style="text-align: end">$0.00</span>
                 </p>
                 <hr />
                 <p class="d-flex total-price" style="font-size: 33px">
                   <span>Total</span>
-                  <span style="text-align: end">$17.60</span>
+                  <span style="text-align: end">${{ total }}</span>
                 </p>
                 <!-- <form action="/web-app/mvc/orders/place" method="post"> -->
                   <button
@@ -97,18 +97,37 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   data() {
     return {
       bankAccount: {}
     }
   },
+  created() {
+    this.bankAccount = this.$store.getters.popularBankAccount;
+    console.log(this.bankAccount);
+  },
   methods: {
-    ...mapActions(['placeOrder', 'currentUser', 'cartItems']),
-    place() {
-      let customerId = this.currentUser().customerId;
-      this.placeOrder(customerId, this.bankAccount.id, this.cartItems());
+    ...mapActions(['placeOrder', 'resetCart']),
+    async place() {
+      let customerId = this.currentUser.id;
+      let response = await this.placeOrder({
+        "customer_id": customerId,
+        "bank_account_id": this.bankAccount.id, 
+        "items": this.cartItems});
+
+        if (response.status === 201) {
+          this.resetCart();
+          let orderId = response.headers.get('Location').substring(response.headers.get('Location').lastIndexOf("/") + 1);
+          this.$router.push({ name: 'OrderTrack', params: { id:  orderId} });
+        }
+    }
+  },
+  computed: {
+    ...mapGetters(["currentUser", "cartItems", "total"]),
+    lastDigitsOfCC() {
+      return this.bankAccount["credit_card_info"]["card_number"].toString().substring(11);
     }
   }
 };

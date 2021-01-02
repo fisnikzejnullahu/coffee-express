@@ -29,8 +29,8 @@ export default {
     }),
   },
   methods: mapActions(["getMenu"]),
-  created() {
-    this.getMenu();
+  async created() {
+    await this.getMenu();
     this.loaded = true;
   },
 };
