@@ -31,4 +31,8 @@ public interface CustomersRestClient {
     @Path("{customerId}")
     Response find(@HeaderParam("Authorization") String authorization, @PathParam("customerId") String customerId);
 
+    @DELETE
+    @Path("{id}")
+    Response delete(@HeaderParam("Authorization") String authorization, @PathParam("id") String id);
+
 }

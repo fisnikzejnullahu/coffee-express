@@ -10,9 +10,7 @@ import javax.transaction.Transactional;
 @RequestScoped
 public class Initializer {
 
-//    void onStart(@Observes StartupEvent event) {
-//
-//        Order.deleteAll();
-//
-//    }
+    void onStart(@Observes StartupEvent event) {
+        Order.deleteAll();
+    }
 }

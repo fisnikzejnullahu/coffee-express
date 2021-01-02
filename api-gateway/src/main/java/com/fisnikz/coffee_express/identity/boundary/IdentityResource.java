@@ -34,7 +34,7 @@ public class IdentityResource {
     public Response refreshToken(@CookieParam("refresh_token") String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .header("reason", "refresh token is required for this action")
+                    .header("x-reason", "refresh token is required for this action")
                     .build();
         }
         return identityService.refreshToken(refreshToken);

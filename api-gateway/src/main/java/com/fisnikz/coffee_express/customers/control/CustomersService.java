@@ -10,8 +10,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
-import static com.fisnikz.coffee_express.identity.control.KeycloakService.adminToken;
-
 /**
  * @author Fisnik Zejnullahu
  */
@@ -26,26 +24,20 @@ public class CustomersService {
     IdentityService identityService;
 
     public String create(CreateCustomerRequest createCustomerRequest) {
-        Response createCustomerResponse = customersRestClient.create(adminToken.getTokenString(), createCustomerRequest);
+        Response createCustomerResponse = customersRestClient.create(identityService.getAdminToken(), createCustomerRequest);
 
-        if (createCustomerResponse.getStatus() != 201) {
-            throw new WebApplicationException(createCustomerResponse);
-        }
         String customerId = getCustomerIdFromLocationHeader(createCustomerResponse.getLocation());
-        System.out.println("1");
-        System.out.println("customerId = " + customerId);
-        System.out.println("1");
-
-        Response createAccountResponse = null;
+        System.out.println("CREATED: " + customerId);
         try {
-            createAccountResponse = identityService.createUserAccount(createCustomerRequest, customerId);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(createAccountResponse.getLocation());
-        System.out.println(createAccountResponse.getStatus());
-        if (createAccountResponse.getStatus() != 201) {
-            throw new WebApplicationException(createCustomerResponse);
+            identityService.createUserAccount(createCustomerRequest, customerId);
+        }catch (WebApplicationException ex) {
+            System.out.println("HAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHA");
+            /*
+            if some exception happened
+            delete the created customer and then throw the ex with response
+         */
+            customersRestClient.delete(identityService.getAdminToken(), customerId);
+            throw ex;
         }
 
         return customerId;

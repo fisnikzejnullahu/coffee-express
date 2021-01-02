@@ -7,8 +7,6 @@ import com.fisnikz.coffee_express.events.FailMessages;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.lang.System.Logger;
@@ -65,5 +63,9 @@ public class CustomerService {
 
     private boolean usernameExists(String username) {
         return Customer.find("username", username).singleResultOptional().isPresent();
+    }
+
+    public boolean delete(UUID customerId) {
+        return Customer.deleteById(customerId);
     }
 }

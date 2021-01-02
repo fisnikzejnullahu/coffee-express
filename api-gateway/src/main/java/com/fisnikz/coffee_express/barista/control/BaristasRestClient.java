@@ -1,6 +1,6 @@
 package com.fisnikz.coffee_express.barista.control;
 
-import com.fisnikz.coffee_express.AuthorizationHeaderClientRequestCheck;
+import com.fisnikz.coffee_express.AdminClientRequest;
 import com.fisnikz.coffee_express.MyResponseExceptionMapper;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @RegisterClientHeaders
 @RegisterProvider(MyResponseExceptionMapper.class)
-@RegisterProvider(AuthorizationHeaderClientRequestCheck.class)
+@RegisterProvider(AdminClientRequest.class)
 public interface BaristasRestClient {
 
     @GET

@@ -34,7 +34,5 @@ export const popularBankAccount = state => {
 
 export const currentUser = state => {
   console.log('currentUser getters');
-  console.log(currentUser);
-  console.log(typeof  state.auth.user);
   return state.auth.user;
 }

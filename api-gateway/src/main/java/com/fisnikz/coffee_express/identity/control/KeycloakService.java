@@ -30,12 +30,7 @@ public class KeycloakService {
     @ConfigProperty(name = "keycloak.client.id", defaultValue = "coffee-express-admin-api-client")
     String keycloakClientId;
 
-    public static Token adminToken;
-
-    @PostConstruct
-    public void init() {
-        getAdminToken();
-    }
+    private Token adminToken;
 
     public Object[] login(String username, String password) {
         return loginAndGetUserTokensAndCustomerId(username, password);
@@ -45,19 +40,7 @@ public class KeycloakService {
         Response loginResponse = keycloakRestClient.login(username, password, "password", keycloakClientId, null);
         JsonObject tokenData = loginResponse.readEntity(JsonObject.class);
 
-        Response userResponse = null;
-        try {
-            userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
-        } catch (WebApplicationException ex) {
-            if (ex.getResponse().getStatus() == 401) {
-                getAdminToken();
-                userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
-            }
-        }
-        if (userResponse.getStatus() == 401) {
-            getAdminToken();
-            keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
-        }
+        Response userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
 
         if (userResponse.getStatus() != 200) {
             throw new WebApplicationException(userResponse);
@@ -97,10 +80,16 @@ public class KeycloakService {
 
     }
 
-    private void getAdminToken() {
-        System.out.println("GET admin token");
+    public void generateNewAdminToken() {
         JsonObject data = keycloakRestClient.login("fisnikz", "123456", "password", keycloakClientId, null).readEntity(JsonObject.class);
+        System.out.println("Generate admin token");
+        System.out.println(data);
+        System.out.println("Generate admin token");
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
+    }
+
+    public String getAdminToken() {
+        return this.adminToken.getTokenString();
     }
 
 
@@ -131,15 +120,6 @@ public class KeycloakService {
                 .add("attributes", customerIdAttribute)
                 .build();
 
-        Response response = null;
-        try {
-            response = keycloakRestClient.create(toBearerToken(adminToken.getTokenString()), createAccountBody);
-        } catch (WebApplicationException ex) {
-            if (ex.getResponse().getStatus() == 401) {
-                getAdminToken();
-                response = keycloakRestClient.create(toBearerToken(adminToken.getTokenString()), createAccountBody);
-            }
-        }
-        return response;
+        return keycloakRestClient.create(toBearerToken(adminToken.getTokenString()), createAccountBody);
     }
 }

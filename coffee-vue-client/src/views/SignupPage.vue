@@ -94,6 +94,9 @@ export default {
           console.log('SUCCESS... redirection to login');
           this.gotoSignin();
         }
+        else if (response.status === 409) {
+          alert('User with that username already exists!');
+        }
       }
     }
   },

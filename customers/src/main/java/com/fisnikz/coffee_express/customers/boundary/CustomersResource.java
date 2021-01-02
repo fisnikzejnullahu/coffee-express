@@ -11,6 +11,8 @@ import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -62,9 +64,27 @@ public class CustomersResource {
     @Path("{customerId}")
     @RolesAllowed({"full_access", "manage_orders"})
     public Customer find(@PathParam("customerId") UUID customerId) {
+        jsonWebToken.getGroups().forEach(System.out::println);
+        System.out.println(customerId);
+        System.out.println(jsonWebToken.getClaim("customer_id").toString());
+        System.out.println(UUID.fromString(jsonWebToken.getClaim("customer_id")));
+        System.out.println(UUID.fromString(jsonWebToken.getClaim("customer_id")).equals(customerId));
         if (!jsonWebToken.getGroups().contains("full_access") && !customerId.equals(UUID.fromString(jsonWebToken.getClaim("customer_id")))) {
             throw new ForbiddenException();
         }
         return customerService.getCustomer(customerId);
+    }
+
+    @DELETE
+    @Path("{id}")
+    @RolesAllowed({"full_access"})
+    public Response delete(@PathParam("id") UUID customerId) {
+        boolean deleted = customerService.delete(customerId);
+
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", customerId.toString())
+                .add("success", deleted);
+
+        return Response.ok(response.build()).build();
     }
 }

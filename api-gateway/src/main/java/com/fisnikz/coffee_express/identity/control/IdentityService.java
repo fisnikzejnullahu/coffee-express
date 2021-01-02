@@ -77,4 +77,8 @@ public class IdentityService {
     public Response onCreateUserAccountFail(CreateCustomerRequest createCustomerRequest, String customerId) {
         return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
     }
+
+    public String getAdminToken() {
+        return toBearerToken(keycloakService.getAdminToken());
+    }
 }

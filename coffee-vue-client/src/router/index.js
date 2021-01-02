@@ -14,6 +14,8 @@ import SigninPage from "../views/SigninPage.vue";
 import SignupPage from "../views/SignupPage.vue";
 import Logout from "../views/Logout.vue";
 
+import store from "../store";
+
 
 Vue.use(VueRouter);
 
@@ -90,5 +92,23 @@ const router = new VueRouter({
   linkActiveClass: "active", // active class for non-exact links.
   linkExactActiveClass: "active" // active class for *exact* links.
 });
+
+router.beforeEach((to, from, next) => {
+  // redirect to login page if not logged in and trying to access a restricted page
+  const authPages = ['/signin', '/signup'];
+  const loggedIn = store.getters.currentUser !== null;
+
+  console.log(loggedIn);
+  if (loggedIn && authPages.includes(to.path)) {
+    return next(from);
+  }
+
+  //everybody is allowed to see menu and home view 
+  if (!loggedIn && (to.path !== '/' && to.path !== '/menu') && !authPages.includes(to.path)) {
+    return next('/signin');
+  }
+
+  next();
+})
 
 export default router;
