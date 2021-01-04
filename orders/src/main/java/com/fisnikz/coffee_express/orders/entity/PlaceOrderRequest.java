@@ -8,25 +8,15 @@ import java.util.UUID;
  */
 public class PlaceOrderRequest {
 
-    private UUID customerId;
     private UUID bankAccountId;
     private List<_OrderItem> items;
 
     public PlaceOrderRequest() {
     }
 
-    public PlaceOrderRequest(UUID customerId, UUID bankAccountId, List<_OrderItem> items) {
-        this.customerId = customerId;
+    public PlaceOrderRequest(UUID bankAccountId, List<_OrderItem> items) {
         this.bankAccountId = bankAccountId;
         this.items = items;
-    }
-
-    public UUID getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
     }
 
     public UUID getBankAccountId() {

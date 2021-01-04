@@ -3,6 +3,7 @@ package com.fisnikz.coffee_express.customers.control;
 import com.fisnikz.coffee_express.AuthorizationHeaderClientRequestCheck;
 import com.fisnikz.coffee_express.MyResponseExceptionMapper;
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
+import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.identity.entity.Token;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
@@ -26,6 +27,10 @@ public interface CustomersRestClient {
 
     @POST
     Response create(@HeaderParam("Authorization") String authorization, CreateCustomerRequest createCustomerRequest);
+
+    @PUT
+    @Path("{id}")
+    Response update(@HeaderParam("X-Authorization") String authorization, @PathParam("id") String id, UpdateCustomerRequest request);
 
     @GET
     @Path("{customerId}")

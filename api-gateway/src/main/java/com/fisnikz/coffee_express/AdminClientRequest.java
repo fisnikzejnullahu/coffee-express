@@ -17,6 +17,7 @@ public class AdminClientRequest implements ClientRequestFilter {
 
     @Override
     public void filter(ClientRequestContext requestContext) {
+        System.out.println("FILTERING");
         requestContext.getHeaders().add("Authorization", "Bearer " + keycloakService.getAdminToken());
     }
 }

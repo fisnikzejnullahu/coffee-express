@@ -31,21 +31,9 @@ export const login = async ({commit}, userInfo) => {
   console.log(response);
   if (response.status === 200) {
     let customerInfo = await response.json();
-    
-    let popularBankAccountResponse = await Api.getMyPopularBankAccount(customerInfo.id);
-    console.log(popularBankAccountResponse.headers.get("content-length"));
-    if (popularBankAccountResponse.headers.get("content-length") == 0) {
-      customerInfo.popularBankAccount = null;
-    }else {
-      let popularBankAccount = await popularBankAccountResponse.json();
-      delete popularBankAccount["customer_id"];
-      customerInfo.popularBankAccount = popularBankAccount;
-    }
-
     commit('LOGGED_IN', customerInfo);
-    return response;
   }
-  return null;
+  return response;
 }
 
 export const logout = async ({commit}) => {

@@ -2,7 +2,9 @@ package com.fisnikz.coffee_express.customers.control;
 
 import com.fisnikz.coffee_express.customers.boundary.CustomerCommandService;
 import com.fisnikz.coffee_express.customers.entity.Customer;
+import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.events.FailMessages;
+import io.quarkus.panache.common.Parameters;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -67,5 +69,25 @@ public class CustomerService {
 
     public boolean delete(UUID customerId) {
         return Customer.deleteById(customerId);
+    }
+
+    public int update(UUID customerId, UpdateCustomerRequest updateCustomerRequest) {
+        Customer customer = Customer.findById(customerId);
+
+        if (customer == null) {
+            return -1;
+        }
+
+        if (!customer.username.equals(updateCustomerRequest.getUsername()) && usernameExists(updateCustomerRequest.getUsername())) {
+            throw new WebApplicationException("Customer exists with same username", Response.Status.CONFLICT);
+        }
+
+        int update = Customer.update("firstName = :firstName, lastName = :lastName, username = :username",
+                Parameters.with("firstName", updateCustomerRequest.getFirstName())
+                        .and("lastName", updateCustomerRequest.getLastName())
+                        .and("username", updateCustomerRequest.getUsername()));
+
+        System.out.println("update = " + update);
+        return update;
     }
 }

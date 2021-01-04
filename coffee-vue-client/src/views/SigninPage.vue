@@ -2,34 +2,18 @@
   <div class="limiter">
     <div class="container-login100">
       <div class="wrap-login100">
-        <form
-          class="login100-form validate-form"
-          @submit.prevent="onSubmit"
-        >
+        <form class="login100-form validate-form" @submit.prevent="onSubmit">
           <span class="login100-form-title p-b-43"> Login to continue </span>
           <div
             class="wrap-input100 validate-input"
             data-validate="Valid email is required: ex@abc.xyz"
           >
-            <input
-              class="input100"
-              type="text"
-              name="email"
-              v-model="username"
-            />
+            <input class="input100" type="text" name="email" v-model="username" />
             <span class="focus-input100"></span>
             <span class="label-input100">Email</span>
           </div>
-          <div
-            class="wrap-input100 validate-input"
-            data-validate="Password is required"
-          >
-            <input
-              class="input100"
-              type="password"
-              name="pass"
-              v-model="password"
-            />
+          <div class="wrap-input100 validate-input" data-validate="Password is required">
+            <input class="input100" type="password" name="pass" v-model="password" />
             <span class="focus-input100"></span>
             <span class="label-input100">Password</span>
           </div>
@@ -47,8 +31,46 @@
               <a href="#" class="txt1"> Forgot Password? </a>
             </div>
           </div>
+
           <div class="container-login100-form-btn">
-            <button type="submit" class="login100-form-btn">Login</button>
+            <button
+              type="submit"
+              class="login100-form-btn load-button"
+              :class="{ 'loading-start': clicked }"
+              :disabled="clicked"
+              id="signin-btn"
+              style="width: 100%"
+            >
+              <span style="color: inherit">Login</span>
+              <svg
+                version="1.1"
+                id="loader-1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                width="23px"
+                height="23px"
+                viewBox="0 0 50 50"
+                style="enable-background: new 0 0 50 50"
+                xml:space="preserve"
+              >
+                <path
+                  fill="#fff"
+                  d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"
+                >
+                  <animateTransform
+                    attributeType="xml"
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 25 25"
+                    to="360 25 25"
+                    dur="0.6s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </path>
+              </svg>
+            </button>
           </div>
           <div class="text-center p-t-46 p-b-20">
             <button type="button" class="txt my-txt-link" @click="gotoSignup()">
@@ -59,8 +81,7 @@
         <div
           class="login100-more"
           :style="{
-            'background-image':
-              'url(' + require('@/assets/images/bg_1.jpg') + ')',
+            'background-image': 'url(' + require('@/assets/images/bg_1.jpg') + ')',
           }"
         ></div>
       </div>
@@ -73,9 +94,9 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
+      clicked: false,
       username: "",
       password: "",
-      submitted: false,
     };
   },
   computed: {
@@ -87,17 +108,24 @@ export default {
       this.$router.push("signup");
     },
     async onSubmit(e) {
-      this.submitted = true;
+      this.clicked = true;
       const { username, password } = this;
       if (username && password) {
         console.log(username);
         console.log(password);
-        const response = await this.login({ username, password });
-        this.$router.push('/');
+        let response = await this.login({ username, password });
+        console.log(response);
+        if (response.status === 200) {
+          this.$router.push("/");
+        } else if (response.status === 401) {
+          alert("username or password is incorrect");
+        } else {
+          alert("something went wrong!");
+        }
+      } else {
+        alert("username and password are required");
       }
-      else {
-        alert('username and password are required');
-      }
+      this.clicked = false;
     },
   },
 };
@@ -7981,7 +8009,7 @@ input.input100 {
   bottom: 0;
 }
 
-.invalid-feedback{
+.invalid-feedback {
   display: block !important;
   font-size: 100%;
 }

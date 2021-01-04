@@ -93,9 +93,11 @@ export default {
   async created() {
     let id = this.currentUser().id;
     const response = await Api.getMyBankAccounts(id);
-    this.bankAccounts = await response.json();
+    if (response.headers.get("content-length") != 0) {
+      this.bankAccounts = await response.json();
+      console.log(this.bankAccounts);
+    }
     this.loaded = true;
-    console.log(this.bankAccounts);
   },
   methods: {
     countDownChanged(dismissCountDown) {
@@ -121,7 +123,7 @@ export default {
         this.showAlert();
         setTimeout(() => {
           this.bankAccounts.splice(index, 1);
-        }, 1000)
+        }, 1000);
       }
     },
     showNewBankAccView() {

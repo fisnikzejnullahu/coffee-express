@@ -8,14 +8,16 @@ import java.util.UUID;
 public class AuthorizeCard extends OrderCommand {
 
     private UUID bankAccountId;
+    private UUID customerId;
     private double amount;
 
     public AuthorizeCard() {
     }
 
-    public AuthorizeCard(UUID orderId, UUID bankAccountId, double amount) {
+    public AuthorizeCard(UUID orderId, UUID bankAccountId, UUID customerId, double amount) {
         super(orderId);
         this.bankAccountId = bankAccountId;
+        this.customerId = customerId;
         this.amount = amount;
     }
 
@@ -33,5 +35,13 @@ public class AuthorizeCard extends OrderCommand {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 }

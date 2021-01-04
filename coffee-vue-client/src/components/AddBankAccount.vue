@@ -20,7 +20,7 @@
                 class="form-control pl-4"
                 name="username"
                 placeholder="name"
-                required=""
+                required
               />
             </div>
             <!-- input-group.// -->
@@ -39,6 +39,7 @@
               </div>
               <input
                 v-model="cardNumber"
+                required
                 type="text"
                 class="form-control pl-4"
                 name="cardNumber"
@@ -54,11 +55,7 @@
               <div class="form-group">
                 <label><span class="hidden-xs">Expiration</span> </label>
                 <div class="form-inline">
-                  <select
-                    class="form-control"
-                    style="width: 45%"
-                    v-model="expMonth"
-                  >
+                  <select class="form-control" style="width: 45%" v-model="expMonth">
                     <option disabled selected>MM</option>
                     <option value="01">01 - January</option>
                     <option value="02">02 - February</option>
@@ -74,11 +71,7 @@
                     <option value="12">12 - December</option>
                   </select>
                   <span style="width: 10%; text-align: center"> / </span>
-                  <select
-                    class="form-control"
-                    style="width: 45%"
-                    v-model="expYear"
-                  >
+                  <select class="form-control" style="width: 45%" v-model="expYear">
                     <option disabled selected>YY</option>
                     <option value="2020">2020</option>
                     <option value="2021">2021</option>
@@ -102,12 +95,7 @@
                   data-original-title="3 digits code on back side of the card"
                   >CVV <i class="fa fa-question-circle"></i
                 ></label>
-                <input
-                  class="form-control"
-                  required=""
-                  type="text"
-                  v-model="cvc"
-                />
+                <input class="form-control" required type="text" v-model="cvc" />
               </div>
               <!-- form-group.// -->
             </div>
@@ -117,6 +105,7 @@
             type="submit"
             class="subscribe btn btn-primary btn-block btn-lg mt-2 load-button"
             :class="{ 'loading-start': clicked }"
+            :disabled="clicked"
             id="signin-btn"
             style="width: 100%"
           >

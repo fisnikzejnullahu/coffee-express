@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,18 +21,17 @@ public class Customer extends PanacheEntityBase {
     @Type(type = "uuid-char")
     public UUID id;
 
-    @NotNull
+    @NotBlank
     public String firstName;
 
-    @NotNull
+    @NotBlank
     public String lastName;
 
-    @NotNull
+    @NotBlank
     public String username;
 
     @NotNull
     public LocalDateTime registeredAt;
-
     public boolean banned;
 
 }

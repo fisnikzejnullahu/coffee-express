@@ -24,7 +24,7 @@ public class FinanceService {
     FinanceCommandService commandService;
 
     @Counted
-    public void authorize(UUID orderId, UUID bankAccountId, double amount) {
+    public void authorize(UUID orderId, UUID bankAccountId, UUID customerId, double amount) {
         //TODO: call Stripe api and charge card
         //TODO: validate that the bankAccounts belongs to the customer that want to make payment, not everyone can use bankAccountId to make payments
         //for now just simulate a wait and return a success
@@ -38,8 +38,12 @@ public class FinanceService {
         if (bankAccount == null) {
             commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_FOUND);
         } else {
-            savePayment(orderId, bankAccount, amount);
-            commandService.cardVerified(orderId);
+            if (!bankAccount.customerId.equals(customerId)) {
+                commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_BELONGS_TO_CUSTOMER);
+            }else {
+                savePayment(orderId, bankAccount, amount);
+                commandService.cardVerified(orderId);
+            }
         }
 
     }

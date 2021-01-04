@@ -17,13 +17,21 @@ async function call(url, object, httpMethod) {
   });
 
   if (response.status === 401) {
+    console.log('401####################');
+    // console.log('0');
     if (retryUnauthorized === 0) {
+    //   console.log('1');
+      retryUnauthorized++;
       await refreshLogin();
-      return call(url, object, httpMethod); 
+      response = call(url, object, httpMethod); 
+    // }
+    // else if (retryUnauthorized > 0) {
+    //   console.log('hahahaha');
     }
-  }else{
-    retryUnauthorized = 0;
   }
+  // else{
+  //   retryUnauthorized = 0;
+  // }
 
   return response;
 }
@@ -78,5 +86,9 @@ export default {
   },
   async getMyPayments(customerId) {
     return await call(`${API_URL}/payments?customerId=${customerId}`, null, "GET");
+  },
+  async updateProfile(customerId, body) {
+    console.log(body);
+    return await call(`${API_URL}/customers/${customerId}`, body, "PUT");
   }
 };

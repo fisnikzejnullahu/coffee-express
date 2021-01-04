@@ -20,6 +20,6 @@ public class FinanceCommandHandler {
     FinanceService financeService;
 
     void handleEvent(@Observes AuthorizeCard event) {
-        financeService.authorize(event.getOrderId(), event.getBankAccountId(), event.getAmount());
+        financeService.authorize(event.getOrderId(), event.getBankAccountId(), event.getCustomerId(), event.getAmount());
     }
 }

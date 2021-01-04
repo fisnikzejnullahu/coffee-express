@@ -14,6 +14,7 @@ import SigninPage from "../views/SigninPage.vue";
 import SignupPage from "../views/SignupPage.vue";
 import Logout from "../views/Logout.vue";
 import AddBankAccount from "../components/AddBankAccount.vue";
+import Profile from "../views/Profile.vue";
 
 import store from "../store";
 
@@ -88,6 +89,11 @@ const routes = [{
     path: "/add-bankacc",
     name: "AddBankAccount",
     component: AddBankAccount,
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
   },
 ];
 

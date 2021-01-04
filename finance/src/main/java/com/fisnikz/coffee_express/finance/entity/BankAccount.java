@@ -26,6 +26,8 @@ public class BankAccount extends PanacheEntityBase {
     @NotNull
     public UUID customerId;
 
+    public boolean removed;
+
     @Embedded
     @NotNull
     public CreditCardInfo creditCardInfo;

@@ -1,12 +1,12 @@
 package com.fisnikz.coffee_express.identity.control;
 
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
+import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.identity.entity.Token;
 import io.quarkus.runtime.Startup;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.*;
@@ -40,19 +40,22 @@ public class KeycloakService {
         Response loginResponse = keycloakRestClient.login(username, password, "password", keycloakClientId, null);
         JsonObject tokenData = loginResponse.readEntity(JsonObject.class);
 
-        Response userResponse = keycloakRestClient.findUser(toBearerToken(adminToken.getTokenString()), username);
+        Response userResponse = keycloakRestClient.findUser(toBearerToken(getAdminToken()), username);
 
         if (userResponse.getStatus() != 200) {
             throw new WebApplicationException(userResponse);
         }
 
         String customerId = null;
+        //keycloak accountId
+        String accountId = null;
 
         JsonArray usersJson = userResponse.readEntity(JsonArray.class);
 
         for (JsonValue u : usersJson) {
             JsonObject object = u.asJsonObject();
             if (object.getString("username").equals(username)) {
+                accountId = object.getString("id");
                 customerId = object.getJsonObject("attributes").getJsonArray("customerId").get(0).toString().replace("\"", "");
                 break;
             }
@@ -61,6 +64,7 @@ public class KeycloakService {
         return new Object[]{
                 new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
                 new Token(tokenData.getString("refresh_token"), Token.TokenType.REFRESH_TOKEN, tokenData.getJsonNumber("refresh_expires_in").intValue()),
+                accountId,
                 customerId
         };
     }
@@ -81,10 +85,7 @@ public class KeycloakService {
     }
 
     public void generateNewAdminToken() {
-        JsonObject data = keycloakRestClient.login("fisnikz", "123456", "password", keycloakClientId, null).readEntity(JsonObject.class);
-        System.out.println("Generate admin token");
-        System.out.println(data);
-        System.out.println("Generate admin token");
+        JsonObject data = keycloakRestClient.login("fisnikz", "12345678", "password", keycloakClientId, null).readEntity(JsonObject.class);
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
     }
 
@@ -98,28 +99,43 @@ public class KeycloakService {
     }
 
     public Response createAccount(CreateCustomerRequest createCustomerRequest, String customerId) {
+        JsonObject createAccountBody = keycloakJsonUserRepresentation(customerId, createCustomerRequest.getFirstName(), createCustomerRequest.getLastName(), createCustomerRequest.getUsername(), createCustomerRequest.getPassword());
+
+        return keycloakRestClient.create(toBearerToken(getAdminToken()), createAccountBody);
+    }
+
+    public Response update(String customerId, UpdateCustomerRequest request) {
+        JsonObject userJson = keycloakJsonUserRepresentation(customerId, request.getFirstName(), request.getFirstName(), request.getUsername(), request.getNewPassword());
+        System.out.println(userJson);
+        return keycloakRestClient.update(toBearerToken(getAdminToken()), request.getAccountId(), userJson);
+    }
+
+    private JsonObject keycloakJsonUserRepresentation(String customerId, String firstName, String lastName, String username, String password) {
         JsonObjectBuilder customerIdAttribute = Json.createObjectBuilder()
                 .add("customerId", Json.createArrayBuilder().add(customerId));
 
-        JsonObjectBuilder password = Json.createObjectBuilder()
-                .add("type", "password")
-                .add("temporary", false)
-                .add("value", createCustomerRequest.getPassword());
+        JsonArrayBuilder credentialsArray = Json.createArrayBuilder();
+        if (password != null) {
+            JsonObjectBuilder passwordJson = Json.createObjectBuilder()
+                    .add("type", "password")
+                    .add("temporary", false)
+                    .add("value", password);
+            credentialsArray.add(passwordJson);
+        }
 
-        JsonArrayBuilder credentialsArray = Json.createArrayBuilder()
-                .add(password);
-
-        JsonObject createAccountBody = Json.createObjectBuilder()
-                .add("firstName", createCustomerRequest.getFirstName())
-                .add("lastName", createCustomerRequest.getFirstName())
-                .add("username", createCustomerRequest.getUsername())
-                .add("credentials", credentialsArray)
+        JsonObjectBuilder userRepresentation = Json.createObjectBuilder()
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("username", username)
                 .add("emailVerified", true)
                 .add("enabled", true)
                 .add("groups", Json.createArrayBuilder().add("USERS"))
-                .add("attributes", customerIdAttribute)
-                .build();
+                .add("attributes", customerIdAttribute);
 
-        return keycloakRestClient.create(toBearerToken(adminToken.getTokenString()), createAccountBody);
+        if (password != null) {
+            userRepresentation.add("credentials", credentialsArray);
+        }
+
+        return userRepresentation.build();
     }
 }

@@ -46,7 +46,44 @@
             </div>
           </div>
           <div class="container-login100-form-btn">
-            <button class="login100-form-btn">SUBMIT</button>
+            <button
+              type="submit"
+              class="login100-form-btn load-button"
+              :class="{ 'loading-start': clicked }"
+              :disabled="clicked"
+              id="signin-btn"
+              style="width: 100%"
+            >
+              <span style="color: inherit">Submit</span>
+              <svg
+                version="1.1"
+                id="loader-1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                width="23px"
+                height="23px"
+                viewBox="0 0 50 50"
+                style="enable-background: new 0 0 50 50"
+                xml:space="preserve"
+              >
+                <path
+                  fill="#fff"
+                  d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"
+                >
+                  <animateTransform
+                    attributeType="xml"
+                    attributeName="transform"
+                    type="rotate"
+                    from="0 25 25"
+                    to="360 25 25"
+                    dur="0.6s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </path>
+              </svg>
+            </button>
           </div>
           <div class="text-center p-t-46 p-b-20">
             <button type="button" class="txt my-txt-link" @click="gotoSignin()">
@@ -71,6 +108,7 @@ import { mapActions } from 'vuex';
 export default {
   data() {
     return {
+      clicked: false,
       userInfo: {
         first_name: "",
         last_name: "",
@@ -85,12 +123,14 @@ export default {
       this.$router.push("signin");
     },
     async onSubmit() {
+      this.clicked = true;
       if (this.userInfo.first_name === '' || this.userInfo.last_name === '' || this.userInfo.username === '' || this.userInfo.password === ''){
         alert('Please fill all fields');
       }
       else {
         const response = await this.signup(this.userInfo);
         if (response.status === 201) {
+          this.clicked = false;
           console.log('SUCCESS... redirection to login');
           this.gotoSignin();
         }
@@ -98,6 +138,7 @@ export default {
           alert('User with that username already exists!');
         }
       }
+        this.clicked = false;
     }
   },
 };

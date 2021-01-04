@@ -40,7 +40,7 @@ public class OrdersResource {
     public Response place(PlaceOrderRequest placeOrderRequest) {
         System.out.println(JsonbBuilder.create().toJson(placeOrderRequest));
         UUID orderId = UUID.randomUUID();
-        orderService.place(orderId, placeOrderRequest);
+        orderService.place(orderId, UUID.fromString(jsonWebToken.getClaim("customer_id")), placeOrderRequest);
 
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(OrdersResource.class, "find").build(orderId))

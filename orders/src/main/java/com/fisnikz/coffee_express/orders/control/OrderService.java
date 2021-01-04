@@ -36,8 +36,8 @@ public class OrderService {
     Event<Order> event;
 
     @Counted(name = "placed_orders")
-    public void place(UUID orderId, PlaceOrderRequest placeOrderRequest) {
-        Order order = new Order(orderId, placeOrderRequest.getCustomerId(), placeOrderRequest.getBankAccountId(), new OrderDetails(makeOrderItems(placeOrderRequest.getItems())));
+    public void place(UUID orderId, UUID customerId, PlaceOrderRequest placeOrderRequest) {
+        Order order = new Order(orderId, customerId, placeOrderRequest.getBankAccountId(), new OrderDetails(makeOrderItems(placeOrderRequest.getItems())));
         LOG.log(Logger.Level.INFO, "Placing order: " + JsonbBuilder.create().toJson(placeOrderRequest));
         order.place();
         order.persist();

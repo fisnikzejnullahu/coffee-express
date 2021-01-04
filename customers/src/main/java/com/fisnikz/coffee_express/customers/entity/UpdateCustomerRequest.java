@@ -1,20 +1,37 @@
 package com.fisnikz.coffee_express.customers.entity;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Fisnik Zejnullahu
  */
-public class CreateCustomerRequest {
+public class UpdateCustomerRequest {
 
+    //keycloak accountId
+    @NotBlank
+    private String accountId;
+
+    @NotBlank
     private String firstName;
+
+    @NotBlank
     private String lastName;
+
+    @NotBlank
     private String username;
 
-    @Min(value = 8, message = "Min length for password is 8 characters")
-    private String password;
+    public UpdateCustomerRequest() {
+    }
 
-    public CreateCustomerRequest() {
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public String getFirstName() {
@@ -39,13 +56,5 @@ public class CreateCustomerRequest {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

@@ -10,6 +10,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -69,12 +70,19 @@ public class BankAccountsResource {
     @DELETE
     @Path("{accountId}")
     public Response delete(@PathParam("accountId") UUID accountId) {
-        boolean deleted = service.delete(accountId, jsonWebToken.getClaim("customer_id"));
-        JsonObject data = Json.createObjectBuilder()
-                .add("id", accountId.toString())
-                .add("success", deleted)
-                .build();
-        return Response.ok(data).build();
+        int deleted = service.delete(accountId, jsonWebToken.getClaim("customer_id"));
+
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", accountId.toString());
+
+        if (deleted != 0) {
+            response.add("success", true);
+        }
+        else {
+            response.add("success", false);
+        }
+
+        return Response.ok(response.build()).build();
     }
 
     @GET

@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.customers.boundary;
 
 import com.fisnikz.coffee_express.customers.control.CustomersService;
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
+import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.logging.Logged;
 
 import javax.inject.Inject;
@@ -37,12 +38,17 @@ public class CustomersResource {
     @POST
     public Response create(@Valid CreateCustomerRequest createCustomerRequest) {
         String customerId = customersService.create(createCustomerRequest);
-        System.out.println("---------------------------------");
-        System.out.println("customerId = " + customerId);
 
         return Response
                 .created(uriInfo.getRequestUriBuilder().path(CustomersResource.class, "find").build(customerId))
                 .build();
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response update(@PathParam("id") String customerId, @Valid UpdateCustomerRequest request) {
+        System.out.println(JsonbBuilder.create().toJson(request));
+        return customersService.update(customerId, request);
     }
 
     @GET

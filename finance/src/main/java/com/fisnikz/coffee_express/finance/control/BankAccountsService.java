@@ -2,7 +2,7 @@ package com.fisnikz.coffee_express.finance.control;
 
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.panache.common.Parameters;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -51,6 +51,12 @@ public class BankAccountsService {
 
     public BankAccount find(UUID id, String authorizedCustomerId) {
         BankAccount bankAccount = BankAccount.findById(id);
+        if (bankAccount == null) {
+            return null;
+        }
+        if (bankAccount.removed) {
+            return null;
+        }
         checkForAuthorizedCustomerId(bankAccount.customerId, authorizedCustomerId);
         return bankAccount;
     }
@@ -64,24 +70,31 @@ public class BankAccountsService {
         CriteriaQuery<Object[]> bankAccountCriteriaQuery =
                 query.multiselect(from, cb.count(payments))
                         .where(cb.equal(from.get("customerId"), customerId))
+                        .where(cb.equal(from.get("removed"), 0))
                         .groupBy(from.get("id"))
                         .orderBy(cb.desc(cb.count(payments)));
 
         List<Object[]> rs = em.createQuery(bankAccountCriteriaQuery).getResultList();
         if (rs.size() == 0)
-            return BankAccount.find("customerId", customerId).firstResult();
+            return accountsOfCustomer(customerId, authorizedCustomerId).get(0);
         Object[] data = rs.get(0);
         return (BankAccount) data[0];
     }
 
     public List<BankAccount> accountsOfCustomer(UUID customerId, String authorizedCustomerId) {
         checkForAuthorizedCustomerId(customerId, authorizedCustomerId);
-        return BankAccount.find("customerId", customerId).list();
+// TODO:       return BankAccount.find("customerId = :customerId, removed = :removed",
+        return BankAccount.find("customerId = :customerId",
+                Parameters.with("customerId", customerId))
+                .list();
     }
 
-    public boolean delete(UUID accountId, String authorizedCustomerId) {
-        find(accountId, authorizedCustomerId);
-        return BankAccount.deleteById(accountId);
+    public int delete(UUID accountId, String authorizedCustomerId) {
+        BankAccount bankAccount = find(accountId, authorizedCustomerId);
+        if (bankAccount == null) {
+            throw new WebApplicationException(Response.status(404).build());
+        }
+        return BankAccount.update("removed = 1 where id = ?1", accountId);
     }
 
     private void checkForAuthorizedCustomerId(UUID customerId, String authorizedCustomerId) {

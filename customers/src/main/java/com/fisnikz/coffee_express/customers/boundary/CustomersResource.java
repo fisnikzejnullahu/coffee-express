@@ -2,6 +2,7 @@ package com.fisnikz.coffee_express.customers.boundary;
 
 import com.fisnikz.coffee_express.customers.control.CustomerService;
 import com.fisnikz.coffee_express.customers.entity.Customer;
+import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.logging.Logged;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.metrics.annotation.Counted;
@@ -13,6 +14,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -59,16 +61,26 @@ public class CustomersResource {
                 .build();
     }
 
+    @PUT
+    @Path("{id}")
+    @RolesAllowed({"full_access"})
+    public Response update(@PathParam("id") UUID customerId, @Valid UpdateCustomerRequest updateCustomerRequest){
+        int updated = customerService.update(customerId, updateCustomerRequest);
+        System.out.println("updated = " + updated);
+        if (updated == -1) {
+            return Response.status(404).build();
+        }
+        else if (updated == 0){
+            return Response.status(400).build();
+        }
+        return Response.noContent().build();
+    }
+
     @Traced
     @GET
     @Path("{customerId}")
     @RolesAllowed({"full_access", "manage_orders"})
     public Customer find(@PathParam("customerId") UUID customerId) {
-        jsonWebToken.getGroups().forEach(System.out::println);
-        System.out.println(customerId);
-        System.out.println(jsonWebToken.getClaim("customer_id").toString());
-        System.out.println(UUID.fromString(jsonWebToken.getClaim("customer_id")));
-        System.out.println(UUID.fromString(jsonWebToken.getClaim("customer_id")).equals(customerId));
         if (!jsonWebToken.getGroups().contains("full_access") && !customerId.equals(UUID.fromString(jsonWebToken.getClaim("customer_id")))) {
             throw new ForbiddenException();
         }

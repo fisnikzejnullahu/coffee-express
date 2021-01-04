@@ -10,6 +10,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
+import java.lang.System.Logger;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class OrderCommandService {
     String ordersHistoryQueue;
 
     @Inject
-    System.Logger LOG;
+    Logger LOG;
 
     public void placeOrder(Order order) {
         eventProducer.publish(new OrderPlaced(order.id, order.orderDetails, order.customerId, order.bankAccountId), ordersHistoryQueue);
@@ -47,7 +48,7 @@ public class OrderCommandService {
     }
 
     public void authorizeCard(Order order) {
-        eventProducer.publish(new AuthorizeCard(order.id, order.bankAccountId, order.orderDetails.getTotalOfOrder()), financesQueue);
+        eventProducer.publish(new AuthorizeCard(order.id, order.bankAccountId, order.customerId, order.orderDetails.getTotalOfOrder()), financesQueue);
     }
 
     public void acceptOrder(Order order) {

@@ -33,4 +33,8 @@ public interface KeycloakRestClient {
     @Path("admin/realms/public/users")
     Response findUser(@HeaderParam("Authorization") String authorization, @QueryParam("search") String username);
 
+    @PUT
+    @Path("admin/realms/public/users/{accountId}/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response update(@HeaderParam("Authorization") String authorization, @PathParam("accountId") String accountId, JsonObject body);
 }

@@ -11,8 +11,9 @@
       <div
         class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary"
       >
-        <div class="w-100 text-center py-1 px-2">
-          <span class="text-medium" id="order-status"
+        <div class="w-100 text-center py-1 px-2 order-status"
+          :class="{ failed: stepsCompleted == 6 }">
+          <span class="text-medium"
             >Status: {{ order["order_state"] }}</span
           >
           <span v-if="order['cancelled_reason']"
@@ -23,6 +24,7 @@
       <div class="card-body">
         <div
           class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x"
+          :class="{ failed: stepsCompleted == 6 }"
         >
           <div class="step" :class="{ completed: stepsCompleted >= 1 }" id="placed">
             <div class="step-icon-wrap">
@@ -30,25 +32,25 @@
             </div>
             <h4 class="step-title">Order Placed</h4>
           </div>
-          <div class="step" :class="{ completed: stepsCompleted >= 2 }" id="accepted">
+          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 2) }" id="accepted">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-check"></i></div>
             </div>
             <h4 class="step-title">Order Accepted</h4>
           </div>
-          <div class="step" :class="{ completed: stepsCompleted >= 3 }" id="preparing">
+          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 3) }" id="preparing">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
             <h4 class="step-title">Preparing</h4>
           </div>
-          <div class="step" :class="{ completed: stepsCompleted >= 4 }" id="ready">
+          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 4) }" id="ready">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-car"></i></div>
             </div>
             <h4 class="step-title">Ready for pickup</h4>
           </div>
-          <div class="step" :class="{ completed: stepsCompleted >= 5 }" id="pickedup">
+          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 5) }" id="pickedup">
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
@@ -57,16 +59,13 @@
         </div>
       </div>
     </div>
-    <div
-      class="d-flex flex-wrap flex-md-nowrap justify-content-center justify-content-sm-between align-items-center"
-    >
-      <div class="text-left text-sm-right">
+    <div>
+      
         <router-link
           :to="{ name: 'OrderDetails', params: { id: order.id } }"
-          class="btn btn-outline-primary btn-rounded btn-sm"
+          class="btn btn-primary btn-outline-primary btn-lg btn-block"
           >View Order Details</router-link
         >
-      </div>
     </div>
   </div>
 </template>
@@ -244,4 +243,23 @@ body {
 .bg-secondary {
   background-color: #f5f5f5 !important;
 }
+
+.order-status span {
+  color: #28a745 !important;
+  font-weight: bold;
+}
+
+.order-status.failed span {
+  color: #ff0000 !important;
+}
+
+.card-body .steps.failed {
+
+  #accepted .step-icon {
+    border-color: #ff0000;
+    background-color: #ff0000;
+    color: #ffffff;
+  }
+}
+
 </style>

@@ -1,6 +1,7 @@
 package com.fisnikz.coffee_express.customers.control;
 
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
+import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.identity.control.IdentityService;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -31,7 +32,6 @@ public class CustomersService {
         try {
             identityService.createUserAccount(createCustomerRequest, customerId);
         }catch (WebApplicationException ex) {
-            System.out.println("HAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHAHAHHHAHAHA");
             /*
             if some exception happened
             delete the created customer and then throw the ex with response
@@ -41,6 +41,14 @@ public class CustomersService {
         }
 
         return customerId;
+    }
+
+    public Response update(String customerId, UpdateCustomerRequest updateCustomerRequest) {
+        System.out.println("UPDATING");
+        customersRestClient.update(identityService.getAdminToken(), customerId, updateCustomerRequest);
+        identityService.updateUserAccount(customerId, updateCustomerRequest);
+
+        return Response.noContent().build();
     }
 
     private String getCustomerIdFromLocationHeader(URI location) {
