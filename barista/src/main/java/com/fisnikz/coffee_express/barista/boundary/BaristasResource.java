@@ -31,7 +31,9 @@ public class BaristasResource {
     @GET
     @Path("items")
     public Response allItems() {
-        return Response.ok(MenuItem.listAll()).build();
+        return Response.ok(
+                MenuItem.list("removed", false)
+        ).build();
     }
 
     @GET

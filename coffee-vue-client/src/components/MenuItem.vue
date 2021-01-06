@@ -8,13 +8,13 @@
       ></a>
       <div class="text text-center pt-4">
         <h3>
-          <a href="product-single.html">{{ item.name }}</a>
+          <a :href="'/menu/details/' + item.id">{{ item.name }}</a>
         </h3>
 
         <p class="price">
           <span>$ {{ item.price }}</span>
         </p>
-        <p>
+        <p v-if="currentUser !== null">
           <button
             class="btn btn-primary btn-outline-primary"
             @click="addToCart(item)"
@@ -28,12 +28,15 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "MenuItem",
   props: {
     item: {},
+  },
+  computed: {
+    ...mapGetters(["currentUser"]),
   },
   methods: mapActions(["addToCart"]),
 };

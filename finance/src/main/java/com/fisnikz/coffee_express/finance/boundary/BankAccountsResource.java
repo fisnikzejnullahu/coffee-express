@@ -7,6 +7,8 @@ import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -27,6 +29,7 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Logged
+@RolesAllowed({"full_access", "manage_orders"})
 public class BankAccountsResource {
 
     @Inject
@@ -89,8 +92,8 @@ public class BankAccountsResource {
     @QueryParam("customerId")
     public List<BankAccount> accountsOfCustomer(@QueryParam("customerId") UUID customerId) {
         if (jsonWebToken.getGroups().contains("full_access")) {
-            return service.accountsOfCustomer(customerId, null);
+            return service.accountsOfCustomer(customerId, customerId.toString(), true);
         }
-        return service.accountsOfCustomer(customerId, jsonWebToken.getClaim("customer_id"));
+        return service.accountsOfCustomer(customerId, jsonWebToken.getClaim("customer_id"), false);
     }
 }

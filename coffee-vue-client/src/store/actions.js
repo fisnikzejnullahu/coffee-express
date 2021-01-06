@@ -7,12 +7,14 @@ export const getMenu = async ({commit}) => {
   commit('MENU_FETCHED', menu);
 }
 
-export const addToCart = ({ commit }, menuItem, quantity) => {
+export const addToCart = ({ commit }, menuItem) => {
+  let quantity = menuItem.quantity;
   console.log('ACTIONS: ADDTOCART: ' + menuItem.id + ", qnt: " + quantity);
   if (!quantity || quantity < 1) {
     quantity = 1;
   }
-  commit('ADD_TO_CART', menuItem.id, quantity)
+  menuItem.quantity = quantity;
+  commit('ADD_TO_CART', menuItem)
 }
 
 export const removeFromCart = ({ commit }, menuItem) => {

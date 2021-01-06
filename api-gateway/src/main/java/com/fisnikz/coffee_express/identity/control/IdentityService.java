@@ -53,7 +53,6 @@ public class IdentityService {
         return Response.ok(body)
                 .cookie(accessToken.toCookie())
                 .cookie(refreshToken.toCookie())
-                .cookie(new NewCookie("signedIn", "1", "/", null, null, refreshToken.getExpiresIn(), false, false))
                 .build();
     }
 
@@ -62,7 +61,6 @@ public class IdentityService {
         return Response.ok()
                 .cookie(tokens[0].toCookie())
                 .cookie(tokens[1].toCookie())
-                .cookie(new NewCookie("signedIn", "1", "/", null, null, tokens[1].getExpiresIn(), false, false))
                 .build();
     }
 
@@ -73,7 +71,6 @@ public class IdentityService {
             return Response.fromResponse(logoutResponse)
                     .cookie(new Token(null, Token.TokenType.ACCESS_TOKEN, 0).toCookie())
                     .cookie(new Token(null, Token.TokenType.REFRESH_TOKEN, 0).toCookie())
-                    .cookie(new NewCookie("signedIn", "0", "/", null, null, 0, false, false))
                     .build();
         }
 

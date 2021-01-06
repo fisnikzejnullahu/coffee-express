@@ -64,7 +64,7 @@
               <a
                 type="button"
                 class="view"
-                :class="page + 1 == totalPages ? 'text-muted' : ''"
+                :class="page === 0 || page + 1 == totalPages ? 'text-muted' : ''"
                 @click="page + 1 != totalPages ? nextPage() : null"
                 title=""
                 data-toggle="tooltip"

@@ -102,9 +102,6 @@ export default {
   computed: {
     ...mapGetters(["itemsQuantity", "currentUser"]),
   },
-  mounted() {
-    console.log(this.currentUser === null);
-  },
 };
 </script>
 

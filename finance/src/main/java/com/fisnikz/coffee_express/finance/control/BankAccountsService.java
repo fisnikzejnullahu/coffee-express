@@ -70,23 +70,24 @@ public class BankAccountsService {
         CriteriaQuery<Object[]> bankAccountCriteriaQuery =
                 query.multiselect(from, cb.count(payments))
                         .where(cb.equal(from.get("customerId"), customerId))
-                        .where(cb.equal(from.get("removed"), 0))
+                        .where(cb.equal(from.get("removed"), false))
                         .groupBy(from.get("id"))
                         .orderBy(cb.desc(cb.count(payments)));
 
         List<Object[]> rs = em.createQuery(bankAccountCriteriaQuery).getResultList();
         if (rs.size() == 0)
-            return accountsOfCustomer(customerId, authorizedCustomerId).get(0);
+            return accountsOfCustomer(customerId, authorizedCustomerId, false).get(0);
         Object[] data = rs.get(0);
         return (BankAccount) data[0];
     }
 
-    public List<BankAccount> accountsOfCustomer(UUID customerId, String authorizedCustomerId) {
+    //if admin jwt return all removed and non removed
+    public List<BankAccount> accountsOfCustomer(UUID customerId, String authorizedCustomerId, boolean all) {
+        if (all) {
+            return BankAccount.list("customerId", customerId);
+        }
         checkForAuthorizedCustomerId(customerId, authorizedCustomerId);
-// TODO:       return BankAccount.find("customerId = :customerId, removed = :removed",
-        return BankAccount.find("customerId = :customerId",
-                Parameters.with("customerId", customerId))
-                .list();
+        return BankAccount.list("customerId = ?1 and removed = false", customerId);
     }
 
     public int delete(UUID accountId, String authorizedCustomerId) {

@@ -3,21 +3,20 @@ const state = {
 }
 
 const mutations = {
-  ADD_TO_CART (state, menuItemId, quantity) {
-    const item = state.items.find(item => item.id === menuItemId)
+  ADD_TO_CART (state, menuItem) {
+    let quantity = menuItem.quantity;
+    console.log('MUTATION ADD TO CART');
+    console.log(menuItem.id);
+    console.log(quantity);
+    const item = state.items.find(item => item.id === menuItem.id)
 
     if (!item) {
       state.items.push({
-        id: menuItemId,
+        id: menuItem.id,
         quantity: quantity ? quantity : 1
       })
     } else {
-      if (quantity) {
-        item.quantity = quantity;
-      }
-      else {
-        item.quantity++;
-      }
+        item.quantity += quantity;
     }
   },
 

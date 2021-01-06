@@ -21,7 +21,7 @@
                   class="quantity-left-minus btn"
                   data-type="minus"
                   data-field=""
-                  onclick="document.querySelector('#quantity').value = parseInt(document.querySelector('#quantity').value) - 1"
+                  @click="decQuantity"
                 >
                   <i class="icon-minus"></i>
                 </button>
@@ -30,9 +30,7 @@
                 v-model="quantity"
                 type="text"
                 id="quantity"
-                name="quantity"
                 class="form-control input-number"
-                value="1"
                 min="1"
                 max="100"
               />
@@ -42,7 +40,7 @@
                   class="quantity-right-plus btn"
                   data-type="plus"
                   data-field=""
-                  onclick="document.querySelector('#quantity').value = parseInt(document.querySelector('#quantity').value) + 1"
+                  @click="incQuantity"
                 >
                   <i class="icon-plus"></i>
                 </button>
@@ -50,11 +48,7 @@
             </div>
           </div>
           <p>
-            <a
-              type="button"
-              class="btn btn-primary py-3 px-5"
-              @click="addToCart(menuItem, quantity)"
-            >
+            <a type="button" class="btn btn-primary py-3 px-5" @click="addToCart({'id': menuItem.id, quantity})">
               Add to Cart
             </a>
           </p>
@@ -80,13 +74,24 @@ export default {
   components: {
     LoadingScreen,
   },
-  methods: mapActions(["addToCart"]),
   async mounted() {
     console.log("MenuItemDetails.vue mounted()");
     let response = await Api.getMenuItem(this.$route.params.id);
     let menuItem = await response.json();
+    console.log(menuItem);
     this.menuItem = menuItem;
     this.loaded = true;
+  },
+  methods: {
+    ...mapActions(["addToCart"]),
+    incQuantity() {
+      this.quantity++;
+    },
+    decQuantity() {
+      if (this.quantity > 1) {
+        this.quantity--;
+      }
+    },
   },
 };
 </script>

@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Menu from "../views/Menu.vue";
-import MenuItemDetails from "../views/MenuItemDetails.vue";
+import MenuItemDetails from "../components/MenuItemDetails.vue";
 import Orders from "../views/Orders.vue";
 import OrderTrack from "../views/OrderTrack.vue";
 import OrderDetails from "../views/OrderDetails.vue";

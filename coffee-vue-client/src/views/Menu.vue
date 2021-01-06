@@ -15,7 +15,17 @@
                   role="tabpanel"
                   aria-labelledby="v-pills-0-tab"
                 >
-                  <menu-items />
+                  <div v-if="!loaded">
+                    <LoadingScreen />
+                  </div>
+
+                  <div v-else class="row">
+                    <MenuItem
+                      v-for="item in menuItems"
+                      v-bind:key="item.id"
+                      :item="item"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -27,15 +37,32 @@
 </template>
 
 <script>
-import MenuItems from "@/components/MenuItems";
+import MenuItem from "@/components/MenuItem";
+import LoadingScreen from "@/components/LoadingScreen";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Menu",
   components: {
-    "menu-items": MenuItems,
+    MenuItem,
+    LoadingScreen,
+  },
+  data() {
+    return {
+      loaded: false,
+    };
+  },
+  computed: {
+    ...mapState({
+      menuItems: (state) => state.menuItems.all,
+    }),
+  },
+  methods: mapActions(["getMenu"]),
+  async created() {
+    await this.getMenu();
+    this.loaded = true;
   },
 };
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>
