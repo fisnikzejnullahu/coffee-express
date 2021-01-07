@@ -85,7 +85,7 @@ public class KeycloakService {
     }
 
     public void generateNewAdminToken() {
-        JsonObject data = keycloakRestClient.login("fisnikz", "12345678", "password", keycloakClientId, null).readEntity(JsonObject.class);
+        JsonObject data = keycloakRestClient.login("fisnikz", "123456", "password", keycloakClientId, null).readEntity(JsonObject.class);
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
     }
 

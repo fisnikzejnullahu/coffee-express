@@ -42,7 +42,6 @@ export const logout = async ({commit}) => {
   console.log('LOGOUT ACTION');
   await Api.logout();
   commit('LOGGED_OUT');
-  window.location.href = '/';
 }
 
 export const signup = async ({commit}, customerInfo) => {

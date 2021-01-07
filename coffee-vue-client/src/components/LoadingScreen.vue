@@ -1,6 +1,6 @@
 <template>
   <div id="ftco-loader" class="show">
-      <svg class="circular" width="48px" height="48px">
+    <svg class="circular" width="48px" height="48px">
       <circle
         class="path-bg"
         cx="24"
@@ -25,11 +25,8 @@
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
 <style>
-
 </style>

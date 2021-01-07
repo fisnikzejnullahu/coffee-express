@@ -9,10 +9,9 @@ import OrderDetails from "../views/OrderDetails.vue";
 import Cart from "../views/Cart.vue";
 import Checkout from "../views/Checkout.vue";
 import BankAccounts from "../views/BankAccounts.vue";
-import PageNotFound from "../views/PageNotFound.vue";
+import ErrorPage from "../views/ErrorPage.vue";
 import SigninPage from "../views/SigninPage.vue";
 import SignupPage from "../views/SignupPage.vue";
-import Logout from "../views/Logout.vue";
 import AddBankAccount from "../components/AddBankAccount.vue";
 import Profile from "../views/Profile.vue";
 
@@ -23,7 +22,7 @@ Vue.use(VueRouter);
 
 const routes = [{
     path: "*",
-    component: PageNotFound
+    component: ErrorPage
   },
   {
     path: "/",
@@ -79,11 +78,6 @@ const routes = [{
     path: "/signup",
     name: "SignupPage",
     component: SignupPage,
-  },
-  {
-    path: "/logout",
-    name: "Logout",
-    component: Logout,
   },
   {
     path: "/add-bankacc",

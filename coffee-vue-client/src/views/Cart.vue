@@ -49,8 +49,7 @@
                         name="quantity"
                         class="quantity form-control input-number"
                         :value="item.quantity"
-                        min="1"
-                        max="100"
+                        disabled
                       />
                     </div>
                   </td>
@@ -88,10 +87,9 @@
             </p>
           </div>
           <p class="text-center">
-            <router-link
-              to="/checkout"
-              class="btn btn-primary py-3 px-4"
-              >Proceed to Checkout</router-link>
+            <router-link to="/checkout" class="btn btn-primary py-3 px-4"
+              >Proceed to Checkout</router-link
+            >
           </p>
         </div>
       </div>

@@ -2,7 +2,6 @@ package com.fisnikz.coffee_express.finance.control;
 
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
-import io.quarkus.panache.common.Parameters;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.annotation.RegistryType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -69,16 +68,19 @@ public class BankAccountsService {
         Join<BankAccount, Payment> payments = from.join("payments");
         CriteriaQuery<Object[]> bankAccountCriteriaQuery =
                 query.multiselect(from, cb.count(payments))
-                        .where(cb.equal(from.get("customerId"), customerId))
-                        .where(cb.equal(from.get("removed"), false))
+                        .where(cb.equal(from.get("customerId"), customerId), cb.equal(from.get("removed"), false))
                         .groupBy(from.get("id"))
                         .orderBy(cb.desc(cb.count(payments)));
 
         List<Object[]> rs = em.createQuery(bankAccountCriteriaQuery).getResultList();
-        if (rs.size() == 0)
-            return accountsOfCustomer(customerId, authorizedCustomerId, false).get(0);
-        Object[] data = rs.get(0);
-        return (BankAccount) data[0];
+        System.out.println(rs.size());
+        if (rs.size() != 0) {
+            Object[] data = rs.get(0);
+            return (BankAccount) data[0];
+        }
+
+        List<BankAccount> accounts = accountsOfCustomer(customerId, authorizedCustomerId, false);
+        return accounts.size() != 0 ? accounts.get(0) : null;
     }
 
     //if admin jwt return all removed and non removed

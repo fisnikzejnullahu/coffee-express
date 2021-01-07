@@ -70,16 +70,14 @@
             class="nav-item"
             exact
           >
-            <a class="nav-link">My Profile</a>
+          <a class="nav-link">My Profile</a>
           </router-link>
-          <router-link
-            v-if="currentUser !== null"
-            tag="li"
-            to="/logout"
+          <li
             class="nav-item"
+            v-if="currentUser !== null"
           >
-            <a class="nav-link">Logout</a>
-          </router-link>
+          <a type="button" @click="onLogout" class="nav-link">Logout</a>
+          </li>
           <li v-if="currentUser !== null" class="nav-item cart">
             <router-link to="/cart" class="nav-link">
               <span class="icon icon-shopping_cart"></span
@@ -96,12 +94,19 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   computed: {
     ...mapGetters(["itemsQuantity", "currentUser"]),
   },
+  methods: {
+    ...mapActions(["logout"]),
+    onLogout() {
+      this.logout();
+      this.$router.push('/');
+    }
+  }
 };
 </script>
 

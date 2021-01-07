@@ -185,6 +185,10 @@ export default {
           }
         }, 500);
       }
+      else if (response.status === 400) {
+        this.clicked = false;
+        alert('please write all fields correct...');
+      }
     },
   },
 };

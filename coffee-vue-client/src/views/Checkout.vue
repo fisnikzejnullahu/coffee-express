@@ -1,146 +1,172 @@
 <template>
-<div v-if="!loaded">
+  <div v-if="!loaded">
     <LoadingScreen />
   </div>
-  <section v-else class="ftco-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-5 ftco-animate fadeInUp ftco-animated">
-          <div class="row d-flex">
-            <div class="col">
-              <div class="cart-detail ftco-bg-dark p-3 p-md-4">
-                <div class="form-group">
-                  <div class="col">
-                    <p style="font-weight: bold; color: #fff">Billing Information</p>
-                    <p>Fisnik Zejnullahu</p>
-                    <p>
-                      Evlia Qelebia, Mitrovice, Kosovo
-                      <span
-                        style="text-decoration: underline; margin-left: 5px; color: #fff"
-                        >Edit</span
+  <transition v-else name="slide">
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-5 ftco-animate fadeInUp ftco-animated">
+            <div class="row d-flex">
+              <div class="col">
+                <div class="cart-detail ftco-bg-dark p-3 p-md-4">
+                  <div class="form-group">
+                    <div class="col">
+                      <p style="font-weight: bold; color: #fff">
+                        Billing Information
+                      </p>
+                      <p>Fisnik Zejnullahu</p>
+                      <p>
+                        Mitrovice, Kosovo 40000
+                        <span
+                          style="
+                            text-decoration: underline;
+                            margin-left: 5px;
+                            color: #fff;
+                          "
+                          >Edit</span
+                        >
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-2 pt-3 d-flex">
+              <div class="col">
+                <div class="cart-detail ftco-bg-dark p-3 p-md-4">
+                  <div class="form-group">
+                    <div class="col">
+                      <p style="font-weight: bold; color: #fff">
+                        Payment Method
+                      </p>
+                      <select
+                        @change="onSelectedBankAccount"
+                        class="form-control"
+                        v-if="editingBankAccount"
+                        v-model="selectedBankAccountPosition"
                       >
-                    </p>
+                        <option disabled value="">Select</option>
+                        <option
+                          v-for="(bankAcc, index) in allBankAccounts"
+                          :key="bankAcc.id"
+                          :value="index"
+                        >
+                          Ending with {{ lastDigitsOfCC(bankAcc) }}
+                        </option>
+                      </select>
+                      <p v-if="bankAccount !== null && !editingBankAccount">
+                        Ending with {{ lastDigitsOfCC(bankAccount) }}
+                        <span
+                          @click="editBankAccount"
+                          style="
+                            text-decoration: underline;
+                            margin-left: 5px;
+                            color: #fff;
+                            cursor: pointer;
+                          "
+                          >Edit</span
+                        >
+                      </p>
+
+                      <p v-else-if="!editingBankAccount">
+                        You don't have any payment method
+                        <span
+                          @click="addPaymentMethod"
+                          style="
+                            text-decoration: underline;
+                            margin-left: 5px;
+                            color: #fff;
+                            cursor: pointer;
+                          "
+                          >Add</span
+                        >
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <!-- .col-md-8 -->
 
-          <div class="row mt-2 pt-3 d-flex">
-            <div class="col">
-              <div class="cart-detail ftco-bg-dark p-3 p-md-4">
-                <div class="form-group">
-                  <div class="col">
-                    <p style="font-weight: bold; color: #fff">Payment Method</p>
-                    <p v-if="this.bankAccount !== null">
-                      Ending with {{ lastDigitsOfCC }}
-                      <span
-                        style="
-                          text-decoration: underline;
-                          margin-left: 5px;
-                          color: #fff;
-                          cursor: pointer;
-                        "
-                        >Edit</span
-                      >
-                    </p>
-
-                    <p v-else>
-                      You don't have any payment method
-                      <span
-                        @click="addPaymentMethod"
-                        style="
-                          text-decoration: underline;
-                          margin-left: 5px;
-                          color: #fff;
-                          cursor: pointer;
-                        "
-                        >Add</span
-                      >
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- .col-md-8 -->
-
-        <div class="col-7 sidebar ftco-animate fadeInUp ftco-animated">
-          <div class="row">
-            <div class="col d-flex">
-              <div class="cart-detail cart-total ftco-bg-dark p-3 p-md-4">
-                <h3 class="billing-heading mb-4">Cart Total</h3>
-                <p class="d-flex">
-                  <span>Subtotal</span>
-                  <span style="text-align: end">${{ total }}</span>
-                </p>
-                <p class="d-flex">
-                  <span>Delivery</span>
-                  <span style="text-align: end">$0.00</span>
-                </p>
-                <p class="d-flex">
-                  <span>Discount</span>
-                  <span style="text-align: end">$0.00</span>
-                </p>
-                <hr />
-                <p class="d-flex total-price" style="font-size: 33px">
-                  <span>Total</span>
-                  <span style="text-align: end">${{ total }}</span>
-                </p>
-                <!-- <form action="/web-app/mvc/orders/place" method="post"> -->
-                <button
-                  @click="place"
-                  type="submit"
-                  class="btn btn-primary py-3 px-4 load-button"
-                  :class="{ 'loading-start': clicked }"
-                  :disabled="clicked"
-                  id="signin-btn"
-                  style="width: 100%"
-                >
-                  <span style="color: inherit">Place Order</span>
-                  <svg
-                    version="1.1"
-                    id="loader-1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    x="0px"
-                    y="0px"
-                    width="23px"
-                    height="23px"
-                    viewBox="0 0 50 50"
-                    style="enable-background: new 0 0 50 50"
-                    xml:space="preserve"
+          <div class="col-7 sidebar ftco-animate fadeInUp ftco-animated">
+            <div class="row">
+              <div class="col d-flex">
+                <div class="cart-detail cart-total ftco-bg-dark p-3 p-md-4">
+                  <h3 class="billing-heading mb-4">Cart Total</h3>
+                  <p class="d-flex">
+                    <span>Subtotal</span>
+                    <span style="text-align: end">${{ total }}</span>
+                  </p>
+                  <p class="d-flex">
+                    <span>Delivery</span>
+                    <span style="text-align: end">$0.00</span>
+                  </p>
+                  <p class="d-flex">
+                    <span>Discount</span>
+                    <span style="text-align: end">$0.00</span>
+                  </p>
+                  <hr />
+                  <p class="d-flex total-price" style="font-size: 33px">
+                    <span>Total</span>
+                    <span style="text-align: end">${{ total }}</span>
+                  </p>
+                  <!-- <form action="/web-app/mvc/orders/place" method="post"> -->
+                  <button
+                    @click="place"
+                    type="submit"
+                    class="btn btn-primary py-3 px-4 load-button"
+                    :class="{ 'loading-start': clicked }"
+                    :disabled="clicked"
+                    id="signin-btn"
+                    style="width: 100%"
                   >
-                    <path
-                      fill="#000"
-                      d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"
+                    <span style="color: inherit">Place Order</span>
+                    <svg
+                      version="1.1"
+                      id="loader-1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
+                      x="0px"
+                      y="0px"
+                      width="23px"
+                      height="23px"
+                      viewBox="0 0 50 50"
+                      style="enable-background: new 0 0 50 50"
+                      xml:space="preserve"
                     >
-                      <animateTransform
-                        attributeType="xml"
-                        attributeName="transform"
-                        type="rotate"
-                        from="0 25 25"
-                        to="360 25 25"
-                        dur="0.6s"
-                        repeatCount="indefinite"
-                      ></animateTransform>
-                    </path>
-                  </svg>
-                </button>
-                <input
-                  name="bankAccountId"
-                  value="70d273a8-03ec-11eb-adc1-0242ac120002"
-                  type="hidden"
-                />
-                <!-- </form> -->
+                      <path
+                        fill="#000"
+                        d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z"
+                      >
+                        <animateTransform
+                          attributeType="xml"
+                          attributeName="transform"
+                          type="rotate"
+                          from="0 25 25"
+                          to="360 25 25"
+                          dur="0.6s"
+                          repeatCount="indefinite"
+                        ></animateTransform>
+                      </path>
+                    </svg>
+                  </button>
+                  <input
+                    name="bankAccountId"
+                    value="70d273a8-03ec-11eb-adc1-0242ac120002"
+                    type="hidden"
+                  />
+                  <!-- </form> -->
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </transition>
 </template>
 
 <script>
@@ -153,6 +179,9 @@ export default {
       clicked: false,
       loaded: false,
       bankAccount: {},
+      editingBankAccount: false,
+      selectedBankAccountPosition: "",
+      allBankAccounts: [],
     };
   },
   components: {
@@ -164,10 +193,15 @@ export default {
   methods: {
     ...mapActions(["placeOrder", "resetCart"]),
     addPaymentMethod() {
-      this.$router.push({ path: "/add-bankacc", query: { redirectTo: "/checkout" } });
+      this.$router.push({
+        path: "/add-bankacc",
+        query: { redirectTo: "/checkout" },
+      });
     },
     async getPopularBankAccount() {
-      let popularBankAccountResponse = await Api.getMyPopularBankAccount(this.currentUser.id);
+      let popularBankAccountResponse = await Api.getMyPopularBankAccount(
+        this.currentUser.id
+      );
       if (popularBankAccountResponse.headers.get("content-length") == 0) {
         this.bankAccount = null;
       } else {
@@ -199,14 +233,30 @@ export default {
       }
       this.resetCart();
     },
+    editBankAccount() {
+      this.editingBankAccount = true;
+      this.getAllBankAccounts();
+    },
+    async getAllBankAccounts() {
+      let id = this.currentUser.id;
+      const response = await Api.getMyBankAccounts(id);
+      if (response.headers.get("content-length") != 0) {
+        this.allBankAccounts = await response.json();
+      }
+      console.log(this.allBankAccounts);
+    },
+    onSelectedBankAccount() {
+      this.bankAccount = this.allBankAccounts[this.selectedBankAccountPosition];
+      this.editingBankAccount = false;
+    },
+    lastDigitsOfCC(bankAccount) {
+      return bankAccount["credit_card_info"]["card_number"]
+        .toString()
+        .substring(12);
+    },
   },
   computed: {
     ...mapGetters(["currentUser", "cartItems", "total"]),
-    lastDigitsOfCC() {
-      console.log("kast");
-      console.log(this.bankAccount["credit_card_info"]["card_number"]);
-      return this.bankAccount["credit_card_info"]["card_number"].toString().substring(11);
-    },
   },
 };
 </script>

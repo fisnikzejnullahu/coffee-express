@@ -19,7 +19,7 @@ public class Initializer {
     @Transactional
     void onStart(@Observes StartupEvent event) {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
-        creditCardInfo.cardNumber = 378282246310005L;
+        creditCardInfo.cardNumber = 3782822463100005L;
         creditCardInfo.cvc = 123;
         creditCardInfo.expirationDate = LocalDate.now().plusYears(2);
 

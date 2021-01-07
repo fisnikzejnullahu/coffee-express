@@ -2,7 +2,10 @@ const BASE_URL = "http://localhost:8080";
 const API_VERSION = "v1"
 const API_URL = `${BASE_URL}/api/${API_VERSION}`;
 
-let retryUnauthorized = 0;
+import router from './router';
+import store from './store';
+
+let refreshTokenCount = 0;
 async function call(url, object, httpMethod) {
   console.log("CALLED API from /" + url);
 
@@ -16,22 +19,27 @@ async function call(url, object, httpMethod) {
     }
   });
 
-  if (response.status === 401) {
-    console.log('401####################');
-    // console.log('0');
-    if (retryUnauthorized === 0) {
-    //   console.log('1');
-      retryUnauthorized++;
-      await refreshLogin();
-      response = call(url, object, httpMethod); 
-    // }
-    // else if (retryUnauthorized > 0) {
-    //   console.log('hahahaha');
+  console.log(refreshTokenCount);
+  if (response.ok) {
+    //maybe is ok when you refreshToken
+    if (refreshTokenCount > 1) {
+      refreshTokenCount = 0;
+    }
+  } else if (response.status === 404 || response.status === 403) {
+    router.push('/error');
+  } else if (response.status === 401) {
+    if (store.getters.currentUser !== null) {
+      if (refreshTokenCount < 1) {
+        refreshTokenCount++;
+        await refreshLogin();
+        return call(url, object, httpMethod);
+      } else {
+        console.log(store);
+        store.dispatch('logout');
+        router.go();
+      }
     }
   }
-  // else{
-  //   retryUnauthorized = 0;
-  // }
 
   return response;
 }

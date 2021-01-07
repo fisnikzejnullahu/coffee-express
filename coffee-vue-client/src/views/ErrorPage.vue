@@ -4,10 +4,9 @@
       <div class="notfound-404">
         <h1>:(</h1>
       </div>
-      <h2>404 - Page not found</h2>
+      <h2>This page isn't available</h2>
       <p>
-        The page you are looking for might have been removed had its name
-        changed or is temporarily unavailable.
+        The link you followed may be broken, or the page may have been removed.
       </p>
       {{ message }}
     </div>
