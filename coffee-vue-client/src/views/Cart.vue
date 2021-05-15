@@ -54,7 +54,7 @@
                     </div>
                   </td>
 
-                  <td class="total">$1.03</td>
+                  <td class="total">$ {{item.price * item.quantity}}</td>
                 </tr>
                 <!-- END TR-->
               </tbody>

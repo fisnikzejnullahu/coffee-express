@@ -52,10 +52,4 @@ public class IdentityResource {
         return identityService.logout(refreshToken);
     }
 
-//    @POST
-//    @Path("register")
-//    public Response register(@Valid Customer customer) {
-//        //validate and return appropriate response
-//        return identityService.createNewCustomer(customer);
-//    }
 }

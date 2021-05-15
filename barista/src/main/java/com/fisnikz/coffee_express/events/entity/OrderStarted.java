@@ -8,21 +8,15 @@ import java.util.UUID;
  */
 public class OrderStarted extends OrderEvent {
 
-    private LocalDateTime readyBy;
+    public LocalDateTime startedAt;
+    public LocalDateTime readyBy;
 
     public OrderStarted() {
     }
 
-    public OrderStarted(UUID orderId, LocalDateTime readyBy) {
+    public OrderStarted(UUID orderId, LocalDateTime startedAt, LocalDateTime readyBy) {
         super(orderId);
-        this.readyBy = readyBy;
-    }
-
-    public LocalDateTime getReadyBy() {
-        return readyBy;
-    }
-
-    public void setReadyBy(LocalDateTime readyBy) {
+        this.startedAt = startedAt;
         this.readyBy = readyBy;
     }
 }

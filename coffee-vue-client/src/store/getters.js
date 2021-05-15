@@ -19,12 +19,17 @@ export const itemsQuantity = state => {
   }, 0)
 }
 
+const formatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,      
+  maximumFractionDigits: 2,
+});
+
 export const total = state => {
   console.log('total getters');
   const total = cartItems(state).reduce((subtotal, item) => {
     return subtotal + item.price * item.quantity
   }, 0.0)
-  return total;
+  return formatter.format(total);
 }
 
 export const popularBankAccount = state => {

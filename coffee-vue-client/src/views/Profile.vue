@@ -3,26 +3,59 @@
     <LoadingScreen />
   </div>
   <section v-else class="ftco-section">
+    <b-alert
+      :show="dismissCountDown"
+      dismissible
+      variant="success"
+      @dismissed="dismissCountDown = 0"
+      @dismiss-count-down="countDownChanged"
+    >
+      <p>{{ alertText }}</p>
+    </b-alert>
     <div class="container" style="padding-top: 1em">
       <div class="row justify-content-center">
         <form @submit.prevent="saveChanges">
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="firstname">Firstname</label>
-              <input type="text" v-model.trim="firstname" class="form-control" required />
+              <input
+                type="text"
+                v-model.trim="firstname"
+                class="form-control"
+                required
+              />
             </div>
             <div class="form-group col-md-6">
               <label for="lastname">Lastname</label>
-              <input type="text" v-model.trim="lastname" class="form-control" required />
+              <input
+                type="text"
+                v-model.trim="lastname"
+                class="form-control"
+                required
+              />
             </div>
           </div>
           <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" v-model.trim="username" class="form-control" required />
+            <input
+              type="text"
+              v-model.trim="username"
+              class="form-control"
+              required
+              disabled
+              readonly
+            />
           </div>
-            <div class="form-group">
+          <div class="form-group">
             <label for="registerDate">Registered At</label>
-            <input type="text" v-model="registerDate" class="form-control" required disabled/>
+            <input
+              type="text"
+              v-model="registerDate"
+              class="form-control"
+              required
+              disabled
+              readonly
+            />
           </div>
           <hr class="my-4" />
           <div class="row mb-4">
@@ -118,6 +151,9 @@ export default {
       newPasswordConfirm: "",
       clicked: false,
       loaded: false,
+      dismissSecs: 3,
+      dismissCountDown: 0,
+      alertText: "",
     };
   },
   components: {
@@ -150,11 +186,28 @@ export default {
         username: this.username,
         new_password: this.newPassword.length !== 0 ? this.newPassword : null,
       });
-      console.log(response.status);
+
       this.clicked = false;
+      if (response.status === 204) {
+        this.showAlert("Changes saved");
+        this.newPassword = "";
+        this.newPasswordConfirm = "";
+      }
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown;
+    },
+    showAlert(text) {
+      this.alertText = text;
+      this.dismissCountDown = this.dismissSecs;
     },
   },
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.form-control:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>>

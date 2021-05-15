@@ -16,9 +16,14 @@ import java.time.LocalDateTime;
 public class AddAuthorizationHeaderToRequest implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        System.out.println("FILTERING....................");
         Cookie accessToken = requestContext.getCookies().get("access_token");
         if (accessToken != null && !accessToken.getValue().isEmpty()) {
+            System.out.println("1111111");
             requestContext.getHeaders().add("Authorization", "Bearer " + accessToken.getValue());
+        }
+        else {
+            System.out.println("2222");
         }
     }
 }

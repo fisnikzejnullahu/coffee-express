@@ -18,7 +18,7 @@
           </thead>
           <tbody>
             <tr v-for="(order, index) in orders" :key="order.orderId">
-              <td>{{ 1 + index + page * 5 }}</td>
+              <td>{{ 1 + index + (page - 1) * 5 }}</td>
               <td>{{ order.placedAt }}</td>
               <td><span class="status">•</span> {{ order.orderState }}</td>
               <td>${{ order.orderDetails.totalOfOrder }}</td>
@@ -52,8 +52,8 @@
               <a
                 type="button"
                 class="view"
-                :class="page == 0 ? 'text-muted' : ''"
-                @click="page != 0 ? previousPage() : null"
+                :class="page == 1 ? 'text-muted' : ''"
+                @click="page != 1 ? previousPage() : null"
                 title=""
                 data-toggle="tooltip"
                 data-original-title="View Details"
@@ -64,8 +64,8 @@
               <a
                 type="button"
                 class="view"
-                :class="page === 0 || page + 1 == totalPages ? 'text-muted' : ''"
-                @click="page + 1 != totalPages ? nextPage() : null"
+                :class="totalPages === 1 || page == totalPages ? 'text-muted' : ''"
+                @click="page != totalPages ? nextPage() : null"
                 title=""
                 data-toggle="tooltip"
                 data-original-title="View Details"
@@ -88,7 +88,7 @@ export default {
   data() {
     return {
       orders: [],
-      page: 0,
+      page: 1,
       totalPages: 0,
       loaded: false,
     };
@@ -105,7 +105,7 @@ export default {
   methods: {
     async fetchMyOrders() {
       console.log(this.page);
-      const response = await Api.getMyOrders(this.currentUser.id, this.page);
+      const response = await Api.getMyOrders(this.currentUser.id, this.page - 1);
       const body = await response.json();
       console.log(body);
       this.totalPages = body["total_pages"];
@@ -126,7 +126,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  color: gray;
+  color: #c2c2c2;
 }
 .table-hover tbody tr {
   cursor: pointer;

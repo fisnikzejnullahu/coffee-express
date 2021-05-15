@@ -1,5 +1,7 @@
 package com.fisnikz.coffee_express.orderhistory.entity;
 
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.List;
 
 public class OrderDetails {
@@ -21,9 +23,20 @@ public class OrderDetails {
         this.items = items;
     }
 
-    public double getTotalOfOrder() {
-        return items.stream()
+    public String getTotalOfOrder() {
+        double total = items.stream()
                 .map(OrderItem::getTotalPrice)
                 .reduce(0d, Double::sum);
+
+        return formatAndRound(total);
+    }
+
+    private String formatAndRound(double num) {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(2);
+        nf.setMinimumFractionDigits(2);
+        nf.setRoundingMode(RoundingMode.HALF_UP);
+
+        return nf.format(num);
     }
 }

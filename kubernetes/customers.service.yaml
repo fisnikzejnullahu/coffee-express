@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-service
+  labels:
+    app: customers-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customers-service
+  template:
+    metadata:
+      labels:
+        app: customers-service
+    spec:
+      containers:
+        - env:
+            - name: QUARKUS_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_username
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_password
+            - name: QUARKUS_ARTEMIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: artemis_username
+            - name: QUARKUS_ARTEMIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: artemis_password
+          envFrom:
+            - configMapRef:
+                name: quarkus-mysql-connection
+          name: customers-service-container
+          image: fisnikz/customers-service:latest
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /health/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-service
+  labels:
+    app: customers-service
+spec:
+  selector:
+    app: customers-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

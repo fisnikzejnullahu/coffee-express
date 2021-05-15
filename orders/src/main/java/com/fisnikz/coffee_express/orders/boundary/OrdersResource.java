@@ -36,7 +36,7 @@ public class OrdersResource {
 
     @POST
     @PermitAll
-//    @RolesAllowed({"full_access", "manage_orders"})
+//    @RolesAllowed({"full_access", "user_data"})
     public Response place(PlaceOrderRequest placeOrderRequest) {
         System.out.println(JsonbBuilder.create().toJson(placeOrderRequest));
         UUID orderId = UUID.randomUUID();
@@ -48,7 +48,7 @@ public class OrdersResource {
     }
 
     @Path("{orderId}")
-    @RolesAllowed({"full_access", "manage_orders"})
+    @RolesAllowed({"full_access", "user_data"})
     public OrderResource find(@PathParam("orderId") UUID orderId) {
         // if user from token is admin
         if (jsonWebToken.getGroups().contains("full_access")) {

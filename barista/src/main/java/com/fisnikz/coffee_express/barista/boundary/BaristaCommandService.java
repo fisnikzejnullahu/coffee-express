@@ -24,8 +24,8 @@ public class BaristaCommandService {
         this.eventProducer.publish(new OrderAccepted(order.id, acceptedAt));
     }
 
-    public void orderStarted(UUID orderId, LocalDateTime readyBy) {
-        eventProducer.publish(new OrderStarted(orderId, readyBy));
+    public void orderStarted(UUID orderId, LocalDateTime startedAt, LocalDateTime readyBy) {
+        eventProducer.publish(new OrderStarted(orderId, startedAt, readyBy));
     }
 
     public void orderFinished(UUID orderId) {

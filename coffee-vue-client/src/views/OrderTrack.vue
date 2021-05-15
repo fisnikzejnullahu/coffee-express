@@ -11,11 +11,11 @@
       <div
         class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-secondary"
       >
-        <div class="w-100 text-center py-1 px-2 order-status"
-          :class="{ failed: stepsCompleted == 6 }">
-          <span class="text-medium"
-            >Status: {{ order["order_state"] }}</span
-          >
+        <div
+          class="w-100 text-center py-1 px-2 order-status"
+          :class="{ failed: stepsCompleted == 6 }"
+        >
+          <span class="text-medium">Status: {{ order["order_state"] }}</span>
           <span v-if="order['cancelled_reason']"
             >, Reason: {{ order["cancelled_reason"] }}</span
           >
@@ -26,31 +26,63 @@
           class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x"
           :class="{ failed: stepsCompleted == 6 }"
         >
-          <div class="step" :class="{ completed: stepsCompleted >= 1 }" id="placed">
+          <div
+            class="step"
+            :class="{ completed: stepsCompleted >= 1 }"
+            id="placed"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-more"></i></div>
             </div>
             <h4 class="step-title">Order Placed</h4>
           </div>
-          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 2) }" id="accepted">
+          <div
+            class="step"
+            :class="{
+              completed:
+                this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 2,
+            }"
+            id="accepted"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-check"></i></div>
             </div>
             <h4 class="step-title">Order Accepted</h4>
           </div>
-          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 3) }" id="preparing">
+          <div
+            class="step"
+            :class="{
+              completed:
+                this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 3,
+            }"
+            id="preparing"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
             <h4 class="step-title">Preparing</h4>
           </div>
-          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 4) }" id="ready">
+          <div
+            class="step"
+            :class="{
+              completed:
+                this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 4,
+            }"
+            id="ready"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-car"></i></div>
             </div>
             <h4 class="step-title">Ready for pickup</h4>
           </div>
-          <div class="step" :class="{ completed: (this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 5) }" id="pickedup">
+          <div
+            class="step"
+            :class="{
+              completed:
+                this.order['order_state'] != 'CANCELLED' && stepsCompleted >= 5,
+            }"
+            id="pickedup"
+          >
             <div class="step-icon-wrap">
               <div class="step-icon"><i class="pe-7s-coffee"></i></div>
             </div>
@@ -60,12 +92,11 @@
       </div>
     </div>
     <div>
-      
-        <router-link
-          :to="{ name: 'OrderDetails', params: { id: order.id } }"
-          class="btn btn-primary btn-outline-primary btn-lg btn-block"
-          >View Order Details</router-link
-        >
+      <router-link
+        :to="{ name: 'OrderDetails', params: { id: order.id } }"
+        class="btn btn-primary btn-outline-primary btn-lg btn-block"
+        >View Order Details</router-link
+      >
     </div>
   </div>
 </template>
@@ -89,15 +120,18 @@ export default {
   },
   methods: {
     async trackOrder() {
-      const response = await Api.trackOrder(this.$route.params.id);
-      const body = await response.json();
-      this.order = body;
-      this.orderStateCheck(this.order["order_state"]);
-      this.loaded = true;
-      if (this.stepsCompleted < 4) {
-        setTimeout(() => {
-          this.trackOrder();
-        }, 2000);
+      //some error cause of setTimeout, if user changes view after settimeout is called and before is finished...
+      if (this.$route.name === "OrderTrack") {
+        const response = await Api.trackOrder(this.$route.params.id);
+        const body = await response.json();
+        this.order = body;
+        this.orderStateCheck(this.order["order_state"]);
+        this.loaded = true;
+        if (this.stepsCompleted < 4) {
+          setTimeout(async () => {
+            await this.trackOrder();
+          }, 2000);
+        }
       }
     },
     orderStateCheck(state) {
@@ -254,12 +288,10 @@ body {
 }
 
 .card-body .steps.failed {
-
   #accepted .step-icon {
     border-color: #ff0000;
     background-color: #ff0000;
     color: #ffffff;
   }
 }
-
 </style>

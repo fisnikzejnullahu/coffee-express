@@ -39,10 +39,10 @@ public class BaristaService {
         This method should be called after barista manually in their screens click the button that order has started
         That is why for demonstration purposes, I used a simulated timer BaristaTimer
     */
-    public void orderStarted(UUID orderId, LocalDateTime readyBy) {
+    public void orderStarted(UUID orderId, LocalDateTime startedAt, LocalDateTime readyBy) {
         Order order = Order.findById(orderId);
         order.start(readyBy);
-        commandService.orderStarted(orderId, readyBy);
+        commandService.orderStarted(orderId, startedAt, readyBy);
     }
 
     public void finishOrder(UUID orderId) {

@@ -35,7 +35,7 @@ public class OrdersResource {
 
     @GET
     @Path("{orderId}")
-    @RolesAllowed({"full_access", "manage_orders"})
+    @RolesAllowed({"full_access", "user_data"})
     public Response find(@PathParam("orderId") String orderId) {
         Order order = Order.find("orderId", orderId).firstResult();
         if (order == null) {
@@ -49,17 +49,12 @@ public class OrdersResource {
     }
 
     @GET
-    @RolesAllowed({"full_access", "manage_orders"})
+    @RolesAllowed({"full_access", "user_data"})
     public Response ordersOfCustomer(@QueryParam("customerId") String customerId, @QueryParam("page") int page) {
         if (!jsonWebToken.getGroups().contains("full_access") && !customerId.equals(jsonWebToken.getClaim("customer_id"))) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-
-        JsonObject response = Json.createObjectBuilder()
-                .add("orders", Json.createReader(new StringReader(JsonbBuilder.create().toJson(orderService.getOrdersOfCustomer(customerId, page)))).readValue())
-                .add("total_pages", orderService.totalPages())
-                .build();
-        return Response.ok(response).build();
+        return Response.ok(orderService.ordersOfCustomer(customerId, page)).build();
     }
 
 }

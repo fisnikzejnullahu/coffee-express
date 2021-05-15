@@ -79,7 +79,7 @@ public class CustomersResource {
     @Traced
     @GET
     @Path("{customerId}")
-    @RolesAllowed({"full_access", "manage_orders"})
+    @RolesAllowed({"full_access", "user_data"})
     public Customer find(@PathParam("customerId") UUID customerId) {
         if (!jsonWebToken.getGroups().contains("full_access") && !customerId.equals(UUID.fromString(jsonWebToken.getClaim("customer_id")))) {
             throw new ForbiddenException();

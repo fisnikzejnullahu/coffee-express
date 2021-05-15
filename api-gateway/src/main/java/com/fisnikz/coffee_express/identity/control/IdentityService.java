@@ -14,6 +14,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 
 /**
  * @author Fisnik Zejnullahu

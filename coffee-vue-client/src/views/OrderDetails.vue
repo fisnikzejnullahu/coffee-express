@@ -89,8 +89,8 @@
             </p>
             <hr />
             <p class="d-flex total-price">
-              <span>Preparation time</span>
-              <span>2 minutes</span>
+              <span>Estimated Preparation time</span>
+              <span>{{ order.estimatedPreparationTime }}</span>
             </p>
           </div>
         </div>
@@ -144,4 +144,5 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+</style>

@@ -2,12 +2,11 @@ package com.fisnikz.coffee_express.orderhistory.entity;
 
 import io.quarkus.mongodb.panache.MongoEntity;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import javax.json.bind.annotation.JsonbDateFormat;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author Fisnik Zejnullahu
@@ -21,11 +20,26 @@ public class Order extends PanacheMongoEntity {
     private OrderState orderState;
     private boolean paid;
     private String bankAccountId;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
     private LocalDateTime placedAt;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
     private LocalDateTime acceptedAt;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
+    private LocalDateTime startedAt;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
     private LocalDateTime readyBy;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
     private LocalDateTime finishedAt;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
     private LocalDateTime cancelledAt;
+
+    @JsonbDateFormat("d MMM y, HH:mm:ss")
     private LocalDateTime pickedUpAt;
     private String cancelledReason;
 
@@ -75,6 +89,14 @@ public class Order extends PanacheMongoEntity {
 
     public void setAcceptedAt(LocalDateTime acceptedAt) {
         this.acceptedAt = acceptedAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
     }
 
     public LocalDateTime getReadyBy() {
@@ -131,6 +153,14 @@ public class Order extends PanacheMongoEntity {
 
     public void setOrderState(OrderState orderState) {
         this.orderState = orderState;
+    }
+
+    // if order has not yet been start preparing, that just return empty string
+    @BsonIgnore
+    public String getEstimatedPreparationTime() {
+        return this.getStartedAt() != null
+                ? ChronoUnit.MINUTES.between(this.getStartedAt(), this.getReadyBy()) + " MINUTES"
+                : "";
     }
 
     public enum OrderState {

@@ -10,7 +10,7 @@
       @dismissed="dismissCountDown = 0"
       @dismiss-count-down="countDownChanged"
     >
-      <p>Success</p>
+      <p>{{ alertText }}</p>
     </b-alert>
 
     <ConfirmationModal
@@ -83,7 +83,7 @@ export default {
       whichId: "",
       dismissSecs: 3,
       dismissCountDown: 0,
-      showDismissibleAlert: false,
+      alertText: "",
     };
   },
   components: {
@@ -103,7 +103,8 @@ export default {
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown;
     },
-    showAlert() {
+    showAlert(text) {
+      this.alertText = text;
       this.dismissCountDown = this.dismissSecs;
     },
     ...mapGetters(["currentUser"]),
@@ -120,7 +121,7 @@ export default {
           })
           .indexOf(id);
 
-        this.showAlert();
+        this.showAlert("Deleted successfully");
         setTimeout(() => {
           this.bankAccounts.splice(index, 1);
         }, 1000);

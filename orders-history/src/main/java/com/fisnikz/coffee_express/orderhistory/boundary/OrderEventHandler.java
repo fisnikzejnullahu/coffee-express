@@ -34,7 +34,7 @@ public class OrderEventHandler {
     }
 
     void handleEvent(@Observes OrderStarted event) {
-        orderService.orderStarted(event.getOrderId(), event.readyBy);
+        orderService.orderStarted(event.getOrderId(), event.startedAt, event.readyBy);
     }
 
     void handleEvent(@Observes OrderFinished event) {

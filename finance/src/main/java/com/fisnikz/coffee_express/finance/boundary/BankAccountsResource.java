@@ -29,7 +29,7 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Logged
-@RolesAllowed({"full_access", "manage_orders"})
+@RolesAllowed({"full_access", "user_data"})
 public class BankAccountsResource {
 
     @Inject

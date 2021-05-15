@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: activemq-artemis
+  labels:
+    app: activemq-artemis
+spec:
+  serviceName: activemq-artemis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: activemq-artemis
+  template:
+    metadata:
+      labels:
+        app: activemq-artemis
+    spec:
+#      volumes:
+#        - name: activemq-artemis-data
+#          persistentVolumeClaim:
+#            claimName: my-pvc
+#        - name: activemq-artemis-config-override
+#          persistentVolumeClaim:
+#            claimName: my-pvc
+#        - name: activemq-artemis-configure-common
+#          persistentVolumeClaim:
+#            claimName: my-pvc
+#        - name: activemq-artemis-configure-master
+#          persistentVolumeClaim:
+#            claimName: my-pvc
+      containers:
+        - env:
+            - name: ARTEMIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: artemis_username
+            - name: ARTEMIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: artemis_password
+          name: activemq-artemis-container
+          image: vromero/activemq-artemis:2.9.0-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8161
+            - name: core
+              containerPort: 61616
+            - name: amqp
+              containerPort: 5672
+            - name: jmxexporter
+              containerPort: 9404
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: core
+            initialDelaySeconds: 10
+            periodSeconds: 10
+#          volumeMounts:
+#            - name: activemq-artemis-data
+#              mountPath: /var/lib/artemis/data
+#            - name: activemq-artemis-config-override
+#              mountPath: /var/lib/artemis/etc-override
+#            - name: activemq-artemis-configure-common
+#              mountPath: /opt/configure-common
+#            - name: activemq-artemis-configure-master
+#              mountPath: /opt/configure-master
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: activemq-artemis
+  labels:
+    app: activemq-artemis
+spec:
+  selector:
+    app: activemq-artemis
+  ports:
+    - name: http
+      port: 8161
+      targetPort: 8161
+    - name: core
+      port: 61616
+      targetPort: 61616
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: jmxexporter
+      port: 9404
+      targetPort: 9404

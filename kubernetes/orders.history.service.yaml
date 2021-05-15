@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-history-service
+  labels:
+    app: orders-history-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-history-service
+  template:
+    metadata:
+      labels:
+        app: orders-history-service
+    spec:
+      containers:
+        - env:
+            - name: QUARKUS_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_username
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_password
+            - name: QUARKUS_ARTEMIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: artemis_username
+            - name: QUARKUS_ARTEMIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: artemis_password
+          name: orders-history-service-container
+          image: fisnikz/orders-history-service:latest
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /health/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-history-service
+  labels:
+    app: orders-history-service
+spec:
+  selector:
+    app: orders-history-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

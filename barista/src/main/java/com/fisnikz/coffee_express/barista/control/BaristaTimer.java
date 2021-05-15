@@ -5,6 +5,7 @@ import io.quarkus.scheduler.Scheduled;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -21,7 +22,7 @@ public class BaristaTimer {
     void startPreparingCoffes() {
         List<Order> pendingOrders = baristaService.getPendingOrders();
         pendingOrders.forEach(order -> {
-            baristaService.orderStarted(order.id, order.acceptedAt.plusMinutes(new Random().nextInt(1) + 2));
+            baristaService.orderStarted(order.id, LocalDateTime.now(), LocalDateTime.now().plusMinutes(new Random().nextInt(2) + 1));
         });
     }
 
