@@ -35,6 +35,7 @@ public class IdentityService {
     }
 
     public Response login(LoginInfo loginInfo) {
+        System.out.println(loginInfo);
         Object[] loginData = keycloakService.login(loginInfo.getUsername(), loginInfo.getPassword());
         Token accessToken = (Token) loginData[0];
         Token refreshToken = (Token) loginData[1];

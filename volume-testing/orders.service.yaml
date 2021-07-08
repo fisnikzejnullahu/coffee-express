@@ -1,30 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: finance-service
+  name: orders-service
   labels:
-    app: finance-service
+    app: orders-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: finance-service
+      app: orders-service
   template:
     metadata:
       labels:
-        app: finance-service
+        app: orders-service
     spec:
       containers:
         - env:
-            - name: QUARKUS_DATASOURCE_JDBC_URL
-              value: jdbc:mysql://mysql:3306/finance_service
             - name: QUARKUS_DATASOURCE_USERNAME
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_username
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
-                  key: mysql_root_password
+                  key: mysql_password
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -35,8 +36,11 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: artemis_password
-          name: finance-service-container
-          image: fisnikz/finance-service:latest
+          envFrom:
+            - configMapRef:
+                name: quarkus-mysql-connection
+          name: orders-service-container
+          image: fisnikz/orders-service:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 4
@@ -68,12 +72,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: finance-service
+  name: orders-service
   labels:
-    app: finance-service
+    app: orders-service
 spec:
   selector:
-    app: finance-service
+    app: orders-service
   ports:
     - name: http
       port: 8080

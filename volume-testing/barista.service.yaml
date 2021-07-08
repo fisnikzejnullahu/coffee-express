@@ -1,30 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: finance-service
+  name: barista-service
   labels:
-    app: finance-service
+    app: barista-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: finance-service
+      app: barista-service
   template:
     metadata:
       labels:
-        app: finance-service
+        app: barista-service
     spec:
       containers:
         - env:
-            - name: QUARKUS_DATASOURCE_JDBC_URL
-              value: jdbc:mysql://mysql:3306/finance_service
             - name: QUARKUS_DATASOURCE_USERNAME
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_username
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
-                  key: mysql_root_password
+                  key: mysql_password
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -35,16 +36,19 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: artemis_password
-          name: finance-service-container
-          image: fisnikz/finance-service:latest
+          envFrom:
+            - configMapRef:
+                name: quarkus-mysql-connection
+          name: barista-service-container
+          image: fisnikz/barista-service:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
-            failureThreshold: 4
+            failureThreshold: 3
             httpGet:
               path: /health/live
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 0
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 10
@@ -53,12 +57,12 @@ spec:
               name: http
               protocol: TCP
           readinessProbe:
-            failureThreshold: 4
+            failureThreshold: 3
             httpGet:
               path: /health/ready
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 0
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 10
@@ -68,12 +72,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: finance-service
+  name: barista-service
   labels:
-    app: finance-service
+    app: barista-service
 spec:
   selector:
-    app: finance-service
+    app: barista-service
   ports:
     - name: http
       port: 8080

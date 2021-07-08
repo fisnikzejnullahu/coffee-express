@@ -19,7 +19,6 @@ public class OrderEventHandler {
 
     void handleEvent(@Observes CustomerVerificationFailed event) {
         orderService.rejectOrder(event.getOrderId(), event.getMessage());
-        //TODO: Notify user from a notification-service that his user has cancelled
     }
 
     void handleEvent(@Observes CardAuthorized event) {

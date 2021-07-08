@@ -2,7 +2,7 @@
   <section class="ftco-section">
     <div class="container">
       <div class="card-body p-5">
-        <h4>Create a new bank account</h4>
+        <h4>Add a new bank account</h4>
         <form role="form" class="mt-4" @submit.prevent="create">
           <div class="form-group">
             <label for="username">Full name (on the card)</label>
@@ -109,7 +109,7 @@
             id="signin-btn"
             style="width: 100%"
           >
-            <span style="color: inherit">Create</span>
+            <span style="color: inherit">Add</span>
             <svg
               version="1.1"
               id="loader-1"

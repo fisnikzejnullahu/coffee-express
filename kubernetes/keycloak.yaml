@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-settings
+data:
+  DB_VENDOR: "MYSQL"
+  DB_ADDR: "mysql"
+  DB_PORT: "3306"
+  DB_DATABASE: "keycloak"
+  DB_SCHEMA: "keycloak"
+  DB_USER: "root"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: default
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: jboss/keycloak
+          envFrom:
+            - configMapRef:
+                name: keycloak-settings
+          env:
+            - name: KEYCLOAK_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: keycloak_user
+            - name: KEYCLOAK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: keycloak_password
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-passwords
+                  key: mysql_root_password
+            - name: KEYCLOAK_IMPORT
+              value: /tmp/keycloak/realm-export.json
+          volumeMounts:
+            - name: realm-import-file
+              mountPath: /tmp/keycloak/
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: https
+              containerPort: 8443
+          readinessProbe:
+            httpGet:
+              path: /auth/realms/master
+              port: 8080
+      volumes:
+        - name: realm-import-file
+          configMap:
+            name: keycloak-realm-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: https
+      port: 8443
+      targetPort: 8443

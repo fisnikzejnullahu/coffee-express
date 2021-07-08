@@ -16,16 +16,15 @@ spec:
     spec:
       containers:
         - env:
+            - name: QUARKUS_DATASOURCE_JDBC_URL
+              value: jdbc:mysql://mysql:3306/barista_service
             - name: QUARKUS_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: database-passwords
-                  key: mysql_username
+              value: "root"
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
-                  key: mysql_password
+                  key: mysql_root_password
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -36,9 +35,6 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: artemis_password
-          envFrom:
-            - configMapRef:
-                name: quarkus-mysql-connection
           name: barista-service-container
           image: fisnikz/barista-service:latest
           imagePullPolicy: IfNotPresent

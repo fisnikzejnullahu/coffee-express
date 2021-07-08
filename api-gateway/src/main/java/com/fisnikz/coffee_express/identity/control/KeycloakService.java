@@ -3,6 +3,7 @@ package com.fisnikz.coffee_express.identity.control;
 import com.fisnikz.coffee_express.customers.entity.CreateCustomerRequest;
 import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.identity.entity.Token;
+import com.fisnikz.coffee_express.logging.Logged;
 import io.quarkus.runtime.Startup;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -20,6 +21,7 @@ import static com.fisnikz.coffee_express.identity.control.IdentityService.toBear
  */
 @ApplicationScoped
 @Startup
+@Logged
 public class KeycloakService {
 
     @Inject
@@ -37,36 +39,43 @@ public class KeycloakService {
     }
 
     private Object[] loginAndGetUserTokensAndCustomerId(String username, String password) {
-        Response loginResponse = keycloakRestClient.login(username, password, "password", keycloakClientId, null);
-        JsonObject tokenData = loginResponse.readEntity(JsonObject.class);
+        try {
+            Response loginResponse = keycloakRestClient.login(username, password, "password", keycloakClientId, null);
+            JsonObject tokenData = loginResponse.readEntity(JsonObject.class);
 
-        Response userResponse = keycloakRestClient.findUser(toBearerToken(getAdminToken()), username);
+            System.out.println(getAdminToken());
+            Response userResponse = keycloakRestClient.findUser(toBearerToken(getAdminToken()), username);
 
-        if (userResponse.getStatus() != 200) {
-            throw new WebApplicationException(userResponse);
-        }
-
-        String customerId = null;
-        //keycloak accountId
-        String accountId = null;
-
-        JsonArray usersJson = userResponse.readEntity(JsonArray.class);
-
-        for (JsonValue u : usersJson) {
-            JsonObject object = u.asJsonObject();
-            if (object.getString("username").equals(username)) {
-                accountId = object.getString("id");
-                customerId = object.getJsonObject("attributes").getJsonArray("customerId").get(0).toString().replace("\"", "");
-                break;
+            if (userResponse.getStatus() != 200) {
+                throw new WebApplicationException(userResponse);
             }
-        }
 
-        return new Object[]{
-                new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
-                new Token(tokenData.getString("refresh_token"), Token.TokenType.REFRESH_TOKEN, tokenData.getJsonNumber("refresh_expires_in").intValue()),
-                accountId,
-                customerId
-        };
+            String customerId = null;
+            //keycloak accountId
+            String accountId = null;
+
+            JsonArray usersJson = userResponse.readEntity(JsonArray.class);
+            System.out.println(usersJson);
+
+            for (JsonValue u : usersJson) {
+                JsonObject object = u.asJsonObject();
+                if (object.getString("username").equals(username)) {
+                    accountId = object.getString("id");
+                    customerId = object.getJsonObject("attributes").getJsonArray("customerId").get(0).toString().replace("\"", "");
+                    break;
+                }
+            }
+
+            return new Object[]{
+                    new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
+                    new Token(tokenData.getString("refresh_token"), Token.TokenType.REFRESH_TOKEN, tokenData.getJsonNumber("refresh_expires_in").intValue()),
+                    accountId,
+                    customerId
+            };
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw  e;
+        }
     }
 
     public Token[] refreshToken(String token) {
@@ -84,9 +93,12 @@ public class KeycloakService {
 
     }
 
+    //TODO: bone nashta heren e pare me password, po tani ruje refresh tokenin edhe boni me refresh token... deri sa skadon edhe refreshi
     public void generateNewAdminToken() {
         JsonObject data = keycloakRestClient.login("fisnikz", "123456", "password", keycloakClientId, null).readEntity(JsonObject.class);
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
+        System.out.println("generating...");
+        System.out.println(this.getAdminToken());
     }
 
     public String getAdminToken() {

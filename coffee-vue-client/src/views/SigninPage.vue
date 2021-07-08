@@ -3,17 +3,30 @@
     <div class="container-login100">
       <div class="wrap-login100">
         <form class="login100-form validate-form" @submit.prevent="onSubmit">
-          <span class="login100-form-title p-b-43"> Login to continue </span>
+          <span class="login100-form-title p-b-43"> Sign in to continue </span>
           <div
             class="wrap-input100 validate-input"
             data-validate="Valid email is required: ex@abc.xyz"
           >
-            <input class="input100" type="text" name="email" v-model="username" />
+            <input
+              class="input100"
+              type="text"
+              name="email"
+              v-model="username"
+            />
             <span class="focus-input100"></span>
-            <span class="label-input100">Email</span>
+            <span class="label-input100">Username</span>
           </div>
-          <div class="wrap-input100 validate-input" data-validate="Password is required">
-            <input class="input100" type="password" name="pass" v-model="password" />
+          <div
+            class="wrap-input100 validate-input"
+            data-validate="Password is required"
+          >
+            <input
+              class="input100"
+              type="password"
+              name="pass"
+              v-model="password"
+            />
             <span class="focus-input100"></span>
             <span class="label-input100">Password</span>
           </div>
@@ -32,6 +45,10 @@
             </div>
           </div>
 
+          <p style="color: red" v-if="errorMessage.length !== 0">
+            {{ errorMessage }}
+          </p>
+
           <div class="container-login100-form-btn">
             <button
               type="submit"
@@ -41,7 +58,7 @@
               id="signin-btn"
               style="width: 100%"
             >
-              <span style="color: inherit">Login</span>
+              <span style="color: inherit">Submit</span>
               <svg
                 version="1.1"
                 id="loader-1"
@@ -81,7 +98,8 @@
         <div
           class="login100-more"
           :style="{
-            'background-image': 'url(' + require('@/assets/images/bg_1.jpg') + ')',
+            'background-image':
+              'url(' + require('@/assets/images/bg_1.jpg') + ')',
           }"
         ></div>
       </div>
@@ -92,12 +110,21 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 export default {
+  props: {
+    tokenExpired: Boolean,
+  },
   data() {
     return {
       clicked: false,
       username: "",
       password: "",
+      errorMessage: "",
     };
+  },
+  created() {
+    if (this.tokenExpired) {
+      this.errorMessage = "token expired. please login again"
+    }
   },
   computed: {
     ...mapGetters(["currentUser"]),
@@ -118,12 +145,10 @@ export default {
         if (response.status === 200) {
           this.$router.push("/");
         } else if (response.status === 401) {
-          alert("username or password is incorrect");
-        } else {
-          alert("something went wrong!");
+          this.errorMessage = "username or password is incorrect";
         }
       } else {
-        alert("username and password are required");
+        this.errorMessage = "Username and password are required";
       }
       this.clicked = false;
     },

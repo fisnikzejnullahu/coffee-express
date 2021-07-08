@@ -1,7 +1,10 @@
 package com.fisnikz.coffee_express.orders.control;
 
 import com.fisnikz.coffee_express.AuthorizationHeaderClientRequestCheck;
-import com.fisnikz.coffee_express.MyResponseExceptionMapper;
+import com.fisnikz.coffee_express.ResponseWebApplicationExceptionMapper;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.exceptions.CircuitBreakerOpenException;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -19,8 +22,10 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RegisterClientHeaders
-@RegisterProvider(MyResponseExceptionMapper.class)
+@RegisterProvider(ResponseWebApplicationExceptionMapper.class)
 @RegisterProvider(AuthorizationHeaderClientRequestCheck.class)
+@Retry(maxRetries = 1, abortOn = CircuitBreakerOpenException.class)
+@CircuitBreaker(requestVolumeThreshold = 6, failureRatio = 0.5, delay = 3000L, successThreshold = 2)
 public interface OrdersRestClient {
 
     @POST

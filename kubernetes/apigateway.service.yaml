@@ -17,15 +17,12 @@ spec:
       containers:
         - env:
             - name: QUARKUS_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: database-passwords
-                  key: mysql_username
+              value: "root"
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
-                  key: mysql_password
+                  key: mysql_root_password
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -45,7 +42,7 @@ spec:
               path: /health/live
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 0
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 10
@@ -59,7 +56,7 @@ spec:
               path: /health/ready
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 0
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 10

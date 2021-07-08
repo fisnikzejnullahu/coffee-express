@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:9999";
 const API_VERSION = "v1"
 const API_URL = `${BASE_URL}/api/${API_VERSION}`;
 
@@ -26,7 +26,19 @@ async function call(url, object, httpMethod) {
       refreshTokenCount = 0;
     }
   } else if (response.status === 404 || response.status === 403) {
-    router.push('/error');
+    router.push({
+      name: 'ErrorPage',
+      params: {
+        message: 'The link you followed may be broken, or the page may have been removed.'
+      }
+    });
+  } else if (response.status >= 500) {
+    router.push({
+      name: 'ErrorPage',
+      params: {
+        message: "We're facing some technical problems right now. Please try again later!"
+      }
+    });
   } else if (response.status === 401) {
     if (store.getters.currentUser !== null) {
       if (refreshTokenCount < 1) {
@@ -36,7 +48,13 @@ async function call(url, object, httpMethod) {
       } else {
         console.log(store);
         store.dispatch('logout');
-        router.go();
+        router.push({
+          name: 'SignInPage',
+          params: {
+            tokenExpired: true,
+          }
+        });
+        // router.go();
       }
     }
   }

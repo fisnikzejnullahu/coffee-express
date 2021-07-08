@@ -36,7 +36,8 @@
                     <div
                       class="img"
                       :style="{
-                        'background-image': 'url(' + item.menuItem.thumbnail + ')',
+                        'background-image':
+                          'url(' + item.menuItem.thumbnail + ')',
                       }"
                     ></div>
                   </td>
@@ -76,12 +77,15 @@
             </p>
             <p class="d-flex">
               <span>Placed at</span>
-              <!-- <span>16 Nov 2020, 18:21:19</span> -->
               <span>{{ order.placedAt }}</span>
             </p>
             <p class="d-flex">
               <span>Accepted at</span>
               <span>{{ order.acceptedAt }}</span>
+            </p>
+            <p class="d-flex">
+              <span>Started at</span>
+              <span>{{ order.startedAt }}</span>
             </p>
             <p class="d-flex">
               <span>Finished at</span>

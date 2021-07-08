@@ -21,7 +21,9 @@ Vue.use(VueRouter);
 
 const routes = [{
     path: "*",
-    component: ErrorPage
+    name: "ErrorPage",
+    component: ErrorPage,
+    props: true
   },
   {
     path: "/",

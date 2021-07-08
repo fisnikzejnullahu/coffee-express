@@ -17,15 +17,12 @@ spec:
       containers:
         - env:
             - name: QUARKUS_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: database-passwords
-                  key: mysql_username
+              value: "root"
             - name: QUARKUS_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
-                  key: mysql_password
+                  key: mysql_root_password
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:

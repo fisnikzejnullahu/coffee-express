@@ -4,22 +4,22 @@
       <div class="notfound-404">
         <h1>:(</h1>
       </div>
-      <h2>This page isn't available</h2>
-      <p>
-        The link you followed may be broken, or the page may have been removed.
+      <h2>Sorry for inconvenience</h2>
+      <span>
+        {{ message }}
+      </span>
+      <p style="margin-top: 20px">
+        If you continue to have this problem please contact us!
       </p>
-      {{ message }}
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      message: ''
-    }
-  }
+  props: {
+    message: String,
+  },
 };
 </script>
 

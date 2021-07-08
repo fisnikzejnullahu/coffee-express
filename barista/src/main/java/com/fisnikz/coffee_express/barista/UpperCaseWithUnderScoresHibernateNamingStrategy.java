@@ -24,13 +24,7 @@ public class UpperCaseWithUnderScoresHibernateNamingStrategy implements Physical
 
     @Override
     public Identifier toPhysicalTableName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        /*
-            just for now I'm using only one instance of MySql which does not have schemas,
-            and therefore it cannot have two tables with same NAME.
-            So just for testing purposes I add a B (Baristas) at the begin of table name.
-         */
-
-        String newName = "B" + convert(identifier.getText());
+        String newName = convert(identifier.getText());
         return newName.endsWith("S") ? Identifier.toIdentifier(newName) : Identifier.toIdentifier(newName + "S");
     }
 

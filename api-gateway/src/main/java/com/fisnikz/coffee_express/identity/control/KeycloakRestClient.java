@@ -37,4 +37,8 @@ public interface KeycloakRestClient {
     @Path("admin/realms/public/users/{accountId}/")
     @Consumes(MediaType.APPLICATION_JSON)
     Response update(@HeaderParam("Authorization") String authorization, @PathParam("accountId") String accountId, JsonObject body);
+
+    @GET
+    @Path("realms/public")
+    Response healthCheck();
 }

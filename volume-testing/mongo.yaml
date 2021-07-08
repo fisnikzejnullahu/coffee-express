@@ -21,10 +21,9 @@ spec:
       containers:
         - name: mongodb
           image: mvertes/alpine-mongo
-          imagePullPolicy: IfNotPresent
           volumeMounts:
              - name: mongo-storage
-               mountPath: "/data/db"
+               mountPath: /data/db
 
 ---
 
