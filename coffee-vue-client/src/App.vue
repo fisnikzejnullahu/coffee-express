@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Navbar v-if="!currentPageIsLogin" />
-      <router-view />
+    <router-view />
   </div>
 </template>
 
@@ -34,7 +34,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 .slide-enter-active {
   transition: opacity 0.7s, transform 0.7s;
 }
@@ -44,5 +43,4 @@ export default {
   opacity: 0;
   transform: translateX(-30%);
 }
-
 </style>

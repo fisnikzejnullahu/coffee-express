@@ -1,12 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import * as actions from './actions'
-import * as getters from './getters'
-import menuItems from './modules/menuitems'
-import auth from './modules/auth'
-import orders from './modules/orders'
-import shoppingCart from './modules/shopping-cart'
-import createPersistedState from 'vuex-persistedstate';
+import * as actions from "./actions";
+import * as getters from "./getters";
+import menuItems from "./modules/menuitems";
+import auth from "./modules/auth";
+import orders from "./modules/orders";
+import shoppingCart from "./modules/shopping-cart";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -19,5 +19,5 @@ export default new Vuex.Store({
     orders,
     shoppingCart
   },
-  plugins: [createPersistedState()],
+  plugins: [createPersistedState()]
 });

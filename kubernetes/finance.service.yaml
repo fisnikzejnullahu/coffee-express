@@ -37,7 +37,7 @@ spec:
                   key: artemis_password
           name: finance-service-container
           image: fisnikz/finance-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           livenessProbe:
             failureThreshold: 4
             httpGet:

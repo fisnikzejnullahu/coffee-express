@@ -1,5 +1,6 @@
 package com.fisnikz.coffee_express;
 
+import com.fisnikz.coffee_express.logging.Logged;
 import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
 
 import javax.inject.Inject;
@@ -12,20 +13,24 @@ import java.lang.System.Logger;
 /**
  * @author Fisnik Zejnullahu
  */
+@Logged
 public class ResponseWebApplicationExceptionMapper implements ResponseExceptionMapper<WebApplicationException> {
-
-    @Inject
-    Logger LOG;
 
     @Override
     public WebApplicationException toThrowable(Response response) {
-        LOG.log(Logger.Level.ERROR, "Mapping Exception");
+        if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SERVER_ERROR)) {
 
+        }
         JsonObject body = Json.createObjectBuilder()
                 .add("success", false)
                 .add("message", "We're facing some technical problems right now. Please try again later!")
                 .build();
 
-        return new WebApplicationException(Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(body).build());
+        WebApplicationException ex = new WebApplicationException(Response.status(response.getStatus())
+                .entity(response.getEntity())
+                .build());
+
+//        return new WebApplicationException(Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(body).build());
+        return ex;
     }
 }

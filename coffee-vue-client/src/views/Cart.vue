@@ -54,7 +54,7 @@
                     </div>
                   </td>
 
-                  <td class="total">$ {{item.price * item.quantity}}</td>
+                  <td class="total">$ {{ item.price * item.quantity }}</td>
                 </tr>
                 <!-- END TR-->
               </tbody>
@@ -64,7 +64,14 @@
       </div>
       <div class="row justify-content-end">
         <div
-          class="col col-lg-3 col-md-6 mt-5 cart-wrap ftco-animate fadeInUp ftco-animated"
+          class="
+            col col-lg-3 col-md-6
+            mt-5
+            cart-wrap
+            ftco-animate
+            fadeInUp
+            ftco-animated
+          "
         >
           <div class="cart-total mb-3">
             <h3>Cart Totals</h3>

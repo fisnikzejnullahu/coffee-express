@@ -13,7 +13,7 @@ import java.net.URI;
 public class OrderSystem {
 
     private OrdersResourceClient client;
-    private RequestJsonBuider jsonBuilder;
+    private RequestJsonBuilder jsonBuilder;
 
     public OrderSystem() {
         URI uri = URI.create("http://localhost:8088/");
@@ -22,7 +22,7 @@ public class OrderSystem {
                 .baseUri(uri)
                 .build(OrdersResourceClient.class);
 
-        this.jsonBuilder = new RequestJsonBuider();
+        this.jsonBuilder = new RequestJsonBuilder();
     }
 
     public URI placeOrder(Order order) {

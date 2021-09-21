@@ -43,7 +43,6 @@ public class KeycloakService {
             Response loginResponse = keycloakRestClient.login(username, password, "password", keycloakClientId, null);
             JsonObject tokenData = loginResponse.readEntity(JsonObject.class);
 
-            System.out.println(getAdminToken());
             Response userResponse = keycloakRestClient.findUser(toBearerToken(getAdminToken()), username);
 
             if (userResponse.getStatus() != 200) {
@@ -55,7 +54,6 @@ public class KeycloakService {
             String accountId = null;
 
             JsonArray usersJson = userResponse.readEntity(JsonArray.class);
-            System.out.println(usersJson);
 
             for (JsonValue u : usersJson) {
                 JsonObject object = u.asJsonObject();
@@ -97,8 +95,6 @@ public class KeycloakService {
     public void generateNewAdminToken() {
         JsonObject data = keycloakRestClient.login("fisnikz", "123456", "password", keycloakClientId, null).readEntity(JsonObject.class);
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
-        System.out.println("generating...");
-        System.out.println(this.getAdminToken());
     }
 
     public String getAdminToken() {
@@ -118,7 +114,6 @@ public class KeycloakService {
 
     public Response update(String customerId, UpdateCustomerRequest request) {
         JsonObject userJson = keycloakJsonUserRepresentation(customerId, request.getFirstName(), request.getFirstName(), request.getUsername(), request.getNewPassword());
-        System.out.println(userJson);
         return keycloakRestClient.update(toBearerToken(getAdminToken()), request.getAccountId(), userJson);
     }
 

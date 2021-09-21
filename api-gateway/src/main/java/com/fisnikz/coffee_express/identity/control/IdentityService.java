@@ -35,6 +35,8 @@ public class IdentityService {
     }
 
     public Response login(LoginInfo loginInfo) {
+        //TODO JWT.createToken e qet nserver e nlocal api e qet veq publikun qe munet me dekriptu
+        //pra, kur logiratesh shkon kerkesa nserver serveri e kthen userin edhe tokenin tani nlocal kthej si cookies tokenat...
         System.out.println(loginInfo);
         Object[] loginData = keycloakService.login(loginInfo.getUsername(), loginInfo.getPassword());
         Token accessToken = (Token) loginData[0];

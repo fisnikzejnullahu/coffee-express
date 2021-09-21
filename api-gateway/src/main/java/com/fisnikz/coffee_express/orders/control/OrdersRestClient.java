@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 @RegisterProvider(ResponseWebApplicationExceptionMapper.class)
 @RegisterProvider(AuthorizationHeaderClientRequestCheck.class)
 @Retry(maxRetries = 1, abortOn = CircuitBreakerOpenException.class)
-@CircuitBreaker(requestVolumeThreshold = 6, failureRatio = 0.5, delay = 3000L, successThreshold = 2)
+@CircuitBreaker(requestVolumeThreshold = 6, failureRatio = 0.5, delay = 3000L, successThreshold = 2, skipOn = WebApplicationException.class)
 public interface OrdersRestClient {
 
     @POST

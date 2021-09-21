@@ -12,7 +12,7 @@ import java.io.StringReader;
 /**
  * @author Fisnik Zejnullahu
  */
-public class RequestJsonBuider {
+public class RequestJsonBuilder {
 
     public JsonObject toJson(Order order) {
         JsonObjectBuilder builder = Json.createObjectBuilder();

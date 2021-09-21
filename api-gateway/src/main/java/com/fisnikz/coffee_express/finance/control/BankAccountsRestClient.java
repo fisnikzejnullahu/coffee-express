@@ -26,7 +26,7 @@ import java.net.ConnectException;
 //@RegisterProvider(ResponseWebApplicationExceptionMapper.class)
 @RegisterProvider(AuthorizationHeaderClientRequestCheck.class)
 @Retry(maxRetries = 1, retryOn = ConnectException.class,abortOn = CircuitBreakerOpenException.class)
-@CircuitBreaker(requestVolumeThreshold = 6, failureRatio = 0.5, delay = 3000L, successThreshold = 2)
+@CircuitBreaker(requestVolumeThreshold = 6, failureRatio = 0.5, delay = 3000L, successThreshold = 2, skipOn = WebApplicationException.class)
 public interface BankAccountsRestClient {
 
     @POST

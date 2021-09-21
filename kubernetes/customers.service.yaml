@@ -37,7 +37,7 @@ spec:
                   key: artemis_password
           name: customers-service-container
           image: fisnikz/customers-service:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           livenessProbe:
             failureThreshold: 4
             httpGet:

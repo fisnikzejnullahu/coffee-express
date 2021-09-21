@@ -12,13 +12,13 @@ public class AuthorizationHeaderClientRequestCheck implements ClientRequestFilte
 
     @Override
     public void filter(ClientRequestContext requestContext) {
-        System.out.println(requestContext.getUri());
-        System.out.println("AuthorizationHeaderClientRequestCheck...");
+//        System.out.println(requestContext.getUri());
+//        System.out.println("AuthorizationHeaderClientRequestCheck...");
         String authorization = requestContext.getHeaderString("Authorization");
-        System.out.println(authorization);
-        System.out.println("###############################");
-        System.out.println(requestContext.getHeaderString("X-Authorization"));
-        System.out.println("###############################");
+//        System.out.println(authorization);
+//        System.out.println("###############################");
+//        System.out.println(requestContext.getHeaderString("X-Authorization"));
+//        System.out.println("###############################");
         if (requestContext.getHeaderString("X-Authorization") != null) {
             requestContext.getHeaders().put("Authorization", List.of(requestContext.getHeaderString("X-Authorization")));
         }
