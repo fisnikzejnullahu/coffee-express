@@ -2,9 +2,11 @@ package com.fisnikz.coffee_express.customers.control;
 
 import com.fisnikz.coffee_express.customers.entity.Customer;
 import io.quarkus.runtime.StartupEvent;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;

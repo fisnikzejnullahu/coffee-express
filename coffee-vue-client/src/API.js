@@ -1,9 +1,9 @@
-const BASE_URL = "http://localhost:9999";
-const API_VERSION = "v1"
+const BASE_URL = "http://localhost:8085";
+const API_VERSION = "v1";
 const API_URL = `${BASE_URL}/api/${API_VERSION}`;
 
-import router from './router';
-import store from './store';
+import router from "./router";
+import store from "./store";
 
 let refreshTokenCount = 0;
 async function call(url, object, httpMethod) {
@@ -13,9 +13,9 @@ async function call(url, object, httpMethod) {
     method: httpMethod,
     body: object ? JSON.stringify(object) : null,
     credentials: "include",
-    mode: 'cors',
+    mode: "cors",
     headers: {
-      "content-type": "application/json",
+      "content-type": "application/json"
     }
   });
 
@@ -27,16 +27,18 @@ async function call(url, object, httpMethod) {
     }
   } else if (response.status === 404 || response.status === 403) {
     router.push({
-      name: 'ErrorPage',
+      name: "ErrorPage",
       params: {
-        message: 'The link you followed may be broken, or the page may have been removed.'
+        message:
+          "The link you followed may be broken, or the page may have been removed."
       }
     });
   } else if (response.status >= 500) {
     router.push({
-      name: 'ErrorPage',
+      name: "ErrorPage",
       params: {
-        message: "We're facing some technical problems right now. Please try again later!"
+        message:
+          "We're facing some technical problems right now. Please try again later!"
       }
     });
   } else if (response.status === 401) {
@@ -47,11 +49,11 @@ async function call(url, object, httpMethod) {
         return call(url, object, httpMethod);
       } else {
         console.log(store);
-        store.dispatch('logout');
+        store.dispatch("logout");
         router.push({
-          name: 'SignInPage',
+          name: "SignInPage",
           params: {
-            tokenExpired: true,
+            tokenExpired: true
           }
         });
         // router.go();
@@ -90,7 +92,11 @@ export default {
     return await call(`${API_URL}/orders/`, placeOrderRequestData, "POST");
   },
   async getMyOrders(customerId, page) {
-    return await call(`${API_URL}/orders?customerId=${customerId}&page=${page}`, null, "GET");
+    return await call(
+      `${API_URL}/orders?customerId=${customerId}&page=${page}`,
+      null,
+      "GET"
+    );
   },
   async trackOrder(orderId) {
     return await call(`${API_URL}/orders/track/${orderId}`, null, "GET");
@@ -105,13 +111,25 @@ export default {
     return await call(`${API_URL}/bank-accounts/${id}`, null, "DELETE");
   },
   async getMyBankAccounts(customerId) {
-    return await call(`${API_URL}/bank-accounts?customerId=${customerId}`, null, "GET");
+    return await call(
+      `${API_URL}/bank-accounts?customerId=${customerId}`,
+      null,
+      "GET"
+    );
   },
   async getMyPopularBankAccount(customerId) {
-    return await call(`${API_URL}/bank-accounts/popular?customerId=${customerId}`, null, "GET");
+    return await call(
+      `${API_URL}/bank-accounts/popular?customerId=${customerId}`,
+      null,
+      "GET"
+    );
   },
   async getMyPayments(customerId) {
-    return await call(`${API_URL}/payments?customerId=${customerId}`, null, "GET");
+    return await call(
+      `${API_URL}/payments?customerId=${customerId}`,
+      null,
+      "GET"
+    );
   },
   async updateProfile(customerId, body) {
     console.log(body);

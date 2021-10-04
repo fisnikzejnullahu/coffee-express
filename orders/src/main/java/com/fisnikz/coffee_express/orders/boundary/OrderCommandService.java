@@ -36,11 +36,8 @@ public class OrderCommandService {
     String baristasQueue;
 
     @Inject
-    @ConfigProperty(name = "orderhistory.queue")
+    @ConfigProperty(name = "orders.history.queue")
     String ordersHistoryQueue;
-
-    @Inject
-    Logger LOG;
 
     public void placeOrder(Order order) {
         eventProducer.publish(new OrderPlaced(order.id, order.orderDetails, order.customerId, order.bankAccountId), ordersHistoryQueue);

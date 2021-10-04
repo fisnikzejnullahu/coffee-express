@@ -1,36 +1,236 @@
 version: "3.8"
 services:
-  orders:
+  db:
+    image: mysql
+    command: --init-file /data/application/init.sql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init.sql:/data/application/init.sql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123456
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 2s
+      interval: 2s
+      retries: 5
+
+  activemq-artemis:
+    image: vromero/activemq-artemis:2.9.0-alpine
+    ports:
+      - "8161:8161"
+      - "8188:61616"
+    environment:
+      ARTEMIS_USERNAME: "admin"
+      ARTEMIS_PASSWORD: "123456"
+
+#  jaeger-collector:
+#    image: jaegertracing/jaeger-collector
+#    command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra", "--collector.zipkin.http-port=9411" ]
+#    ports:
+#      - "14269"
+#      - "14268:14268"
+#      - "14250"
+#      - "9411:9411"
+#    restart: on-failure
+#    depends_on:
+#      - cassandra-schema
+#
+#  jaeger-query:
+#    image: jaegertracing/jaeger-query
+#    command: [ "--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra" ]
+#    ports:
+#      - "16686:16686"
+#      - "16687"
+#    restart: on-failure
+#    depends_on:
+#      - cassandra-schema
+#
+#  jaeger-agent:
+#    image: jaegertracing/jaeger-agent
+#    command: [ "--reporter.grpc.host-port=jaeger-collector:14250" ]
+#    ports:
+#      - "5775:5775/udp"
+#      - "6831:6831/udp"
+#      - "6832:6832/udp"
+#      - "5778:5778"
+#    restart: on-failure
+#    depends_on:
+#      - jaeger-collector
+#
+#  cassandra:
+#    image: cassandra:3.9
+#
+#  cassandra-schema:
+#    image: jaegertracing/jaeger-cassandra-schema
+#    depends_on:
+#      - cassandra
+
+  mongodb:
+    image: mvertes/alpine-mongo
+    ports:
+      - "27017:27017"
+
+  keycloak:
+    image: jboss/keycloak
+    ports:
+      - "9099:8080"
+    environment:
+      KEYCLOAK_USER: "admin"
+      KEYCLOAK_PASSWORD: "admin"
+#      DB_VENDOR: "MYSQL"
+#      DB_ADDR: "mysql"
+#      DB_PORT: "3306"
+#      DB_DATABASE: "keycloak"
+#      DB_SCHEMA: "keycloak"
+#      DB_USER: "root"
+#      DB_PASSWORD: "Admin123456"
+      KEYCLOAK_IMPORT: "/tmp/keycloak/public-realm-export.json"
+    volumes:
+      - ./public-realm-export.json:/tmp/keycloak/public-realm-export.json
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/auth/realms/master" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  orders-service:
     build:
       context: orders
       dockerfile: src/main/docker/Dockerfile.openj9
     ports:
       - "8088:8080"
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:mysql://db:3306/orders_service"
+      QUARKUS_DATASOURCE_USERNAME: "root"
+      QUARKUS_DATASOURCE_PASSWORD: "Admin123456"
+      QUARKUS_ARTEMIS_URL: "tcp://activemq-artemis:61616"
+      QUARKUS_ARTEMIS_USERNAME: "admin"
+      QUARKUS_ARTEMIS_PASSWORD: "123456"
+      quarkus.hibernate-orm.database.generation: drop-and-create
+    depends_on:
+      - db
+      - keycloak
+      - activemq-artemis
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-  customers:
+  customers-service:
     build:
       context: customers
       dockerfile: src/main/docker/Dockerfile.openj9
     ports:
       - "8081:8080"
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:mysql://db:3306/customers_service"
+      QUARKUS_DATASOURCE_USERNAME: "root"
+      QUARKUS_DATASOURCE_PASSWORD: "Admin123456"
+      QUARKUS_ARTEMIS_URL: "tcp://activemq-artemis:61616"
+      QUARKUS_ARTEMIS_USERNAME: "admin"
+      QUARKUS_ARTEMIS_PASSWORD: "123456"
+      INIT_USER_CUSTOMER_ID: "045cf19e-34b9-4d1e-a566-921874129ff0"
+      quarkus.hibernate-orm.database.generation: drop-and-create
+    depends_on:
+      - db
+      - keycloak
+      - activemq-artemis
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-  finances:
+  finance-service:
     build:
       context: finance
       dockerfile: src/main/docker/Dockerfile.openj9
     ports:
       - "8082:8080"
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:mysql://db:3306/finances_service"
+      QUARKUS_DATASOURCE_USERNAME: "root"
+      QUARKUS_DATASOURCE_PASSWORD: "Admin123456"
+      QUARKUS_ARTEMIS_URL: "tcp://activemq-artemis:61616"
+      QUARKUS_ARTEMIS_USERNAME: "admin"
+      QUARKUS_ARTEMIS_PASSWORD: "123456"
+      quarkus.hibernate-orm.database.generation: drop-and-create
+    depends_on:
+      - db
+      - keycloak
+      - activemq-artemis
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-  baristas:
+  barista-service:
     build:
       context: barista
       dockerfile: src/main/docker/Dockerfile.openj9
     ports:
       - "8083:8080"
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: "jdbc:mysql://db:3306/baristas_service"
+      QUARKUS_DATASOURCE_USERNAME: "root"
+      QUARKUS_DATASOURCE_PASSWORD: "Admin123456"
+      QUARKUS_ARTEMIS_URL: "tcp://activemq-artemis:61616"
+      QUARKUS_ARTEMIS_USERNAME: "admin"
+      QUARKUS_ARTEMIS_PASSWORD: "123456"
+      quarkus.hibernate-orm.database.generation: drop-and-create
+    depends_on:
+      - db
+      - keycloak
+      - activemq-artemis
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-  orders-history:
+  orders-history-service:
     build:
       context: orders-history
       dockerfile: src/main/docker/Dockerfile.openj9
     ports:
       - "8084:8080"
+    environment:
+      QUARKUS_ARTEMIS_URL: "tcp://activemq-artemis:61616"
+      QUARKUS_ARTEMIS_USERNAME: "admin"
+      QUARKUS_ARTEMIS_PASSWORD: "123456"
+    depends_on:
+      - mongodb
+      - keycloak
+      - activemq-artemis
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  api-gateway:
+    build:
+      context: api-gateway
+      dockerfile: src/main/docker/Dockerfile.openj9
+    ports:
+      - "8085:8080"
+    environment:
+      INIT_USER_CUSTOMER_ID: "045cf19e-34b9-4d1e-a566-921874129ff0"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+networks:
+  default:
+    name: coffee-express_default

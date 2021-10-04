@@ -52,7 +52,7 @@ spec:
                   name: database-passwords
                   key: mysql_root_password
             - name: KEYCLOAK_IMPORT
-              value: /tmp/keycloak/realm-export.json
+              value: /tmp/keycloak/public-realm-export.json
           volumeMounts:
             - name: realm-import-file
               mountPath: /tmp/keycloak/

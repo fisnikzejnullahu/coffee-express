@@ -4,11 +4,17 @@ import com.fisnikz.coffee_express.identity.control.KeycloakRestClient;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Readiness;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.net.URL;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Fisnik Zejnullahu
@@ -36,4 +42,5 @@ public class KeycloakHealthProbe implements HealthCheck {
             return false;
         }
     }
+
 }

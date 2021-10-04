@@ -11,10 +11,18 @@ public class CreateCustomerRequest {
     private String lastName;
     private String username;
 
-    @Min(value = 8, message = "Min length for password is 8 characters")
+    //example for validation
+    @Min(value = 6, message = "Min length for password is 6 characters")
     private String password;
 
     public CreateCustomerRequest() {
+    }
+
+    public CreateCustomerRequest(String firstName, String lastName, String username, @Min(value = 6, message = "Min length for password is 6 characters") String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
     }
 
     public String getFirstName() {

@@ -1,8 +1,6 @@
 package com.fisnikz.coffee_express.events.control;
 
 import com.fisnikz.coffee_express.events.entity.Command;
-import com.fisnikz.coffee_express.events.entity.OrderCommand;
-import com.fisnikz.coffee_express.events.entity.OrderEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -33,8 +31,8 @@ public class EventConsumer implements Runnable {
     ConnectionFactory connectionFactory;
 
     @Inject
-    @ConfigProperty(name = "orders.topic")
-    String ordersTopic;
+    @ConfigProperty(name = "orders.queue")
+    String ordersQueue;
 
     @Inject
     OrderEventJsonbSerializer serializer;
@@ -49,14 +47,14 @@ public class EventConsumer implements Runnable {
     @Override
     public void run() {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            JMSConsumer consumer = context.createConsumer(context.createTopic(ordersTopic));
+            JMSConsumer consumer = context.createConsumer(context.createQueue(ordersQueue));
             while (true) {
                 Message message = consumer.receive();
                 if (message == null) {
                     return;
                 }
                 Object event = serializer.deserialize(message.getBody(String.class));
-                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                LOG.log(Logger.Level.INFO, "Consuming: " + event.getClass().getName());
                 if (event instanceof com.fisnikz.coffee_express.events.entity.Event) {
                     events.fire((com.fisnikz.coffee_express.events.entity.Event) event);
                 }

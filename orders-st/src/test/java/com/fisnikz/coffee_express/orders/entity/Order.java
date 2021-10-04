@@ -11,18 +11,9 @@ public class Order {
     private String bankAccountId;
     private List<OrderItem> items;
 
-    public Order(String customerId, String bankAccountId, List<OrderItem> items) {
-        this.customerId = customerId;
+    public Order(String bankAccountId, List<OrderItem> items) {
         this.bankAccountId = bankAccountId;
         this.items = items;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
     }
 
     public String getBankAccountId() {

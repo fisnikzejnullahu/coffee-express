@@ -66,7 +66,7 @@
                   type="password"
                   class="form-control"
                   v-model.trim="newPassword"
-                  minlength="8"
+                  minlength="6"
                 />
               </div>
               <div class="form-group">
@@ -75,7 +75,7 @@
                   type="password"
                   class="form-control"
                   v-model.trim="newPasswordConfirm"
-                  minlength="8"
+                  minlength="6"
                 />
               </div>
             </div>
@@ -86,7 +86,7 @@
                 requirements:
               </p>
               <ul class="small text-muted pl-4 mb-0">
-                <li>Minimum 8 characters</li>
+                <li>Minimum 6 characters</li>
                 <li>Can’t be the same as a previous password</li>
               </ul>
             </div>

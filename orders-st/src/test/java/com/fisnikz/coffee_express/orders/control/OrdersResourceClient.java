@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 public interface OrdersResourceClient {
 
     @POST
-    Response place(JsonObject requestBody);
+    Response place(JsonObject requestBody, @CookieParam("access_token") String accessToken);
 
     @GET
     @Path("{orderId}")

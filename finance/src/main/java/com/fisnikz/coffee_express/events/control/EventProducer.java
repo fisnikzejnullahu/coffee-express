@@ -22,12 +22,12 @@ public class EventProducer {
     OrderEventJsonbSerializer serializer;
 
     @Inject
-    @ConfigProperty(name = "orders.topic")
-    String ordersTopic;
+    System.Logger LOG;
 
-    public void publish(Object event) {
+    public void publish(Object event, String queue) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createTopic(ordersTopic), serializer.serialize(event));
+            LOG.log(System.Logger.Level.INFO, "Publishing event: " + event.getClass().getName());
+            context.createProducer().send(context.createQueue(queue), serializer.serialize(event));
         }
     }
 }

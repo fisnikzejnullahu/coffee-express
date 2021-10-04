@@ -1,11 +1,23 @@
 <template>
   <nav
-    class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light"
+    class="
+      navbar navbar-expand-lg navbar-dark
+      ftco_navbar
+      bg-dark
+      ftco-navbar-light
+    "
     id="ftco-navbar"
   >
     <div class="container">
       <router-link to="/" class="navbar-brand" exact>
-        Coffee<small>Express</small>
+        <img
+          src="@/assets/images/logo4.png"
+          alt=""
+          height="72"
+          style="padding: 0"
+        />
+        <!-- <img src="https://placeholder.pics/svg/150x50/888888/EEE/Logo" alt="..." height="36"> -->
+        <!-- Coffee<small>Express</small> -->
       </router-link>
 
       <button
@@ -70,13 +82,10 @@
             class="nav-item"
             exact
           >
-          <a class="nav-link">My Profile</a>
+            <a class="nav-link">My Profile</a>
           </router-link>
-          <li
-            class="nav-item"
-            v-if="currentUser !== null"
-          >
-          <a type="button" @click="onLogout" class="nav-link">Logout</a>
+          <li class="nav-item" v-if="currentUser !== null">
+            <a type="button" @click="onLogout" class="nav-link">Logout</a>
           </li>
           <li v-if="currentUser !== null" class="nav-item cart">
             <router-link to="/cart" class="nav-link">
@@ -104,9 +113,9 @@ export default {
     ...mapActions(["logout"]),
     onLogout() {
       this.logout();
-      this.$router.push('/');
-    }
-  }
+      this.$router.push("/");
+    },
+  },
 };
 </script>
 

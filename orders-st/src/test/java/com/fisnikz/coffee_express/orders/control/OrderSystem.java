@@ -16,7 +16,7 @@ public class OrderSystem {
     private RequestJsonBuilder jsonBuilder;
 
     public OrderSystem() {
-        URI uri = URI.create("http://localhost:8088/");
+        URI uri = URI.create("http://localhost:8085/api/v1/");
         this.client = RestClientBuilder
                 .newBuilder()
                 .baseUri(uri)
@@ -25,14 +25,15 @@ public class OrderSystem {
         this.jsonBuilder = new RequestJsonBuilder();
     }
 
-    public URI placeOrder(Order order) {
-        Response response = sendRequest(order);
+    public URI placeOrder(Order order, String accessToken) {
+        Response response = sendRequest(order, accessToken);
+        System.out.println(response.getStatus());
         verifySuccess(response);
         return response.getLocation();
     }
 
     public void placeInvalidOrder(Order order) {
-        Response response = sendRequest(order);
+        Response response = sendRequest(order, "");
         verifyClientError(response);
     }
 
@@ -42,10 +43,10 @@ public class OrderSystem {
         return response.readEntity(JsonObject.class);
     }
 
-    public Response sendRequest(Order order) {
+    public Response sendRequest(Order order, String accessToken) {
         JsonObject requestBody = this.jsonBuilder.toJson(order);
         System.out.println("REQUEST BODY: " + requestBody);
-        return this.client.place(requestBody);
+        return this.client.place(requestBody, accessToken);
     }
 
     private void verifySuccess(Response response) {

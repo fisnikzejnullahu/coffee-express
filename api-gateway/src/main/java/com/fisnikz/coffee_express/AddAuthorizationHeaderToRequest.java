@@ -4,6 +4,7 @@ import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,14 +17,14 @@ import java.time.LocalDateTime;
 public class AddAuthorizationHeaderToRequest implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        System.out.println("FILTERING....................");
+        System.out.println("Checking for access_token cookie....................");
         Cookie accessToken = requestContext.getCookies().get("access_token");
         if (accessToken != null && !accessToken.getValue().isEmpty()) {
-            System.out.println("1111111");
+            System.out.println("COOKIE ACCESS_TOKEN: " + accessToken);
             requestContext.getHeaders().add("Authorization", "Bearer " + accessToken.getValue());
         }
         else {
-            System.out.println("2222");
+            System.out.println("No ACCESS_TOKEN COOKIE");
         }
     }
 }

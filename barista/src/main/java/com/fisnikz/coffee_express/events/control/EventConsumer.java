@@ -56,7 +56,7 @@ public class EventConsumer implements Runnable {
                     return;
                 }
                 Object event = serializer.deserialize(message.getBody(String.class));
-                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName());
+                LOG.log(Logger.Level.INFO, "Consuming: " + event.getClass().getName());
                 if (event instanceof com.fisnikz.coffee_express.events.entity.Event) {
                     events.fire((com.fisnikz.coffee_express.events.entity.Event) event);
                 }

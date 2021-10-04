@@ -5,12 +5,9 @@
 
   <section v-else class="ftco-section ftco-cart">
     <div class="container">
-      <div class="row">
+      <div class="row mt-3">
         <div class="col">
           <h4>Order Details:</h4>
-        </div>
-        <div class="col" style="text-align: end">
-          <p>Order Number: {{ this.$route.params.id }}</p>
         </div>
       </div>
       <div class="row">
@@ -70,7 +67,7 @@
       <div class="row">
         <div class="col mt-5 cart-wrap ftco-animate fadeInUp ftco-animated">
           <div class="cart-total mb-3">
-            <h3>Kitchen details:</h3>
+            <h3>Order Information:</h3>
             <p class="d-flex total-price">
               <span>Order State</span>
               <span>{{ order.orderState }}</span>

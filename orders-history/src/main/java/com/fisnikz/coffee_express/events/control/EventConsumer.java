@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
  * @author Fisnik Zejnullahu
  */
 @ApplicationScoped
-public class EventOrderHistoryQueueConsumer implements Runnable {
+public class EventConsumer implements Runnable {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -30,7 +30,7 @@ public class EventOrderHistoryQueueConsumer implements Runnable {
     ConnectionFactory connectionFactory;
 
     @Inject
-    @ConfigProperty(name = "orderhistory.queue")
+    @ConfigProperty(name = "orders.history.queue")
     String ordersHistoryQueue;
 
     @Inject
@@ -53,7 +53,7 @@ public class EventOrderHistoryQueueConsumer implements Runnable {
                     return;
                 }
                 com.fisnikz.coffee_express.events.entity.Event event = (com.fisnikz.coffee_express.events.entity.Event) serializer.deserialize(message.getBody(String.class));
-                LOG.log(Logger.Level.INFO, "CONSUMING: " + event.getClass().getName() + ", DATA: " + JsonbBuilder.create().toJson(event));
+                LOG.log(Logger.Level.INFO, "Consuming: " + event.getClass().getName());
                 events.fire(event);
             }
         } catch (Exception e) {

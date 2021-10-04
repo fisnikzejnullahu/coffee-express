@@ -26,9 +26,8 @@ public class EventProducer {
 
     public void publish(OrderEvent event, String queue) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            String serialize = serializer.serialize(event);
-            LOG.log(Logger.Level.INFO, "Publishing: " + serialize);
-            context.createProducer().send(context.createQueue(queue), serialize);
+            LOG.log(Logger.Level.INFO, "Publishing event: " + event.getClass().getName());
+            context.createProducer().send(context.createQueue(queue), serializer.serialize(event));
         }
     }
 }

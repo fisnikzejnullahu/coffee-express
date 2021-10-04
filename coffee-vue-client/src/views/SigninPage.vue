@@ -30,7 +30,7 @@
             <span class="focus-input100"></span>
             <span class="label-input100">Password</span>
           </div>
-          <div class="flex-sb-m w-full p-t-3 p-b-32">
+          <!-- <div class="flex-sb-m w-full p-t-3 p-b-32">
             <div class="contact100-form-checkbox">
               <input
                 class="input-checkbox100"
@@ -38,12 +38,12 @@
                 type="checkbox"
                 name="remember-me"
               />
-              <!-- <label class="label-checkbox100" for="ckb1"> Remember me </label> -->
+              <label class="label-checkbox100" for="ckb1"> Remember me </label>
             </div>
             <div>
               <a href="#" class="txt1"> Forgot Password? </a>
             </div>
-          </div>
+          </div> -->
 
           <p style="color: red" v-if="errorMessage.length !== 0">
             {{ errorMessage }}
@@ -101,7 +101,21 @@
             'background-image':
               'url(' + require('@/assets/images/bg_1.jpg') + ')',
           }"
-        ></div>
+        >
+          <img
+            src="@/assets/images/logo4.png"
+            style="
+              margin: auto;
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              left: 0;
+              top: 0;
+            "
+            width="500"
+            alt=""
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -123,7 +137,7 @@ export default {
   },
   created() {
     if (this.tokenExpired) {
-      this.errorMessage = "token expired. please login again"
+      this.errorMessage = "token expired. please login again";
     }
   },
   computed: {

@@ -88,7 +88,6 @@ public class KeycloakService {
                 new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
                 new Token(tokenData.getString("refresh_token"), Token.TokenType.REFRESH_TOKEN, tokenData.getJsonNumber("refresh_expires_in").intValue())
         };
-
     }
 
     //TODO: bone nashta heren e pare me password, po tani ruje refresh tokenin edhe boni me refresh token... deri sa skadon edhe refreshi
@@ -101,14 +100,12 @@ public class KeycloakService {
         return this.adminToken.getTokenString();
     }
 
-
     public Response logout(String refreshToken) {
         return keycloakRestClient.logout(refreshToken, keycloakClientId);
     }
 
     public Response createAccount(CreateCustomerRequest createCustomerRequest, String customerId) {
         JsonObject createAccountBody = keycloakJsonUserRepresentation(customerId, createCustomerRequest.getFirstName(), createCustomerRequest.getLastName(), createCustomerRequest.getUsername(), createCustomerRequest.getPassword());
-
         return keycloakRestClient.create(toBearerToken(getAdminToken()), createAccountBody);
     }
 
@@ -145,4 +142,5 @@ public class KeycloakService {
 
         return userRepresentation.build();
     }
+
 }

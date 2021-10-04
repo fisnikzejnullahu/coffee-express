@@ -5,17 +5,29 @@
         <form class="login100-form validate-form" @submit.prevent="onSubmit">
           <span class="login100-form-title p-b-43"> Sign Up </span>
           <div class="wrap-input100 validate-input">
-            <input class="input100" type="text" v-model.trim="userInfo.first_name" />
+            <input
+              class="input100"
+              type="text"
+              v-model.trim="userInfo.first_name"
+            />
             <span class="focus-input100"></span>
             <span class="label-input100">First Name</span>
           </div>
           <div class="wrap-input100 validate-input">
-            <input class="input100" type="text" v-model.trim="userInfo.last_name" />
+            <input
+              class="input100"
+              type="text"
+              v-model.trim="userInfo.last_name"
+            />
             <span class="focus-input100"></span>
             <span class="label-input100">Last Name</span>
           </div>
           <div class="wrap-input100 validate-input">
-            <input class="input100" type="text" v-model.trim="userInfo.username" />
+            <input
+              class="input100"
+              type="text"
+              v-model.trim="userInfo.username"
+            />
             <span class="focus-input100"></span>
             <span class="label-input100">Username</span>
           </div>
@@ -31,7 +43,7 @@
             <span class="focus-input100"></span>
             <span class="label-input100">Password</span>
           </div>
-          <div class="flex-sb-m w-full p-t-3 p-b-32">
+          <!-- <div class="flex-sb-m w-full p-t-3 p-b-32">
             <div class="contact100-form-checkbox">
               <input
                 class="input-checkbox100"
@@ -44,7 +56,7 @@
             <div>
               <a href="#" class="txt1"> Forgot Password? </a>
             </div>
-          </div>
+          </div> -->
           <div class="container-login100-form-btn">
             <button
               type="submit"
@@ -97,14 +109,28 @@
             'background-image':
               'url(' + require('@/assets/images/bg_1.jpg') + ')',
           }"
-        ></div>
+        >
+          <img
+            src="@/assets/images/logo4.png"
+            style="
+              margin: auto;
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              left: 0;
+              top: 0;
+            "
+            width="500"
+            alt=""
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -124,22 +150,25 @@ export default {
     },
     async onSubmit() {
       this.clicked = true;
-      if (this.userInfo.first_name === '' || this.userInfo.last_name === '' || this.userInfo.username === '' || this.userInfo.password === ''){
-        alert('Please fill all fields');
-      }
-      else {
+      if (
+        this.userInfo.first_name === "" ||
+        this.userInfo.last_name === "" ||
+        this.userInfo.username === "" ||
+        this.userInfo.password === ""
+      ) {
+        alert("Please fill all fields");
+      } else {
         const response = await this.signup(this.userInfo);
         if (response.status === 201) {
           this.clicked = false;
-          console.log('SUCCESS... redirection to login');
+          console.log("SUCCESS... redirection to login");
           this.gotoSignin();
-        }
-        else if (response.status === 409) {
-          alert('User with that username already exists!');
+        } else if (response.status === 409) {
+          alert("User with that username already exists!");
         }
       }
-        this.clicked = false;
-    }
+      this.clicked = false;
+    },
   },
 };
 </script>
