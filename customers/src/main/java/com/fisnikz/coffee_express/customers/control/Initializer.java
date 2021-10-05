@@ -17,10 +17,14 @@ import java.util.UUID;
 @RequestScoped
 public class Initializer {
 
+    @Inject
+    @ConfigProperty(name = "INIT_USER_CUSTOMER_ID")
+    String customerId;
+
     @Transactional
     void onStart(@Observes StartupEvent event) {
         Customer customer = new Customer();
-        customer.id = UUID.fromString("045cf19e-34b9-4d1e-a566-921874129ff0");
+        customer.id = UUID.fromString(customerId);
         customer.firstName = "Fisnik";
         customer.lastName = "Zejnullahu";
         customer.username = "fisnikz";

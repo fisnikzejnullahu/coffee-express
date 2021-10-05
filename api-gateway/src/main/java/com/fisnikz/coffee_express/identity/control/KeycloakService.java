@@ -29,7 +29,7 @@ public class KeycloakService {
     KeycloakRestClient keycloakRestClient;
 
     @Inject
-    @ConfigProperty(name = "keycloak.client.id", defaultValue = "coffee-express-admin-api-client")
+    @ConfigProperty(name = "keycloak.public.realm.client.id", defaultValue = "123coffee-express-admin-api-client")
     String keycloakClientId;
 
     private Token adminToken;
@@ -88,6 +88,7 @@ public class KeycloakService {
                 new Token(tokenData.getString("access_token"), Token.TokenType.ACCESS_TOKEN, tokenData.getJsonNumber("expires_in").intValue()),
                 new Token(tokenData.getString("refresh_token"), Token.TokenType.REFRESH_TOKEN, tokenData.getJsonNumber("refresh_expires_in").intValue())
         };
+
     }
 
     //TODO: bone nashta heren e pare me password, po tani ruje refresh tokenin edhe boni me refresh token... deri sa skadon edhe refreshi
@@ -96,25 +97,36 @@ public class KeycloakService {
         this.adminToken = new Token(data.getString("access_token"), Token.TokenType.ACCESS_TOKEN, data.getJsonNumber("expires_in").longValue());
     }
 
+    public String loginAsRootUser(String clientId) {
+        Response response = keycloakRestClient.loginAsRoot("admin", "admin", "password", clientId);
+        if (response.getStatus() == 200) {
+            JsonObject data = response
+                    .readEntity(JsonObject.class);
+            return data.getString("access_token");
+        }
+        throw new RuntimeException("Couldn't login as root user!");
+    }
+
     public String getAdminToken() {
         return this.adminToken.getTokenString();
     }
+
 
     public Response logout(String refreshToken) {
         return keycloakRestClient.logout(refreshToken, keycloakClientId);
     }
 
     public Response createAccount(CreateCustomerRequest createCustomerRequest, String customerId) {
-        JsonObject createAccountBody = keycloakJsonUserRepresentation(customerId, createCustomerRequest.getFirstName(), createCustomerRequest.getLastName(), createCustomerRequest.getUsername(), createCustomerRequest.getPassword());
+        JsonObject createAccountBody = keycloakJsonUserRepresentation(customerId, createCustomerRequest.getFirstName(), createCustomerRequest.getLastName(), createCustomerRequest.getUsername(), createCustomerRequest.getPassword(), "USERS");
         return keycloakRestClient.create(toBearerToken(getAdminToken()), createAccountBody);
     }
 
     public Response update(String customerId, UpdateCustomerRequest request) {
-        JsonObject userJson = keycloakJsonUserRepresentation(customerId, request.getFirstName(), request.getFirstName(), request.getUsername(), request.getNewPassword());
+        JsonObject userJson = keycloakJsonUserRepresentation(customerId, request.getFirstName(), request.getFirstName(), request.getUsername(), request.getNewPassword(), "USERS");
         return keycloakRestClient.update(toBearerToken(getAdminToken()), request.getAccountId(), userJson);
     }
 
-    private JsonObject keycloakJsonUserRepresentation(String customerId, String firstName, String lastName, String username, String password) {
+    private JsonObject keycloakJsonUserRepresentation(String customerId, String firstName, String lastName, String username, String password, String group) {
         JsonObjectBuilder customerIdAttribute = Json.createObjectBuilder()
                 .add("customerId", Json.createArrayBuilder().add(customerId));
 
@@ -133,7 +145,7 @@ public class KeycloakService {
                 .add("username", username)
                 .add("emailVerified", true)
                 .add("enabled", true)
-                .add("groups", Json.createArrayBuilder().add("USERS"))
+                .add("groups", Json.createArrayBuilder().add(group))
                 .add("attributes", customerIdAttribute);
 
         if (password != null) {
@@ -143,4 +155,8 @@ public class KeycloakService {
         return userRepresentation.build();
     }
 
+    public Response createAdminAccount(CreateCustomerRequest createCustomerRequest, String customerId, String accessToken) {
+        JsonObject createAccountBody = keycloakJsonUserRepresentation(customerId, createCustomerRequest.getFirstName(), createCustomerRequest.getLastName(), createCustomerRequest.getUsername(), createCustomerRequest.getPassword(), "ADMINS");
+        return keycloakRestClient.create(toBearerToken(accessToken), createAccountBody);
+    }
 }

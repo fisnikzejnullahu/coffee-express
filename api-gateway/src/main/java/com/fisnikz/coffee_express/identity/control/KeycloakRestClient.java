@@ -41,4 +41,9 @@ public interface KeycloakRestClient {
     @GET
     @Path("realms/public")
     Response healthCheck();
+
+    @POST
+    @Path("realms/master/protocol/openid-connect/token")
+    Response loginAsRoot(@FormParam("username") String username, @FormParam("password") String password,
+                         @FormParam("grant_type") String grantType, @FormParam("client_id") String clientId);
 }
