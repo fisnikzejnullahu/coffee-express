@@ -31,28 +31,19 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: jboss/keycloak
-          envFrom:
-            - configMapRef:
-                name: keycloak-settings
+          image: quay.io/keycloak/keycloak-x
+          args: [ "start-dev -Dkeycloak.import=/tmp/keycloak/public-realm-export.json" ]
           env:
-            - name: KEYCLOAK_USER
+            - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
                   key: keycloak_user
-            - name: KEYCLOAK_PASSWORD
+            - name: KEYCLOAK_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-passwords
                   key: keycloak_password
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: database-passwords
-                  key: mysql_root_password
-            - name: KEYCLOAK_IMPORT
-              value: /tmp/keycloak/public-realm-export.json
           volumeMounts:
             - name: realm-import-file
               mountPath: /tmp/keycloak/
@@ -64,7 +55,7 @@ spec:
               containerPort: 8443
           readinessProbe:
             httpGet:
-              path: /auth/realms/master
+              path: /realms/public
               port: 8080
       volumes:
         - name: realm-import-file

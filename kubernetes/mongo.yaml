@@ -14,17 +14,10 @@ spec:
         app: mongodb
         selector: mongodb
     spec:
-      volumes:
-        - name: mongo-storage
-          persistentVolumeClaim:
-            claimName: my-pvc
       containers:
         - name: mongodb
           image: mvertes/alpine-mongo
           imagePullPolicy: IfNotPresent
-          volumeMounts:
-             - name: mongo-storage
-               mountPath: "/data/db"
 
 ---
 

@@ -1,0 +1,2 @@
+call kubectl create secret generic database-passwords --from-literal=mysql_root_password=Admin123456 --from-literal=artemis_username=admin --from-literal=artemis_password=123456 --from-literal=keycloak_user=admin --from-literal=keycloak_password=admin
+call kubectl create configmap keycloak-realm-config --from-file=C:\Users\Fisnik\Desktop\My\java\projects\coffee-express\public-realm-export.json

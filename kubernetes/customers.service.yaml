@@ -25,6 +25,10 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: mysql_root_password
+            - name: quarkus.hibernate-orm.database.generation
+              value: drop-and-create
+            - name: INIT_USER_CUSTOMER_ID
+              value: "045cf19e-34b9-4d1e-a566-921874129ff0"
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -37,7 +41,7 @@ spec:
                   key: artemis_password
           name: customers-service-container
           image: fisnikz/customers-service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 4
             httpGet:

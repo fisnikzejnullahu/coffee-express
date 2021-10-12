@@ -23,6 +23,8 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: mysql_root_password
+            - name: QUARKUS_ARTEMIS_URL
+              value: tcp://activemq-artemis:61616
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -35,7 +37,7 @@ spec:
                   key: artemis_password
           name: orders-history-service-container
           image: fisnikz/orders-history-service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 4
             httpGet:

@@ -17,6 +17,7 @@ import java.lang.System.Logger;
  */
 @RequestScoped
 public class CreateInitializerAdmin {
+
     @Inject
     KeycloakService keycloakService;
 

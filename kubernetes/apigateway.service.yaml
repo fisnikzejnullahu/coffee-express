@@ -23,6 +23,12 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: mysql_root_password
+            - name: KEYCLOAK_MASTER_REALM_CLIENT_ID
+              value: "admin-cli"
+            - name: KEYCLOAK_PUBLIC_REALM_CLIENT_ID
+              value: "coffee-express-admin-api-client"
+            - name: INIT_USER_CUSTOMER_ID
+              value: "045cf19e-34b9-4d1e-a566-921874129ff0"
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -35,7 +41,7 @@ spec:
                   key: artemis_password
           name: api-gateway-service-container
           image: fisnikz/api-gateway-service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 4
             httpGet:
@@ -70,9 +76,10 @@ metadata:
   labels:
     app: api-gateway-service
 spec:
+  type: NodePort
   selector:
     app: api-gateway-service
   ports:
-    - name: http
-      port: 8080
+    - port: 8080
       targetPort: 8080
+      nodePort: 30007

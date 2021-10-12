@@ -25,6 +25,8 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: mysql_root_password
+            - name: quarkus.hibernate-orm.database.generation
+              value: drop-and-create
             - name: QUARKUS_ARTEMIS_URL
               value: tcp://activemq-artemis:61616
             - name: QUARKUS_ARTEMIS_USERNAME
@@ -39,7 +41,7 @@ spec:
                   key: artemis_password
           name: orders-service-container
           image: fisnikz/orders-service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 4
             httpGet:

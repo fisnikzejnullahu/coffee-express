@@ -25,6 +25,8 @@ spec:
                 secretKeyRef:
                   name: database-passwords
                   key: mysql_root_password
+            - name: quarkus.hibernate-orm.database.generation
+              value: drop-and-create
             - name: QUARKUS_ARTEMIS_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -37,7 +39,7 @@ spec:
                   key: artemis_password
           name: barista-service-container
           image: fisnikz/barista-service:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 4
             httpGet:
