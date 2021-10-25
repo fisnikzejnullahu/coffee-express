@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,8 +24,7 @@ public class OrdersResourceIT {
         String[] bankAccountIds = {"70d273a8-03ec-11eb-adc1-0242ac120002", "3af3a6e2-57cb-4cf0-9608-f8190040b97b",
                 "e90770f3-0522-47d3-a9be-c9ef9402326e",};
 
-        String[] accessTokens = {"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmVTJGZzM4ZURQUUVNZjh2MFBRb3M5T3BYLVpPOXpxdzNVcG1xaGdwQVM4In0.eyJleHAiOjE2MzMyNzg0MzIsImlhdCI6MTYzMzI3ODEzMiwianRpIjoiMzc4MTc2OTQtMmQ0NC00N2ZkLWEwMTUtNGJlOWZjZDlhMTYyIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrOjgwODAvYXV0aC9yZWFsbXMvcHVibGljIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6ImZlY2UyZTNmLWNlODItNDEzZC04YzdhLTYxZjlmNmQ2ZGZlNCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNvZmZlZS1leHByZXNzLWFkbWluLWFwaS1jbGllbnQiLCJzZXNzaW9uX3N0YXRlIjoiMzdjNTQyODQtOTYzYy00OWU4LWFmMTQtNWVmMzNlOTZkMWZlIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJmdWxsX2FjY2VzcyIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLXB1YmxpYyIsInVzZXJfZGF0YSJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiY29mZmVlLWV4cHJlc3MtYWRtaW4tYXBpLWNsaWVudCI6eyJyb2xlcyI6WyJtYW5hZ2VfcmVhbG0iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsInNpZCI6IjM3YzU0Mjg0LTk2M2MtNDllOC1hZjE0LTVlZjMzZTk2ZDFmZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiZmlzbmlrIHplam51bGxhaHUiLCJncm91cHMiOlsiZnVsbF9hY2Nlc3MiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1wdWJsaWMiLCJ1c2VyX2RhdGEiXSwicHJlZmVycmVkX3VzZXJuYW1lIjoiZmlzbmlreiIsImdpdmVuX25hbWUiOiJmaXNuaWsiLCJjdXN0b21lcl9pZCI6IjA0NWNmMTllLTM0YjktNGQxZS1hNTY2LTkyMTg3NDEyOWZmMCIsImZhbWlseV9uYW1lIjoiemVqbnVsbGFodSIsImVtYWlsIjoiZmlzbmlrekBnbWFpbC5jb20ifQ.ShHlCvKuJtrvAjwpDAGp6nKNgss-54yCbYRR-E3g3BWsxeCzU8p1AfXqy3tNXkqI8n1UBjVJhIuiLiLjk92Q-4q5_3XrrZm7FwgH7yPiIlcD2KApvsVgBqcqiu8hsueJ_voT1kpQUTe3lp9XdLrnGKVkmCMhbcxZo-2wmrhnxo7KdZw0R-XYowhkxgEe8XR-NEnrFNxFoyamGyjUAZ6LGPmI_L1b33nVIHGkg3DGjpQqSGtmMQxm2PrrUD02bDs7tG4uD_RCgjMSNnwg_tskXYX65Zm3meJXYsOD2zPcYuDiBU3LfxK6VRHiC4TkdvESJ5HBAcAqOxGKc3iPufspyg",
-                "e90770f3-0522-47d3-a9be-c9ef9402326e",};
+        String[] accessTokens = {"eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ5TjFIX0dHQXBlUFJBdWNXQlgxbDdZZExvNXRqb3RkcFNzQm9tWlBWc0ljIn0.eyJleHAiOjE2MzQxMzk0MzAsImlhdCI6MTYzNDEzOTEzMCwianRpIjoiY2NlZDliOTUtMDc5NC00YjdjLTgzZjQtYTk4ODJhMzZiZWI5IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrOjgwODAvcmVhbG1zL3B1YmxpYyIsImF1ZCI6WyJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiI1YTBmODA0Yi1iM2FiLTQ5NjAtOTQxNC1kNjBhMDkwZTY2YjAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjb2ZmZWUtZXhwcmVzcy1hZG1pbi1hcGktY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6ImU4ZjI4NzU5LTYzMDAtNDAwZi1iNzQyLTdhMTA3ZWMzYzRmOCIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZnVsbF9hY2Nlc3MiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1wdWJsaWMiXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbInZpZXctcmVhbG0iLCJ2aWV3LWlkZW50aXR5LXByb3ZpZGVycyIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwicmVhbG0tYWRtaW4iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwidmlldy1hdXRob3JpemF0aW9uIiwicXVlcnktY2xpZW50cyIsInF1ZXJ5LXVzZXJzIiwibWFuYWdlLWV2ZW50cyIsIm1hbmFnZS1yZWFsbSIsInZpZXctZXZlbnRzIiwidmlldy11c2VycyIsInZpZXctY2xpZW50cyIsIm1hbmFnZS1hdXRob3JpemF0aW9uIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sImNvZmZlZS1leHByZXNzLWFkbWluLWFwaS1jbGllbnQiOnsicm9sZXMiOlsibWFuYWdlX3JlYWxtIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJzaWQiOiJlOGYyODc1OS02MzAwLTQwMGYtYjc0Mi03YTEwN2VjM2M0ZjgiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkZpc25payBaZWpudWxsYWh1IiwiZ3JvdXBzIjpbImZ1bGxfYWNjZXNzIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtcHVibGljIl0sInByZWZlcnJlZF91c2VybmFtZSI6ImZpc25pa3oiLCJnaXZlbl9uYW1lIjoiRmlzbmlrIiwiY3VzdG9tZXJfaWQiOiIwNDVjZjE5ZS0zNGI5LTRkMWUtYTU2Ni05MjE4NzQxMjlmZjAiLCJmYW1pbHlfbmFtZSI6Ilplam51bGxhaHUifQ.P_XTATu9WegkW3vSXq9VgEwirOeZewWkF7jR8QGfds95iBBofCIuKoeE_eK89GluRD8gGTOPjAy60PLIAt8JUquCS8lU96pgGnpi0lpRyxG21ckwxKCJSC0w740J9voBx5jQkMXU8zyOZDFVrwLogYF6pxe2MXAos8cHe3n-Wcdf-tg1y2MmG_YPb-ucWUvGkhjbS8bIz_rbasoJoBhQANgIrukjfbO3iVM1TApj72R8olpUzVJbIXbZrdmLmv30a9WRWqSQP2kQa9YpRHu429lC2Se9ZBiNqhj-AsJuNyDXcYYe--cusnIEUI6Oio8a0InANanun1-b7eoatRFk-g"};
 
         ExecutorService executorService = Executors.newFixedThreadPool(12);
         OrderSystem orderSystem = new OrderSystem();
@@ -34,16 +34,19 @@ public class OrdersResourceIT {
             var accessToken = accessTokens[0];
             Order order = newOrder(bankAccountId);
 
+
             CompletableFuture.supplyAsync(() -> orderSystem.placeOrder(order, accessToken), executorService)
                     .thenAccept(createdOrderLocation -> {
                         String orderId = createdOrderLocation.toString().substring(createdOrderLocation.toString().lastIndexOf("/"));
                         System.out.println("OrderID: = " + orderId);
                     }).exceptionally(throwable -> {
-                throwable.printStackTrace();
+                System.out.println("Ex: " + throwable.getMessage());
+//                throwable.printStackTrace();
                 return null;
             });
         }
-        System.out.println("done");
+
+        System.out.println("done, placed orders: ");
     }
 
 //    @BeforeEach

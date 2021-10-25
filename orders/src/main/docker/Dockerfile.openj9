@@ -6,7 +6,9 @@ ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jb
 RUN mkdir /opt/app \
     && apk add curl
 
-COPY target/lib/* /opt/app/lib/
-COPY target/*-runner.jar /opt/app/app.jar
+COPY --chown=1001 target/quarkus-app/lib/ /deployments/lib/
+COPY --chown=1001 target/quarkus-app/*.jar /deployments/
+COPY --chown=1001 target/quarkus-app/app/ /deployments/app/
+COPY --chown=1001 target/quarkus-app/quarkus/ /deployments/quarkus/
 
 CMD java ${JAVA_OPTIONS} -jar /opt/app/app.jar

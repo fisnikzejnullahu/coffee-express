@@ -27,7 +27,7 @@ public class OrderSystem {
 
     public URI placeOrder(Order order, String accessToken) {
         Response response = sendRequest(order, accessToken);
-        System.out.println(response.getStatus());
+        System.out.println("Response status code: " +  response.getStatus());
         verifySuccess(response);
         return response.getLocation();
     }

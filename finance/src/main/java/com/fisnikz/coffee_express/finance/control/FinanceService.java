@@ -4,8 +4,7 @@ import com.fisnikz.coffee_express.events.FailMessages;
 import com.fisnikz.coffee_express.finance.boundary.FinanceCommandService;
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.metrics.annotation.Counted;
+import io.micrometer.core.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -37,7 +36,7 @@ public class FinanceService {
         } else {
             if (!bankAccount.customerId.equals(customerId)) {
                 commandService.cardVerificationFailed(orderId, FailMessages.BANK_ACCOUNT_NOT_BELONGS_TO_CUSTOMER);
-            }else {
+            } else {
 
                 try {
                     Thread.sleep(1500);

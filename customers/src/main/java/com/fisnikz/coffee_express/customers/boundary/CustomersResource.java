@@ -4,8 +4,8 @@ import com.fisnikz.coffee_express.customers.control.CustomerService;
 import com.fisnikz.coffee_express.customers.entity.Customer;
 import com.fisnikz.coffee_express.customers.entity.UpdateCustomerRequest;
 import com.fisnikz.coffee_express.logging.Logged;
+import io.micrometer.core.annotation.Counted;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.annotation.security.DenyAll;

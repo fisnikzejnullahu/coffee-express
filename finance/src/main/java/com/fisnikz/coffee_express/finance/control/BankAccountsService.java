@@ -2,8 +2,7 @@ package com.fisnikz.coffee_express.finance.control;
 
 import com.fisnikz.coffee_express.finance.entity.BankAccount;
 import com.fisnikz.coffee_express.finance.entity.Payment;
-import org.eclipse.microprofile.metrics.MetricRegistry;
-import org.eclipse.microprofile.metrics.annotation.RegistryType;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,8 +30,7 @@ public class BankAccountsService {
     CustomersRestClient restClient;
 
     @Inject
-    @RegistryType(type = MetricRegistry.Type.APPLICATION)
-    MetricRegistry metricRegistry;
+    MeterRegistry meterRegistry;
 
     @Inject
     EntityManager em;
@@ -40,7 +38,7 @@ public class BankAccountsService {
     public void create(BankAccount account, String authorizedCustomerId) {
         checkForAuthorizedCustomerId(account.customerId, authorizedCustomerId);
         Response customerServiceResponse = restClient.find(account.customerId);
-        metricRegistry.counter("customer_service_find_status_" + customerServiceResponse.getStatus()).inc();
+        meterRegistry.counter("customer_service_find_status_" + customerServiceResponse.getStatus()).increment();
         if (customerServiceResponse.getStatus() == 404) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).header("cause", customerServiceResponse.getHeaderString("cause")).build());
         } else {

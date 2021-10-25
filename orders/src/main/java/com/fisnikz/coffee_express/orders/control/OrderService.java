@@ -3,7 +3,7 @@ package com.fisnikz.coffee_express.orders.control;
 import com.fisnikz.coffee_express.orders.InvalidMenuItemException;
 import com.fisnikz.coffee_express.orders.entity.*;
 import com.fisnikz.coffee_express.orders.boundary.OrderCommandService;
-import org.eclipse.microprofile.metrics.annotation.Counted;
+import io.micrometer.core.annotation.Counted;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -35,7 +35,7 @@ public class OrderService {
     @Inject
     Event<Order> event;
 
-    @Counted(name = "placed_orders")
+    @Counted(description = "placed_orders_count")
     public void place(UUID orderId, UUID customerId, PlaceOrderRequest placeOrderRequest) {
         Order order = new Order(orderId, customerId, placeOrderRequest.getBankAccountId(), new OrderDetails(makeOrderItems(placeOrderRequest.getItems())));
         LOG.log(Logger.Level.INFO, "Placing order: " + JsonbBuilder.create().toJson(placeOrderRequest));
@@ -71,27 +71,29 @@ public class OrderService {
         commandService.acceptOrder(order);
     }
 
-    @Counted(name = "accepted_orders")
+    @Counted(description = "accepted_orders_count")
     public void orderAccepted(UUID orderId) {
         updateOrder(orderId, Order::accept);
     }
 
+    @Counted(description = "started_orders_count")
     public void orderStarted(UUID orderId, LocalDateTime readyBy) {
         updateOrder(orderId, Order::start);
         //notify user with that order has satrted with a readyby time
     }
 
+    @Counted(description = "finished_orders_count")
     public void orderFinished(UUID orderId) {
         updateOrder(orderId, Order::finish);
     }
 
-    @Counted(name = "rejected_orders")
+    @Counted(description = "rejected_orders_count")
     public void rejectOrder(UUID orderId, String reason){
         Order order = Order.findById(orderId);
         order.cancel(reason);
     }
 
-    @Counted(name = "cancelled_orders")
+    @Counted(description = "cancelled_orders_count")
     public void cancelOrder(UUID orderId, String reason) {
         Order order = Order.findById(orderId);
         switch (order.orderState) {
