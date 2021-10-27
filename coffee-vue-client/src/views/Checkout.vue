@@ -53,11 +53,11 @@
                           :key="bankAcc.id"
                           :value="index"
                         >
-                          Ending with {{ lastDigitsOfCC(bankAcc) }}
+                          Ending with {{ bankAcc["credit_card_info"]["ending_card_numbers"] }}
                         </option>
                       </select>
                       <p v-if="bankAccount !== null && !editingBankAccount">
-                        Ending with {{ lastDigitsOfCC(bankAccount) }}
+                        Ending with {{ bankAccount["credit_card_info"]["ending_card_numbers"] }}
                         <span
                           @click="editBankAccount"
                           style="
@@ -248,11 +248,6 @@ export default {
     onSelectedBankAccount() {
       this.bankAccount = this.allBankAccounts[this.selectedBankAccountPosition];
       this.editingBankAccount = false;
-    },
-    lastDigitsOfCC(bankAccount) {
-      return bankAccount["credit_card_info"]["card_number"]
-        .toString()
-        .substring(12);
     },
   },
   computed: {

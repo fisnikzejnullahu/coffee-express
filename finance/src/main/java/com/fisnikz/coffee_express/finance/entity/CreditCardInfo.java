@@ -1,6 +1,6 @@
 package com.fisnikz.coffee_express.finance.entity;
 
-import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Embeddable;
 import java.time.LocalDate;
 
@@ -14,8 +14,12 @@ public class CreditCardInfo {
     public LocalDate expirationDate;
     public short cvc;
 
-    @JsonbProperty
-    public Long getCardNumber() {
-        return Long.valueOf(String.valueOf(this.cardNumber).substring(12));
+    @JsonbTransient
+    public long getCardNumber() {
+        return this.cardNumber;
+    }
+
+    public String getEndingCardNumbers() {
+        return String.valueOf(this.cardNumber).substring(12);
     }
 }

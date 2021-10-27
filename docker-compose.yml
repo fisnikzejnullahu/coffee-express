@@ -103,7 +103,7 @@ services:
   orders-service:
     build:
       context: orders
-      dockerfile: src/main/docker/Dockerfile.openj9
+      dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8088:8080"
     environment:
@@ -128,7 +128,7 @@ services:
   customers-service:
     build:
       context: customers
-      dockerfile: src/main/docker/Dockerfile.openj9
+      dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8081:8080"
     environment:
@@ -154,7 +154,7 @@ services:
   finance-service:
     build:
       context: finance
-      dockerfile: src/main/docker/Dockerfile.openj9
+      dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8082:8080"
     environment:
@@ -179,7 +179,7 @@ services:
   barista-service:
     build:
       context: barista
-      dockerfile: src/main/docker/Dockerfile.openj9
+      dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8083:8080"
     environment:
@@ -204,7 +204,7 @@ services:
   orders-history-service:
     build:
       context: orders-history
-      dockerfile: src/main/docker/Dockerfile.openj9
+      dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8084:8080"
     environment:
@@ -225,7 +225,7 @@ services:
   api-gateway:
     build:
       context: api-gateway
-      dockerfile: src/main/docker/Dockerfile.openj9
+      dockerfile: src/main/docker/Dockerfile.jvm
     ports:
       - "8085:8080"
     environment:

@@ -36,8 +36,8 @@
                 <div class="col">
                   <p style="font-weight: bold; color: #fff">Card</p>
                   <p>
-                    Card Number:
-                    {{ account["credit_card_info"]["card_number"] }}
+                    Card Number: **** **** ****
+                    {{ account["credit_card_info"]["ending_card_numbers"] }}
                   </p>
                   <p>
                     Expiration Date:
