@@ -83,6 +83,10 @@ yarn serve --port 3333 (cors is used in api-gateway and port 3333 is accepted as
 After Vue.js app is up and running you can access the WebUI in `http://localhost:3333`. Keep in mind that frontend will communicate only with Api-gateway.
 In frontend you can browse everything that Coffee-Express offers (menu and if logged in as a user: orders of user, bankaccounts, profile, placing orders and so on...). For now there is no menuitem in database, that's why you can create some menuitems by using `Barista-service's SwaggerUI` (visit in browser `http://barista-service-url:barista-service-port`) You can use some menuitems that I got from starbucks official website. You will find these menuitems in a json file in coffee express app directory. Copy menuitems and paste in SwaggerUI (post_baristas_items_bulk) and send a POST request to service. And if everything goes right, these menuitems will be stored in database.
 
+<p align="left">
+<img src="./docs/img/barista-service-swagger-ui.png" alt="Barista's Service SwaggerUI" />
+</p>
+
 Note: If Kuberenetes is used, then you can't access barista's service directly outside of cluster. That means that if you want to access via localhost you should use port-forwarding:
 
 ```
