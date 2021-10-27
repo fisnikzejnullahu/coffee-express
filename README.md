@@ -71,11 +71,8 @@ orders-service-57bf9dbc68-hxsrc           1/1     Running   3          2m
 Now all the pods are up and running.
 
 ## Using the web application
-If you want to access each service swagger-ui, you can do this by visiting URL of specific service (if Kubernetes is used, you must use port-forwarding to access in-cluster services from outside cluster): `http://localhost:{SERVICE_HTTP_PORT}/swagger-ui`
-
-After all pods are up and running you can access web application's UI (which is a Vue.js app) by visiting following URL: `http://localhost:3333`. 
-All microservices are written in Quarkus (Java 11). Each of these services will expose it's own API through an OpenAPI specification and you can also test these APIs using a user-friendly UI named SwaggerUI. Each service's SwaggerUI is accessible on `http://service-url:port/q/swagger-ui`.
-You can test each service's API by using their SwaggerUI. This is not easy to do. That's why Coffee Express make use of API-Gateway pattern, and have unique service called Api-Gateway-service. By using API-gateway service, clients will use this service to communicate with all other services.
+All microservices are written in Quarkus (Java 11). Each of these services will expose it's own API through an OpenAPI specification and you can also test these APIs using a user-friendly UI named SwaggerUI. Each service's SwaggerUI is accessible on `http://service-url:service-port/q/swagger-ui`.
+You can test each service's API by using their SwaggerUI. This is not easy to do. That's why Coffee Express make use of API-Gateway pattern, and have a service called Api-Gateway-service. By using API-gateway service, clients will use this service to communicate with all other services.
 
 Coffee-Express have it's own (frontend UI) that is built with Vue.js. (For now Vue.js app it's not run in docker-compose neither in Kubernetes cluster). That's why you should run this app by changing directory to `/coffee-vue-client`, where all of Vue.js app is written. You can start this by using command:
 
