@@ -19,10 +19,11 @@ Bank Accounts
 ![](./docs/img/12%20bankaccounts.png) 
 
 ## Building and running the microservices
-Coffee Express can run either using Docker Compose or a Kubernetes (minikube cluster). In both options you need to first build all java projects using maven, then build locak docker images. You can do this by using command:
+Coffee Express can run either using Docker Compose or a Kubernetes Cluster(only tested in minikube). In both options you need to first build all java projects using maven, then build local docker images. You can do this by executing these batch files in a terminal:
 
 ```
-./build-images.bat
+1: ./build-packages.bat
+2: ./build-images.bat
 ```
 
 After all Docker images have been created, you can either use `docker-compose up` or if you want to run on `Kubernetes minikube cluster`, follow these steps:
@@ -32,7 +33,14 @@ After all Docker images have been created, you can either use `docker-compose up
 minikube start --driver=docker
 ```
 
-2. After minikube cluster is up and running you can then proceed to **deploy coffee-express microservices** in Kubernetes (`don't forget to first build docker images`). Change directory to `kubernetes/` then execute:
+2. After minikube cluster is up and running you can then proceed to **deploy coffee-express microservices** in Kubernetes (`don't forget to first build docker images`). 
+First you need to create a secret that contains all necessary usernames & passwords and create a ConfigMap that will import a Keycloak realm from a json file. You can do both of these by executing batch file:
+
+```
+./create-secret-and-keycloak-import.bat
+```
+
+Then, change directory to `kubernetes/` and run this command:
 
 ```
 kubectl apply -f .
@@ -44,21 +52,44 @@ kubectl apply -f .
 kubectl get pods
 ```
 
-After a few minutes, you should see something like this:
+After a few minutes, (after pulling all necessary docker images and starting up pods) you should see something like this:
 
 ```
-NAME                                     READY   STATUS    RESTARTS   AGE
-activemq-artemis-0                       1/1     Running   0          119s
-api-gateway-service-75f4898958-wf8hg     0/1     Running   0          119s
-barista-service-fddcf4b5d-6sp6r          1/1     Running   2          119s
-customers-service-66869cbb88-hvh7b       1/1     Running   2          119s
-finance-service-655c5bfc6b-97x8z         1/1     Running   2          119s
-keycloak-5ff7f8c466-ghfvf                0/1     Running   1          119s
-mongodb-set-0                            1/1     Running   0          119s
-mysql-6c8d4bdbd9-sqtb9                   1/1     Running   0          119s
-orders-history-service-f759c7dd9-7bdqt   1/1     Running   0          118s
-orders-service-6fdd46b7bd-lsptp          1/1     Running   2          118s
+NAME                                      READY   STATUS    RESTARTS   AGE
+activemq-artemis-0                        1/1     Running   0          2m1s
+api-gateway-service-7c89fdbfb4-z4n8v      1/1     Running   3          2m1s
+barista-service-555499fd74-tdpgv          1/1     Running   3          2m1s
+customers-service-7d7964cb4d-9bzm9        1/1     Running   3          2m1s
+finance-service-5f46499b94-4z87c          1/1     Running   2          2m1s
+keycloak-59c4d545cd-5rtcz                 1/1     Running   0          2m1s
+mongodb-set-0                             1/1     Running   0          2m1s
+mysql-6c8d4bdbd9-6zvb5                    1/1     Running   0          2m
+orders-history-service-65bdffc7c6-lnb6q   1/1     Running   0          2m
+orders-service-57bf9dbc68-hxsrc           1/1     Running   3          2m
 ```
+
+Now all the pods are up and running.
 
 ## Using the web application
-After all containers are up and running you can access web application's UI (which is a Vue.js app) by visiting following URL: `http://localhost:3333`. If you want to access each service swagger-ui, you can do this by visiting URL of specific service (if Kubernetes is used, you must use port-forwarding to access in-cluster services from outside cluster): `http://localhost:{SERVICE_HTTP_PORT}/swagger-ui`
+If you want to access each service swagger-ui, you can do this by visiting URL of specific service (if Kubernetes is used, you must use port-forwarding to access in-cluster services from outside cluster): `http://localhost:{SERVICE_HTTP_PORT}/swagger-ui`
+
+After all pods are up and running you can access web application's UI (which is a Vue.js app) by visiting following URL: `http://localhost:3333`. 
+All microservices are written in Quarkus (Java 11). Each of these services will expose it's own API through an OpenAPI specification and you can also test these APIs using a user-friendly UI named SwaggerUI. Each service's SwaggerUI is accessible on `http://service-url:port/q/swagger-ui`.
+You can test each service's API by using their SwaggerUI. This is not easy to do. That's why Coffee Express make use of API-Gateway pattern, and have unique service called Api-Gateway-service. By using API-gateway service, clients will use this service to communicate with all other services.
+
+Coffee-Express have it's own (frontend UI) that is built with Vue.js. (For now Vue.js app it's not run in docker-compose neither in Kubernetes cluster). That's why you should run this app by changing directory to `/coffee-vue-client`, where all of Vue.js app is written. You can start this by using command:
+
+```
+yarn serve --port 3333 (cors is used in api-gateway and port 3333 is accepted as origin by api-gateway)
+```
+
+After Vue.js app is up and running you can access the WebUI in `http://localhost:3333`. Keep in mind that frontend will communicate only with Api-gateway.
+In frontend you can browse everything that Coffee-Express offers (menu and if logged in as a user: orders of user, bankaccounts, profile, placing orders and so on...). For now there is no menuitem in database, that's why you can create some menuitems by using `Barista-service's SwaggerUI` (visit in browser `http://barista-service-url:barista-service-port`) You can use some menuitems that I got from starbucks official website. You will find these menuitems in a json file in coffee express app directory. Copy menuitems and paste in SwaggerUI (post_baristas_items_bulk) and send a POST request to service. And if everything goes right, these menuitems will be stored in database.
+
+Note: If Kuberenetes is used, then you can't access barista's service directly outside of cluster. That means that if you want to access via localhost you should use port-forwarding:
+
+```
+kubectl port-forward svc/barista-service 8083:8080
+```
+
+Now you can access barista-service directly on `http://localhost:8083`.
