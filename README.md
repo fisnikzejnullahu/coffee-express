@@ -80,7 +80,13 @@ Coffee-Express have it's own (frontend UI) that is built with Vue.js. (For now V
 yarn serve --port 3333 (cors is used in api-gateway and port 3333 is accepted as origin by api-gateway)
 ```
 
-After Vue.js app is up and running you can access the WebUI in `http://localhost:3333`. Keep in mind that frontend will communicate only with Api-gateway.
+After Vue.js app is up and running you can access the WebUI in `http://localhost:3333`. Keep in mind that frontend will communicate only with Api-gateway (that's why when using Kubernetes you must use port-forwarding to access api-gateway):
+
+```
+kubectl port-forward svc/api-gateway-service 8085:8080
+Note: Port 8085 is the port that frontend uses to communicate with api-gateway. If you want to change that port you should modify file `API.js` and change variable BASE_URL!
+```
+
 In frontend you can browse everything that Coffee-Express offers (menu and if logged in as a user: orders of user, bankaccounts, profile, placing orders and so on...). For now there is no menuitem in database, that's why you can create some menuitems by using `Barista-service's SwaggerUI` (visit in browser `http://barista-service-url:barista-service-port`) You can use some menuitems that I got from starbucks official website. You will find these menuitems in a json file in coffee express app directory. Copy menuitems and paste in SwaggerUI (post_baristas_items_bulk) and send a POST request to service. And if everything goes right, these menuitems will be stored in database.
 
 <p align="left">
