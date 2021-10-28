@@ -87,7 +87,8 @@ kubectl port-forward svc/api-gateway-service 8085:8080
 Note: Port 8085 is the port that frontend uses to communicate with api-gateway. If you want to change that port you should modify file `API.js` and change variable BASE_URL!
 ```
 
-In frontend you can browse everything that Coffee-Express offers (menu and if logged in as a user: orders of user, bankaccounts, profile, placing orders and so on...). For now there is no menuitem in database, that's why you can create some menuitems by using `Barista-service's SwaggerUI` (visit in browser `http://barista-service-url:barista-service-port`) You can use some menuitems that I got from starbucks official website. You will find these menuitems in a json file in coffee express app directory. Copy menuitems and paste in SwaggerUI (post_baristas_items_bulk) and send a POST request to service. And if everything goes right, these menuitems will be stored in database.
+### Adding menuitems
+In frontend you can browse everything that Coffee-Express offers (menu and if logged in as a user: orders of user, bankaccounts, profile, placing orders and so on...). But application will start with no menuitem in database of barista service, that's why you can create some menuitems by using `Barista-service's API/SwaggerUI` (visit in browser `http://barista-service-url:barista-service-port`) You can use some menuitems that I got from starbucks official website. You will find these menuitems in a json file in coffee express app directory. Copy menuitems and paste in SwaggerUI (post_baristas_items_bulk) and send a POST request to service. And if everything goes right, these menuitems will be stored in database.
 
 <p align="left">
 <img src="./docs/img/barista-service-swagger-ui.png" alt="Barista's Service SwaggerUI" />
@@ -100,3 +101,38 @@ kubectl port-forward svc/barista-service 8083:8080
 ```
 
 Now you can access barista-service directly on `http://localhost:8083`.
+
+### Logging in
+When you open the frontend, you can browse only the menu without being logged in in application. So if you want to use other feautures of the app you need to login. During application startup, there is one user (withh admin role) that is created, both in customers-service and the keycloak-service. You can use this user to immediately login and test the application or you can signup with a new user by visiting signup page in frontend (keep in mind that all the users that are created from signup page, are assigned with a simple "user role and not admin role". Credentials to login as admin:
+
+```
+Username: fisnikz
+Password: 123456
+```
+
+## Architecture
+
+| Service                                              | Language (Framework)      | Description|
+| ---------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [orders service](./orders)                  | Java 11 (Quarkus)         | Handles placing/managing orders. It also plays role of "orchestrator" during the "place order" process (using sagas pattern) |
+| [finance service](./finance) | Java 11 (Quarkus)            | Make a payment using credit card info (mock) with the given amount and save the payments in db.                        |
+| [barista service](./barista)             | Java 11 (Quarkus)       | The barista that provides list of menuitems. It also manages the process of accepting and preparing orders. |
+| [customers service](./customers)               | Java 11 (Quarkus)       | Responsible for saving customers details (not the login info of accounts (Keycloak is used as identity provider).                                     |
+| [orders history service](./orders-history)             | Java 11 (Quarkus)            | Takes all the information about orders from each service, and saves them in a NoSQL database (CQRS Pattern) |
+| [api gateway service](./api-gateway)                   | Java 11 (Quarkus)        | The "front door" to the application. Each external request will communicate directly only with this service. Then api-gateway forwards the requests to the corresponding service and finally sends response. |
+| [frontend](./coffee-vue-client)                      | Javascript (Vue.js)        | Exposes an web UI that is accesisable in the browser. |
+
+## Features
+
+- **Usage of Microservices Patterns:**
+  As mentioned before, this application is based on Microservices Architecture. That's why the whole application is designed to use sorts of Microservices Patterns and "best practices" when dealing with Microservices. Some of the patterns that are used:
+  - Communication Patterns (Synchronous and Asynchronous)
+  - Circuit Braker Pattern
+  - Sagas Pattern
+  - CQRS (Command and Query Responsibility Segregation)
+  - Security in Microservices (JWT)
+  - API Gateway
+- **Docker:**
+  Docker simplifies the delivery and managment of Microservices using containers. Each service provides a Dockerfile that can be used to build the images and start the containers. Because there are multiple services, the best way to define and run multiple containers is to use Docker Compose. You can find a docker-compose.yml file in the application base directory.    
+- **Kubernetes:**
+  The app is also designed to run on Kubernetes (locally on Minikube). You can find all the configuration yaml files for each of service in the `/kubernetes` dir.
